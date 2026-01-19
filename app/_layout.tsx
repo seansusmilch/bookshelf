@@ -5,8 +5,6 @@ import { Stack, router } from 'expo-router';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
-import { SignOutButton } from '~/components/SignOutButton';
-
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 function InitialLayout() {
@@ -27,16 +25,18 @@ function InitialLayout() {
       screenOptions={{
         headerStyle: {
           backgroundColor: 'var(--color-surface)',
-        },
+          shadowOpacity: 0,
+          borderBottomWidth: 1,
+          borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+        } as any,
         headerTintColor: 'var(--color-on-surface)',
         headerTitleStyle: {
-          fontSize: 22,
-          fontWeight: '400',
-        },
+          fontSize: 24,
+          fontWeight: '700',
+        } as any,
         contentStyle: {
           backgroundColor: 'var(--color-background)',
         },
-        headerRight: () => <SignOutButton />,
       }}>
       <Stack.Screen name="login" options={{ headerShown: false, animation: 'fade' }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />

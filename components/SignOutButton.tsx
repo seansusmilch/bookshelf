@@ -1,7 +1,7 @@
 import { useClerk } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 
 export const SignOutButton = () => {
   const { signOut } = useClerk();
@@ -17,8 +17,11 @@ export const SignOutButton = () => {
   };
 
   return (
-    <TouchableOpacity onPress={handleSignOut} className="pr-4">
-      <Ionicons name="log-out-outline" size={24} color="var(--color-on-surface)" />
+    <TouchableOpacity
+      onPress={handleSignOut}
+      className="flex-row items-center gap-2 rounded-full bg-[--color-error-container] px-4 py-2 pr-6">
+      <Ionicons name="log-out-outline" size={20} color="var(--color-on-error-container)" />
+      <Text className="text-sm font-semibold text-[--color-on-error-container]">Sign Out</Text>
     </TouchableOpacity>
   );
 };
