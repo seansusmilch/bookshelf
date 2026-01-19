@@ -3,22 +3,55 @@ import { Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-nativ
 
 type ButtonProps = {
   title: string;
+  variant?: 'filled' | 'outlined' | 'text';
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
-  return (
-    <TouchableOpacity
-      ref={ref}
-      {...touchableProps}
-      className={`${styles.button} ${touchableProps.className}`}>
-      <Text className={styles.buttonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-});
+export const Button = forwardRef<View, ButtonProps>(
+  ({ title, variant = 'filled', ...touchableProps }, ref) => {
+    const getButtonStyle = () => {
+      switch (variant) {
+        case 'outlined':
+          return styles.outlinedButton;
+        case 'text':
+          return styles.textButton;
+        default:
+          return styles.filledButton;
+      }
+    };
+
+    const getTextStyle = () => {
+      switch (variant) {
+        case 'outlined':
+          return styles.outlinedButtonText;
+        case 'text':
+          return styles.textButtonText;
+        default:
+          return styles.filledButtonText;
+      }
+    };
+
+    return (
+      <TouchableOpacity
+        ref={ref}
+        activeOpacity={0.8}
+        {...touchableProps}
+        className={`${getButtonStyle()} ${touchableProps.className}`}>
+        <Text className={getTextStyle()}>{title}</Text>
+      </TouchableOpacity>
+    );
+  }
+);
 
 Button.displayName = 'Button';
 
 const styles = {
-  button: 'items-center bg-indigo-500 rounded-[28px] shadow-md p-4 w-full',
-  buttonText: 'text-white text-lg font-semibold text-center',
+  filledButton:
+    'items-center justify-center bg-[--color-primary] rounded-full h-14 px-8 w-full active:opacity-90',
+  filledButtonText: 'text-[--color-on-primary] text-base font-medium text-center',
+  outlinedButton:
+    'items-center justify-center bg-transparent border-2 border-[--color-primary] rounded-full h-14 px-8 w-full active:opacity-90',
+  outlinedButtonText: 'text-[--color-primary] text-base font-medium text-center',
+  textButton:
+    'items-center justify-center bg-transparent rounded-full h-14 px-8 w-full active:opacity-90',
+  textButtonText: 'text-[--color-primary] text-base font-medium text-center',
 };

@@ -9,12 +9,12 @@ export const HeaderButton = forwardRef<typeof Pressable, { onPress?: () => void 
         {({ pressed }) => (
           <FontAwesome
             name="info-circle"
-            size={25}
-            color="gray"
+            size={24}
+            color="var(--color-on-surface-variant)"
             style={[
               styles.headerRight,
               {
-                opacity: pressed ? 0.5 : 1,
+                opacity: pressed ? 0.7 : 1,
               },
             ]}
           />
@@ -28,6 +28,6 @@ HeaderButton.displayName = 'HeaderButton';
 
 export const styles = StyleSheet.create({
   headerRight: {
-    marginRight: 15,
+    marginRight: 16,
   },
 });

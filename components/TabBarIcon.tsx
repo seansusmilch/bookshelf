@@ -4,8 +4,9 @@ import { StyleSheet } from 'react-native';
 export const TabBarIcon = (props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
+  size?: number;
 }) => {
-  return <FontAwesome size={28} style={styles.tabBarIcon} {...props} />;
+  return <FontAwesome size={props.size ?? 28} style={styles.tabBarIcon} {...props} />;
 };
 
 export const styles = StyleSheet.create({
