@@ -3,8 +3,9 @@
     "name": "my-expo-app",
     "slug": "my-expo-app",
     "version": "1.0.0",
+
     "scheme": "my-expo-app",
-    "platforms": ["ios", "android", "web"],
+    "platforms": ["ios", "android"],
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -13,11 +14,15 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true,
+
       "tsconfigPaths": true
     },
+
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+
     "userInterfaceStyle": "light",
+
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
