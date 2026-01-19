@@ -1,7 +1,5 @@
-import { Link, Tabs } from 'expo-router';
-
-import { HeaderButton } from '../../components/HeaderButton';
-import { TabBarIcon } from '../../components/TabBarIcon';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   return (
@@ -39,12 +37,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name="home" color={color} size={focused ? 28 : 24} />
-          ),
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <HeaderButton />
-            </Link>
+            <Ionicons name="home" size={focused ? 28 : 24} color={color} />
           ),
         }}
       />
@@ -53,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: 'Library',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name="book" color={color} size={focused ? 28 : 24} />
+            <Ionicons name="book" size={focused ? 28 : 24} color={color} />
           ),
         }}
       />

@@ -1,12 +1,27 @@
 import '../global.css';
 
-import { Stack } from 'expo-router';
+import { useEffect } from 'react';
+import { Stack, router } from 'expo-router';
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
-export const unstable_settings = {
-  initialRouteName: 'login',
-};
+import { SignOutButton } from '~/components/SignOutButton';
 
-export default function RootLayout() {
+const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+function InitialLayout() {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (isSignedIn) {
+      router.replace('/(tabs)');
+    } else {
+      router.replace('/login');
+    }
+  }, [isSignedIn, isLoaded]);
+
   return (
     <Stack
       screenOptions={{
@@ -21,8 +36,10 @@ export default function RootLayout() {
         contentStyle: {
           backgroundColor: 'var(--color-background)',
         },
+        headerRight: () => <SignOutButton />,
       }}>
       <Stack.Screen name="login" options={{ headerShown: false, animation: 'fade' }} />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="modal"
@@ -34,5 +51,21 @@ export default function RootLayout() {
         }}
       />
     </Stack>
+  );
+}
+
+export const unstable_settings = {
+  initialRouteName: 'login',
+};
+
+export default function RootLayout() {
+  if (!CLERK_PUBLISHABLE_KEY) {
+    throw new Error('Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in .env.local');
+  }
+
+  return (
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <InitialLayout />
+    </ClerkProvider>
   );
 }
