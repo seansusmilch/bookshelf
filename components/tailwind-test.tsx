@@ -1,8 +1,13 @@
-import { View, Text, ScrollView, Pressable, TouchableHighlight } from "@/tw";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Pressable, ScrollView, Text, TouchableHighlight, View } from "@/tw";
 
 export function TailwindTest() {
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView className="flex-1 bg-slate-100">
+    <ScrollView 
+      className="flex-1 bg-slate-100" 
+      contentContainerStyle={{ paddingTop: insets.top }}>
       <View className="p-4 gap-6">
         <Text className="text-3xl font-extrabold text-slate-900">
           Tailwind CSS v4 Test
