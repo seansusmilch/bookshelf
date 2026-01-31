@@ -104,10 +104,12 @@ components/
 The app uses Google Books API v1 for book search and metadata.
 
 **Endpoints:**
+
 - Search: `GET https://www.googleapis.com/books/v1/volumes?q={query}`
 - Volume details: `GET https://www.googleapis.com/books/v1/volumes/{volumeId}`
 
 **API Data Mapping:**
+
 - title → book title
 - authors → author array
 - imageLinks.thumbnail → cover URL
@@ -135,12 +137,14 @@ Each query includes staleTime (5-10 minutes) for caching. Mutations invalidate r
 ### Convex Functions
 
 **Query Functions:**
+
 - `getUserBooks` - Get user's books with optional status filter
 - `getBookById` - Get single book with reading status and rating
 - `getUserLists` - Get user's custom lists
 - `getReadingStats` - Get yearly stats and goal progress
 
 **Mutation Functions:**
+
 - `addBook` - Add book to library with initial status
 - `updateProgress` - Update current page for a book
 - `rateBook` - Set or update rating (1-10)
@@ -162,17 +166,20 @@ Functions use Clerk authentication context to ensure users only access their own
 ### Error Handling Strategy
 
 **API Errors:**
+
 - Network failures: Show toast with retry option
 - Rate limiting: Display message, suggest waiting before retry
 - Book not found: Allow manual entry fallback
 - Invalid ISBN: Clear field and show validation message
 
 **Convex Errors:**
+
 - Auth failures: Redirect to sign-in, clear local data
 - Duplicate books: Show "Already in your library" message
 - Validation failures: Display inline error with clear guidance
 
 **UI Error States:**
+
 - Empty states: "No books yet - search for your first book!"
 - Loading states: Skeleton loaders for book cards, spinners for modals
 - Offline mode: Cache book data locally with SQLite, sync when online
