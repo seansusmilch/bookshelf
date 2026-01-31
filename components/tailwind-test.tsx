@@ -158,9 +158,6 @@ export function TailwindTest() {
             <View className="border-t-4 border-b-4 border-blue-500 rounded-lg p-3">
               <Text className="text-sm text-blue-600">border-t-4 border-b-4</Text>
             </View>
-            <View className="border-dashed border-2 border-purple-500 rounded-lg p-3">
-              <Text className="text-sm text-purple-600">border-dashed</Text>
-            </View>
           </View>
         </View>
 
@@ -251,15 +248,6 @@ export function TailwindTest() {
             <View className="w-full h-8 bg-cyan-500 rounded mb-2">
               <Text className="text-white text-center text-sm py-1">w-full</Text>
             </View>
-            <View className="w-3/4 h-8 bg-cyan-600 rounded mb-2">
-              <Text className="text-white text-center text-sm py-1">w-3/4</Text>
-            </View>
-            <View className="w-1/2 h-8 bg-cyan-700 rounded mb-2">
-              <Text className="text-white text-center text-sm py-1">w-1/2</Text>
-            </View>
-            <View className="w-1/4 h-8 bg-cyan-800 rounded mb-2">
-              <Text className="text-white text-center text-sm py-1">w-1/4</Text>
-            </View>
             <View className="w-20 h-8 bg-emerald-500 rounded">
               <Text className="text-white text-center text-sm py-1">w-20</Text>
             </View>
@@ -289,24 +277,6 @@ export function TailwindTest() {
             </View>
             <View className="bg-white shadow-xl rounded-lg p-4 border border-slate-200">
               <Text className="text-sm">shadow-xl</Text>
-            </View>
-          </View>
-        </View>
-
-        <View className="gap-4">
-          <Text className="text-lg font-bold text-slate-800">Opacity</Text>
-          <View className="bg-white rounded-xl p-4 gap-3 shadow-sm">
-            <View className="bg-blue-500 opacity-100 rounded-lg p-3">
-              <Text className="text-white text-sm">opacity-100</Text>
-            </View>
-            <View className="bg-blue-500 opacity-75 rounded-lg p-3">
-              <Text className="text-white text-sm">opacity-75</Text>
-            </View>
-            <View className="bg-blue-500 opacity-50 rounded-lg p-3">
-              <Text className="text-white text-sm">opacity-50</Text>
-            </View>
-            <View className="bg-blue-500 opacity-25 rounded-lg p-3">
-              <Text className="text-white text-sm">opacity-25</Text>
             </View>
           </View>
         </View>
