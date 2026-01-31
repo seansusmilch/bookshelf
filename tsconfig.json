@@ -11,6 +11,9 @@
       ],
       "@/tw": [
         "./components/tw"
+      ],
+      "convex/*": [
+        "./convex/*"
       ]
     }
   },

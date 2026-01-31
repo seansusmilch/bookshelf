@@ -10,60 +10,60 @@ This plan breaks down the implementation of the bookshelf reading tracker into p
 
 ### 1.1 Define Convex Schema
 
-- [ ] Create `convex/schema.ts` with all collections
-- [ ] Define book, readingStatus, lists, bookListMembership, readingSessions, ratings, yearlyGoals
-- [ ] Add indexes for efficient queries (user_id, reading_status, etc.)
-- [ ] Run `npx convex dev` to deploy schema
+- [x] Create `convex/schema.ts` with all collections
+- [x] Define book, readingStatus, lists, bookListMembership, readingSessions, ratings, yearlyGoals
+- [x] Add indexes for efficient queries (user_id, reading_status, etc.)
+- [x] Run `npx convex dev` to deploy schema
 
 ### 1.2 Implement Convex Queries
 
-- [ ] `convex/books.ts`
-  - [ ] `getUserBooks`: Get user's books with optional status filter
-  - [ ] `getBookById`: Get single book with reading status and rating
-- [ ] `convex/lists.ts`
-  - [ ] `getUserLists`: Get user's custom lists
-  - [ ] `getBooksInList`: Get all books in a specific list
-- [ ] `convex/stats.ts`
-  - [ ] `getReadingStats`: Get yearly stats and goal progress
+- [x] `convex/books.ts`
+  - [x] `getUserBooks`: Get user's books with optional status filter
+  - [x] `getBookById`: Get single book with reading status and rating
+- [x] `convex/lists.ts`
+  - [x] `getUserLists`: Get user's custom lists
+  - [x] `getBooksInList`: Get all books in a specific list
+- [x] `convex/stats.ts`
+  - [x] `getReadingStats`: Get yearly stats and goal progress
 
 ### 1.3 Implement Convex Mutations
 
-- [ ] `convex/books.ts`
-  - [ ] `addBook`: Add book to library with initial status
-  - [ ] `updateProgress`: Update current page for a book
-  - [ ] `completeBook`: Mark book as completed
-- [ ] `convex/ratings.ts`
-  - [ ] `rateBook`: Set or update rating (1-10)
-- [ ] `convex/lists.ts`
-  - [ ] `createList`: Create custom list
-  - [ ] `addBookToList`: Add book to list
-  - [ ] `removeBookFromList`: Remove book from list
-  - [ ] `deleteList`: Delete list (if empty)
-- [ ] `convex/stats.ts`
-  - [ ] `setYearlyGoal`: Update yearly reading goal
+- [x] `convex/books.ts`
+  - [x] `addBook`: Add book to library with initial status
+  - [x] `updateProgress`: Update current page for a book
+  - [x] `completeBook`: Mark book as completed
+- [x] `convex/ratings.ts`
+  - [x] `rateBook`: Set or update rating (1-10)
+- [x] `convex/lists.ts`
+  - [x] `createList`: Create custom list
+  - [x] `addBookToList`: Add book to list
+  - [x] `removeBookFromList`: Remove book from list
+  - [x] `deleteList`: Delete list (if empty)
+- [x] `convex/stats.ts`
+  - [x] `setYearlyGoal`: Update yearly reading goal
 
 ## Phase 2: React Query Hooks
 
 ### 2.1 Query Hooks
 
-- [ ] `hooks/useBooks.ts` - `useBooks(statusFilter)`
-- [ ] `hooks/useBookDetail.ts` - `useBookDetail(bookId)`
-- [ ] `hooks/useLists.ts` - `useLists()`
-- [ ] `hooks/useStats.ts` - `useStats()`
+- [x] `hooks/useBooks.ts` - `useBooks(statusFilter)`
+- [x] `hooks/useBookDetail.ts` - `useBookDetail(bookId)`
+- [x] `hooks/useLists.ts` - `useLists()`
+- [x] `hooks/useStats.ts` - `useStats()`
 
 ### 2.2 Mutation Hooks
 
-- [ ] `hooks/useAddBook.ts` - `useAddBook()`
-- [ ] `hooks/useUpdateProgress.ts` - `useUpdateProgress()`
-- [ ] `hooks/useRateBook.ts` - `useRateBook()`
-- [ ] `hooks/useCreateList.ts` - `useCreateList()`
-- [ ] `hooks/useUpdateGoal.ts` - `useUpdateGoal()`
+- [x] `hooks/useAddBook.ts` - `useAddBook()`
+- [x] `hooks/useUpdateProgress.ts` - `useUpdateProgress()`
+- [x] `hooks/useRateBook.ts` - `useRateBook()`
+- [x] `hooks/useCreateList.ts` - `useCreateList()`
+- [x] `hooks/useUpdateGoal.ts` - `useUpdateGoal()`
 
 ### 2.3 API Search Hook
 
-- [ ] `hooks/useSearchBooks.ts` - `useSearchBooks(query)`
-  - [ ] Call Google Books API
-  - [ ] Cache results with 10min staleTime
+- [x] `hooks/useSearchBooks.ts` - `useSearchBooks(query)`
+  - [x] Call Google Books API
+  - [x] Cache results with 10min staleTime
 
 ## Phase 3: UI Components
 
