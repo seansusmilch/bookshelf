@@ -69,58 +69,58 @@ This plan breaks down the implementation of the bookshelf reading tracker into p
 
 ### 3.1 Book Components
 
-- [ ] `components/ui/BookCard.tsx`
-  - [ ] Display cover, title, author, progress bar, rating badge
-  - [ ] Tap handler for detail modal
-  - [ ] Three-dot menu button
+- [x] `components/ui/BookCard.tsx`
+  - [x] Display cover, title, author, progress bar, rating badge
+  - [x] Tap handler for detail modal
+  - [x] Three-dot menu button
 
-- [ ] `components/ui/ProgressSlider.tsx`
-  - [ ] Range slider for page entry
-  - [ ] Display current/total pages
-  - [ ] Validation: can't exceed total pages
+- [x] `components/ui/ProgressSlider.tsx`
+  - [x] Range slider for page entry
+  - [x] Display current/total pages
+  - [x] Validation: can't exceed total pages
 
-- [ ] `components/ui/RatingPicker.tsx`
-  - [ ] Horizontal scrollable row of 10 numbered stars
-  - [ ] Tap to select with visual feedback
-  - [ ] 1-10 scale
+- [x] `components/ui/RatingPicker.tsx`
+  - [x] Horizontal scrollable row of 10 numbered stars
+  - [x] Tap to select with visual feedback
+  - [x] 1-10 scale
 
 ### 3.2 List Components
 
-- [ ] `components/ui/ListSelector.tsx`
-  - [ ] Checkbox list of existing lists
-  - [ ] "Create New List" button
-  - [ ] Multi-select support
+- [x] `components/ui/ListSelector.tsx`
+  - [x] Checkbox list of existing lists
+  - [x] "Create New List" button
+  - [x] Multi-select support
 
-- [ ] `components/ui/FilterTabs.tsx`
-  - [ ] Segmented control for status filtering
-  - [ ] Persist selection across sessions
+- [x] `components/ui/FilterTabs.tsx`
+  - [x] Segmented control for status filtering
+  - [x] Persist selection across sessions
 
 ### 3.3 Stats Components
 
-- [ ] `components/ui/StatsCard.tsx`
-  - [ ] Display goal progress
-  - [ ] Books read / yearly goal
-  - [ ] Pages read total
+- [x] `components/ui/StatsCard.tsx`
+  - [x] Display goal progress
+  - [x] Books read / yearly goal
+  - [x] Pages read total
 
 ### 3.4 Layout Components
 
-- [ ] `components/book/BookDetailModal.tsx`
-  - [ ] Full book details view
-  - [ ] Progress slider integration
-  - [ ] Rating picker integration
-  - [ ] List selector integration
-  - [ ] Mark complete button
+- [x] `components/book/BookDetailModal.tsx`
+  - [x] Full book details view
+  - [x] Progress slider integration
+  - [x] Rating picker integration
+  - [x] List selector integration
+  - [x] Mark complete button
 
-- [ ] `components/book/BookActionsMenu.tsx`
-  - [ ] Three-dot menu options
-  - [ ] "Rate" action
-  - [ ] "Update Progress" action
-  - [ ] "Manage Lists" action
+- [x] `components/book/BookActionsMenu.tsx`
+  - [x] Three-dot menu options
+  - [x] "Rate" action
+  - [x] "Update Progress" action
+  - [x] "Manage Lists" action
 
-- [ ] `components/book/AddBookSheet.tsx`
-  - [ ] Status selection prompt
-  - [ ] Optional list selection
-  - [ ] Confirm button
+- [x] `components/book/AddBookSheet.tsx`
+  - [x] Status selection prompt
+  - [x] Optional list selection
+  - [x] Confirm button
 
 ## Phase 4: Screen Implementation
 
