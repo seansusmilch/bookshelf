@@ -1,0 +1,7 @@
+ignoredBuiltDependencies:
+  - browser-tabs-lock
+  - bufferutil
+  - core-js
+  - utf-8-validate
+onlyBuiltDependencies:
+  - '@clerk/shared'
