@@ -5,6 +5,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@/tw/*": [
+        "./components/tw/*"
+      ],
+      "@/tw": [
+        "./components/tw"
       ]
     }
   },
@@ -12,6 +18,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
   ]
 }

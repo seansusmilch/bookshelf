@@ -2,15 +2,6 @@
 
 ## Commands
 
-### Development
-
-- `pnpm start` - Start Expo dev server
-- `pnpm android` - Run on Android with Convex backend
-- `pnpm ios` - Run on iOS with Convex backend
-- `pnpm web` - Run on web with Convex backend
-- `pnpm backend` - Start Convex backend separately
-- `pnpm prebuild` - Generate native files
-
 ### Code Quality
 
 - `pnpm lint` - Run ESLint and Prettier checks
@@ -34,6 +25,7 @@
 
 - `app/` - Expo Router pages (file-based routing)
 - `components/` - Reusable UI components
+- `components/tw/` - Tailwind CSS-wrapped components (View, Text, ScrollView, etc.)
 - `convex/` - Convex backend functions and schema
 - `assets/` - Images and fonts
 - `global.css` - Global Tailwind imports
@@ -89,11 +81,14 @@ Button.displayName = 'Button';
 ### Styling
 
 - Prefer NativeWind className over StyleSheet
+- Import CSS-wrapped components from `@/tw` (e.g., `import { View, Text } from "@/tw"`)
 - Use template literals for style objects when needed
 - Define styles as const objects at file bottom
 - Tailwind classes should follow utility-first approach
 
 ```typescript
+import { View, Text } from "@/tw";
+
 // Preferred
 <View className="flex items-center justify-center p-4 bg-white" />
 

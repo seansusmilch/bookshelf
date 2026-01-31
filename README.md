@@ -6,15 +6,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 2. Start the app
 
-   ```bash
-   npx expo start
-   ```
+    ```bash
+    npx expo start
+    ```
 
 In the output, you'll find options to open the app in a
 
@@ -24,6 +24,61 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## Tailwind CSS & NativeWind
+
+This project is set up with Tailwind CSS v4 and NativeWind v5 for utility-first styling.
+
+### Usage
+
+Import CSS-wrapped components from `@/tw`:
+
+```tsx
+import { View, Text, ScrollView } from "@/tw";
+
+export default function MyScreen() {
+  return (
+    <ScrollView className="flex-1 bg-white">
+      <View className="p-4 gap-4">
+        <Text className="text-xl font-bold text-gray-900">Hello Tailwind!</Text>
+      </View>
+    </ScrollView>
+  );
+}
+```
+
+**Note:** The CSS-wrapped components are located in `components/tw/`.
+```
+
+### Available Components
+
+- `View` - Container element
+- `Text` - Text element
+- `ScrollView` - Scrollable container
+- `Pressable` - Touchable element
+- `TextInput` - Input field
+- `Image` - Image component (supports `object-fit`)
+- `Link` - Expo Router navigation link
+- `Animated.View` - Animated view component
+- `useCSSVariable` - Hook to access CSS variables
+
+### Platform-Specific Styles
+
+Use platform media queries in global.css for platform-specific styling:
+
+```css
+@media ios {
+  :root {
+    --font-sans: system-ui;
+  }
+}
+
+@media android {
+  :root {
+    --font-sans: normal;
+  }
+}
+```
 
 ## Get a fresh project
 
