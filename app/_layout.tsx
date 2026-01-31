@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
+import { ConvexClientProvider } from '~/components/ConvexClientProvider';
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -65,7 +66,9 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
-      <InitialLayout />
+      <ConvexClientProvider>
+        <InitialLayout />
+      </ConvexClientProvider>
     </ClerkProvider>
   );
 }
