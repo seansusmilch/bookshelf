@@ -67,7 +67,7 @@ The app uses a 3-tab layout:
 
 ### Component Hierarchy
 
-```
+```text
 components/
 ├── ui/
 │   ├── BookCard.tsx          - Book item in list
@@ -120,7 +120,7 @@ The app uses Google Books API v1 for book search and metadata.
 
 ### React Query Hooks Structure
 
-```
+```text
 hooks/
 ├── useBooks.ts              - Query: user's books with status filter
 ├── useSearchBooks.ts        - Query: search Google Books API
