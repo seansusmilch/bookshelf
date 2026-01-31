@@ -1,11 +1,12 @@
-import { View, Text, Pressable, TextInput, ScrollView } from '@/tw';
-import { useSignIn, useSignUp, useOAuth } from '@clerk/clerk-expo';
-import { useRouter } from 'expo-router';
-import * as React from 'react';
-import { Platform, KeyboardAvoidingView } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
-import { FontAwesome } from '@expo/vector-icons';
 import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser';
+import { Pressable, ScrollView, Text, TextInput, View } from '@/tw';
+import { useOAuth, useSignIn, useSignUp } from '@clerk/clerk-expo';
+import { EmailCodeFactor, SignInFirstFactor } from '@clerk/types';
+import { FontAwesome } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
+import * as React from 'react';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -39,8 +40,8 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen() {
   useWarmUpBrowser();
-  const { isLoaded: signInLoaded, signIn } = useSignIn();
-  const { isLoaded: signUpLoaded, signUp } = useSignUp();
+  const { isLoaded: signInLoaded, signIn, setActive: setSignInActive } = useSignIn();
+  const { isLoaded: signUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
   const { startOAuthFlow: startGoogleOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
   const { startOAuthFlow: startAppleOAuthFlow } = useOAuth({ strategy: 'oauth_apple' });
   const router = useRouter();
@@ -54,6 +55,10 @@ export default function AuthScreen() {
 
   const isLoaded = signInLoaded && signUpLoaded;
 
+  const isEmailCodeFactor = (factor: SignInFirstFactor): factor is EmailCodeFactor => {
+    return factor.strategy === 'email_code';
+  };
+
   const onGooglePress = React.useCallback(async () => {
     try {
       const { createdSessionId, setActive: setActiveOAuth } = await startGoogleOAuthFlow();
@@ -62,7 +67,7 @@ export default function AuthScreen() {
         setActiveOAuth!({ session: createdSessionId });
         router.replace('/');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('OAuth error', JSON.stringify(err, null, 2));
     }
   }, [startGoogleOAuthFlow, router]);
@@ -85,7 +90,7 @@ export default function AuthScreen() {
         setActiveOAuth!({ session: createdSessionId });
         router.replace('/');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('OAuth error', JSON.stringify(err, null, 2));
     }
   }, [startAppleOAuthFlow, router]);
@@ -96,34 +101,61 @@ export default function AuthScreen() {
     setLoading(true);
     setError('');
     try {
-      await signIn.create({
-        identifier: emailAddress,
-      });
+      try {
+        const result = await signIn.create({
+          identifier: emailAddress,
+        });
 
-      await signIn.prepareFirstFactor({
-        strategy: 'email_code',
-        emailAddressId: 'primary',
-      });
-      setOtpSent(true);
-      setShowOTP(true);
-    } catch (err: any) {
-      if (err?.errors?.[0]?.code === 'form_identifier_not_found') {
-        try {
-          await signUp.create({
-            emailAddress,
+        if (result.status === 'complete') {
+          if (result.createdSessionId) {
+            await setSignInActive({ session: result.createdSessionId });
+          }
+          router.replace('/');
+          return;
+        }
+
+        const firstFactor = result.supportedFirstFactors?.find(isEmailCodeFactor);
+
+        if (firstFactor) {
+          const { emailAddressId } = firstFactor;
+          await signIn.prepareFirstFactor({
+            strategy: 'email_code',
+            emailAddressId,
           });
-
-          await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
           setOtpSent(true);
           setShowOTP(true);
-        } catch (signUpErr) {
-          console.error(JSON.stringify(signUpErr, null, 2));
-          setError('Something went wrong. Please try again.');
+          return;
         }
-      } else {
-        console.error(JSON.stringify(err, null, 2));
-        setError('Something went wrong. Please try again.');
+      } catch (signInError: unknown) {
+        if ((signInError as any)?.errors?.[0]?.code === 'form_identifier_not_found') {
+          try {
+            await signUp.create({
+              emailAddress,
+            });
+
+            await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+            setOtpSent(true);
+            setShowOTP(true);
+            return;
+          } catch (signUpErr: unknown) {
+            if ((signUpErr as any)?.errors?.[0]?.code === 'form_identifier_already_exists') {
+              setError('An account with this email already exists. Please sign in instead.');
+              return;
+            }
+            if ((signUpErr as any)?.errors?.[0]?.code === 'attempt_identifier_already_verified') {
+              await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+              setOtpSent(true);
+              setShowOTP(true);
+              return;
+            }
+            throw signUpErr;
+          }
+        }
+        throw signInError;
       }
+    } catch (err: unknown) {
+      console.error('Sign in error:', JSON.stringify(err, null, 2));
+      setError((err as any)?.errors?.[0]?.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -135,32 +167,46 @@ export default function AuthScreen() {
     setLoading(true);
     setError('');
     try {
-      let attempt: any;
-
       try {
-        attempt = await signIn.attemptFirstFactor({
+        const attempt = await signIn.attemptFirstFactor({
           strategy: 'email_code',
           code,
         });
-      } catch (signInErr: any) {
-        if (signInErr?.errors?.[0]?.code === 'form_password_incorrect') {
-          attempt = await signUp.attemptEmailAddressVerification({
+
+        if (attempt.status === 'complete') {
+          if (attempt.createdSessionId) {
+            await setSignInActive({ session: attempt.createdSessionId });
+          }
+          router.replace('/');
+          return;
+        } else {
+          console.error(JSON.stringify(attempt, null, 2));
+          setError('Invalid code. Please try again.');
+          return;
+        }
+      } catch (signInErr: unknown) {
+        if ((signInErr as any)?.errors?.[0]?.code === 'form_identifier_not_found') {
+          const signUpAttempt = await signUp.attemptEmailAddressVerification({
             code,
           });
-        } else {
-          throw signInErr;
-        }
-      }
 
-      if (attempt?.status === 'complete') {
-        router.replace('/');
-      } else {
-        console.error(JSON.stringify(attempt, null, 2));
-        setError('Invalid code. Please try again.');
+          if (signUpAttempt.status === 'complete') {
+            if (signUpAttempt.createdSessionId) {
+              await setSignUpActive({ session: signUpAttempt.createdSessionId });
+            }
+            router.replace('/');
+            return;
+          } else {
+            console.error(JSON.stringify(signUpAttempt, null, 2));
+            setError('Invalid code. Please try again.');
+            return;
+          }
+        }
+        throw signInErr;
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
-      setError('Invalid code. Please try again.');
+      setError((err as any)?.errors?.[0]?.message || 'Invalid code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -173,10 +219,19 @@ export default function AuthScreen() {
     setError('');
     try {
       try {
-        await signIn.prepareFirstFactor({
-          strategy: 'email_code',
-          emailAddressId: 'primary',
+        const result = await signIn.create({
+          identifier: emailAddress,
         });
+
+        const firstFactor = result.supportedFirstFactors?.find(isEmailCodeFactor);
+
+        if (firstFactor) {
+          const { emailAddressId } = firstFactor;
+          await signIn.prepareFirstFactor({
+            strategy: 'email_code',
+            emailAddressId,
+          });
+        }
       } catch {
         await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       }

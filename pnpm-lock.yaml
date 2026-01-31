@@ -111,6 +111,9 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
     devDependencies:
+      '@clerk/types':
+        specifier: ^4.101.14
+        version: 4.101.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@types/react':
         specifier: ~19.1.0
         version: 19.1.17
