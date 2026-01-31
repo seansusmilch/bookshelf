@@ -3,6 +3,7 @@
 ## Commands
 
 ### Development
+
 - `pnpm start` - Start Expo dev server
 - `pnpm android` - Run on Android with Convex backend
 - `pnpm ios` - Run on iOS with Convex backend
@@ -11,13 +12,16 @@
 - `pnpm prebuild` - Generate native files
 
 ### Code Quality
+
 - `pnpm lint` - Run ESLint and Prettier checks
 - `pnpm format` - Auto-fix linting and format code
 
 ### Testing
+
 - No test framework configured yet. When adding tests, use Jest/React Native Testing Library.
 
 ## Tech Stack
+
 - **Framework**: Expo SDK 54, React Native 0.81, React 19
 - **Router**: Expo Router (file-based routing)
 - **Styling**: NativeWind v5 + Tailwind CSS v4
@@ -27,15 +31,31 @@
 - **Package Manager**: pnpm
 
 ## Project Structure
+
 - `app/` - Expo Router pages (file-based routing)
 - `components/` - Reusable UI components
 - `convex/` - Convex backend functions and schema
 - `assets/` - Images and fonts
 - `global.css` - Global Tailwind imports
 
+## Available Skills
+
+Use these skills when relevant
+
+- **native-data-fetching** - Network requests, API calls, data fetching patterns
+- **expo-tailwind-setup** - Tailwind CSS v4 + NativeWind v5 configuration
+- **building-native-ui** - Expo Router components, styling, navigation
+- **convex** - All Convex patterns (functions, realtime, agents)
+- **convex-best-practices** - Production-ready Convex architecture
+- **clerk** - Authentication flows and organization management
+- **clerk-setup** - Clerk integration quickstart
+- **root-cause-analysis** - Systematic debugging methodology
+- **log-analysis** - Log analysis and error patterns
+
 ## Code Style
 
 ### Imports
+
 - Order: React Native → Third-party → Local
 - Use path aliases: `@/*` or `~/*` for root imports (e.g., `~/components/ScreenContent`)
 - No default exports for components (use named exports)
@@ -48,6 +68,7 @@ import { ScreenContent } from '~/components/ScreenContent';
 ```
 
 ### Components
+
 - Use named exports: `export const Button = () => {}`
 - Use forwardRef when ref forwarding is needed
 - Add displayName for forwardRef components
@@ -66,6 +87,7 @@ Button.displayName = 'Button';
 ```
 
 ### Styling
+
 - Prefer NativeWind className over StyleSheet
 - Use template literals for style objects when needed
 - Define styles as const objects at file bottom
@@ -82,6 +104,7 @@ const styles = {
 ```
 
 ### TypeScript
+
 - Strict mode enabled - all types must be properly defined
 - Use type aliases for object shapes, interfaces for extendable contracts
 - Use React utility types (ComponentProps, ReactNode, etc.)
@@ -89,6 +112,7 @@ const styles = {
 - Explicitly type function parameters and return values
 
 ### Naming Conventions
+
 - Components: PascalCase (ScreenContent, Button, TabBarIcon)
 - Functions: camelCase (formatDate, getUserData)
 - Variables: camelCase (userName, isLoading)
@@ -97,6 +121,7 @@ const styles = {
 - Style objects: camelCase with semantic names (container, buttonText)
 
 ### Navigation
+
 - Use Expo Router's Link component for navigation
 - Screen options defined in route files
 - Use Stack.Screen for modal presentation
@@ -109,12 +134,14 @@ const styles = {
 ```
 
 ### Error Handling
+
 - Use TypeScript strict mode for type safety
 - Wrap async operations in try-catch blocks
 - Consider adding ErrorBoundary for unhandled errors
 - Use Convex's built-in error handling for backend operations
 
 ### Data Fetching (React Query)
+
 - Use TanStack React Query for all data fetching from Convex
 - Define query hooks as named exports in separate hook files
 - Use `useQuery` for fetching data, `useMutation` for mutations
@@ -136,12 +163,14 @@ export const useBooks = () => {
 ```
 
 ### File Organization
+
 - One component per file
 - Co-locate related components
 - Keep index files minimal
 - Use barrel exports for component groups
 
 ### Formatting (Prettier)
+
 - 100 character line width
 - 2 space indentation
 - Single quotes
@@ -149,23 +178,27 @@ export const useBooks = () => {
 - Brackets on same line
 
 ### Linting (ESLint)
+
 - Uses expo/flat config
 - React displayName rule disabled
 - Run `pnpm lint` before committing
 
 ## Backend (Convex)
+
 - Functions in `convex/` directory
 - Use generated types from `convex/_generated/`
 - Define schema in `convex/schema.ts` when created
 - Use Convex CLI for backend management
 
 ## Mobile-First Design
+
 - Responsive layouts using Tailwind
 - Consider both iOS and Android platforms
 - Test on multiple screen sizes
 - Use Expo's cross-platform APIs
 
 ## Notes
+
 - No test framework currently - add tests when appropriate
 - No CI/CD configured yet
 - Environment files: .env.local (not committed)
