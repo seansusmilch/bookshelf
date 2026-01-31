@@ -1,10 +1,21 @@
-import { Link } from 'expo-router';
+import { Link, Redirect } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { useAuth } from '@clerk/clerk-expo';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 export default function ModalScreen() {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  if (!isLoaded) {
+    return null;
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/sign-in" />;
+  }
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">This is a modal</ThemedText>
