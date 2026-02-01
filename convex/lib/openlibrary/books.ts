@@ -1,7 +1,7 @@
 'use node';
 
 import { fetchOpenLibrary, isValidOLID } from './client';
-import { Book, Work, Author } from './types';
+import { Book, Work, Author, EditionsResponse } from './types';
 
 export async function getBook(olid: string): Promise<Book> {
   if (!isValidOLID(olid)) {
@@ -22,13 +22,13 @@ export async function getWork(olid: string): Promise<Work> {
 export async function getWorkEditions(
   olid: string,
   limit: number = 50
-): Promise<{ num_found: number; start: number; docs: Book[] }> {
+): Promise<EditionsResponse> {
   if (!isValidOLID(olid)) {
     throw new Error(`Invalid work OLID: ${olid}`);
   }
 
   const params = new URLSearchParams({ limit: limit.toString() });
-  return fetchOpenLibrary(`/works/${olid}/editions.json?${params.toString()}`);
+  return fetchOpenLibrary<EditionsResponse>(`/works/${olid}/editions.json?${params.toString()}`);
 }
 
 export async function getAuthor(olid: string): Promise<Author> {

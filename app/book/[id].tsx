@@ -7,6 +7,7 @@ import { ProgressSlider } from '@/components/ui/ProgressSlider';
 import { RatingPicker } from '@/components/ui/RatingPicker';
 import { ListSelector } from '@/components/ui/ListSelector';
 import { useCompleteBook } from '@/hooks/useCompleteBook';
+import { useUncompleteBook } from '@/hooks/useUncompleteBook';
 import { useCreateList } from '../../hooks/useCreateList';
 import { useRateBook } from '../../hooks/useRateBook';
 import { useUpdateProgress } from '../../hooks/useUpdateProgress';
@@ -33,6 +34,7 @@ export default function BookDetailScreen() {
   const updateProgress = useUpdateProgress();
   const rateBook = useRateBook();
   const completeBook = useCompleteBook();
+  const uncompleteBook = useUncompleteBook();
   const createList = useCreateList();
 
   const [selectedListIds, setSelectedListIds] = useState<string[]>([]);
@@ -56,6 +58,11 @@ export default function BookDetailScreen() {
   const handleComplete = () => {
     if (!book) return;
     completeBook.mutate(book._id);
+  };
+
+  const handleUncomplete = () => {
+    if (!book) return;
+    uncompleteBook.mutate(book._id);
   };
 
   const handleCreateList = (name: string) => {
@@ -172,7 +179,14 @@ export default function BookDetailScreen() {
             </Pressable>
           )}
 
-          {book.status !== 'completed' && (
+          {book.status === 'completed' ? (
+            <Pressable
+              onPress={handleUncomplete}
+              className="flex-1 py-3 bg-gray-400 rounded-lg"
+            >
+              <Text className="text-white text-center font-semibold">Undo Complete</Text>
+            </Pressable>
+          ) : (
             <Pressable
               onPress={handleComplete}
               className="flex-1 py-3 bg-green-500 rounded-lg"

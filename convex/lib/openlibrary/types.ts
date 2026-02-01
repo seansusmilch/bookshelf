@@ -48,6 +48,16 @@ export interface SearchResponse {
   docs: SearchResultDoc[];
 }
 
+export interface EditionsResponse {
+  links: {
+    self: string;
+    work: string;
+    next?: string;
+  };
+  size: number;
+  entries: Book[];
+}
+
 // Book/Work Types
 export interface Book {
   key: string;

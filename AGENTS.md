@@ -23,8 +23,11 @@ Core principle: Fresh subagent per task + two-stage review (spec then quality) =
 - **Framework**: Expo SDK 54, React Native 0.81, React 19
 - **Router**: Expo Router (file-based routing)
 - **Styling**: NativeWind v5 + Tailwind CSS v4
+- **UI Components**: react-native-paper (Material Design 3)
+- **Theming**: @pchmn/expo-material3-theme (Material Design 3 dynamic colors)
 - **Backend**: Convex
 - **Data Fetching**: TanStack React Query
+- **Authentication**: Clerk
 - **Language**: TypeScript (strict mode)
 - **Package Manager**: pnpm
 
@@ -36,6 +39,8 @@ Core principle: Fresh subagent per task + two-stage review (spec then quality) =
 - `components/ui/` - Generic UI components (buttons, cards, inputs, etc.)
 - `components/book/` - Book-specific components (modals, sheets, menus)
 - `components/list/` - List-related components
+- `components/material3-provider.tsx` - Material Design 3 theme provider
+- `components/m3-tab-bar.tsx` - M3 navigation bar component
 - `convex/` - Convex backend functions and schema
 - `hooks/` - Custom React hooks (useBooks, useStats, useAddBook, etc.)
 - `lib/` - Utility libraries and providers (query-client, etc.)
@@ -55,20 +60,13 @@ Use these skills when relevant
 
 - **native-data-fetching** - Network requests, API calls, data fetching patterns
 - **expo-tailwind-setup** - Tailwind CSS v4 + NativeWind v5 configuration
-- **building-native-ui** - Expo Router components, styling, navigation
+- **building-native-ui** - Expo Router components, styling, navigation, Material Design 3
 - **convex** - All Convex patterns (functions, realtime, agents)
 - **convex-best-practices** - Production-ready Convex architecture
 - **clerk** - Authentication flows and organization management
 - **clerk-setup** - Clerk integration quickstart
 - **root-cause-analysis** - Systematic debugging methodology
 - **log-analysis** - Log analysis and error patterns
-
-## Folder Rules
-
-- **NO `src/` folder** - All code should be at the root level in appropriate directories
-- `lib/` - For providers, utilities, and helper functions (e.g., `lib/query-client.tsx`)
-- `hooks/` - For all custom React hooks
-- `components/` - For all React components, organized by domain (ui, book, list, etc.)
 
 ## Code Style
 
@@ -150,11 +148,29 @@ const styles = {
 - Screen options defined in route files
 - Use Stack.Screen for modal presentation
 - Tab layouts use Tabs component from expo-router
+- Navigation bar uses custom M3TabBar component with Material Design 3
 
 ```typescript
 <Link href="/modal" asChild>
   <HeaderButton />
 </Link>
+```
+
+### Material Design 3
+
+- Use `Material3Provider` for M3 theme in app/_layout.tsx
+- Access theme with `useAppTheme()` hook from react-native-paper
+- Use `useMaterial3ThemeContext()` for dynamic theme updates
+- Custom components should use M3 color scheme for consistency
+- Navigation bar uses `M3TabBar` with `BottomNavigation.Bar` from react-native-paper
+
+```typescript
+import { useAppTheme } from '@/components/material3-provider';
+
+function MyComponent() {
+  const { colors } = useAppTheme();
+  return <View style={{ backgroundColor: colors.primary }} />;
+}
 ```
 
 ### Error Handling
@@ -220,6 +236,8 @@ export const useBooks = () => {
 - Consider both iOS and Android platforms
 - Test on multiple screen sizes
 - Use Expo's cross-platform APIs
+- Follow Material Design 3 guidelines for UI components
+- Dynamic color generation from source color for light/dark modes
 
 ## Notes
 

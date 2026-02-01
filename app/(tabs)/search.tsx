@@ -9,6 +9,7 @@ import { useAction } from 'convex/react';
 
 type SearchResult = {
   id: string;
+  workId: string;
   title: string;
   author: string;
   coverUrl?: string;
@@ -87,6 +88,7 @@ export default function SearchScreen() {
       const editionOLID = extractOLID(edition.key);
       const result: SearchResult = {
         id: editionOLID,
+        workId: olid,
         title: book.title,
         author: book.author_name?.join(', ') || 'Unknown Author',
         coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
@@ -102,6 +104,7 @@ export default function SearchScreen() {
       console.error('Failed to fetch edition:', error);
       const result: SearchResult = {
         id: olid,
+        workId: olid,
         title: book.title,
         author: book.author_name?.join(', ') || 'Unknown Author',
         coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
@@ -217,7 +220,7 @@ export default function SearchScreen() {
                         )}
                       </View>
 
-                      {selectedBook?.id === olid ? (
+                      {selectedBook?.workId === olid ? (
                         isFetchingEdition ? (
                           <View className="py-2 px-4 bg-gray-200 rounded-lg self-start mt-2">
                             <Text className="text-gray-600 text-sm font-semibold">Loading...</Text>

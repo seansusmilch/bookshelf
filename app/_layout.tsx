@@ -14,6 +14,7 @@ import { QueryProvider } from '~/lib/query-client';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary } from '@/components/error/ErrorBoundary';
 import { ToastProvider } from '@/hooks/useToast';
+import { Material3Provider } from '@/components/material3-provider';
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -37,24 +38,26 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <QueryProvider>
-          <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-            <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <ErrorBoundary>
-                  <ToastProvider>
-                    <Stack>
-                      <Stack.Screen name="index" options={{ headerShown: false }} />
-                      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    </Stack>
-                    <StatusBar style="auto" />
-                  </ToastProvider>
-                </ErrorBoundary>
-              </ThemeProvider>
-            </ConvexProviderWithClerk>
-          </ClerkProvider>
-        </QueryProvider>
+        <Material3Provider sourceColor="#0a7ea4" fallbackSourceColor="#0a7ea4">
+          <QueryProvider>
+            <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+              <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+                <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                  <ErrorBoundary>
+                    <ToastProvider>
+                      <Stack>
+                        <Stack.Screen name="index" options={{ headerShown: false }} />
+                        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                      </Stack>
+                      <StatusBar style="auto" />
+                    </ToastProvider>
+                  </ErrorBoundary>
+                </ThemeProvider>
+              </ConvexProviderWithClerk>
+            </ClerkProvider>
+          </QueryProvider>
+        </Material3Provider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

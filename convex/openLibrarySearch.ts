@@ -10,7 +10,6 @@ import {
   type SearchQuery,
   type Book,
   type SearchResponse,
-  type EditionDoc,
 } from './lib/openlibrary';
 
 export const searchBooks = action({
@@ -171,23 +170,24 @@ export const getBestEditionForWork = action({
   args: {
     openLibraryId: v.string(),
   },
-  handler: async (ctx, args): Promise<EditionDoc> => {
+  handler: async (ctx, args): Promise<Book> => {
     console.log('[getBestEditionForWork] Finding best edition for work:', args.openLibraryId);
 
     try {
-      const { docs } = await getWorkEditions(args.openLibraryId);
+      const editionsResponse = await getWorkEditions(args.openLibraryId);
+      const entries = editionsResponse.entries;
 
-      if (!docs || docs.length === 0) {
+      if (!entries || entries.length === 0) {
         console.warn('[getBestEditionForWork] No editions found for work:', args.openLibraryId);
         throw new Error(`No editions found for work: ${args.openLibraryId}`);
       }
 
-      const bestEdition = docs.find((edition) => {
+      const bestEdition = entries.find((edition) => {
         const pageCount = edition.number_of_pages;
         return pageCount !== undefined && pageCount > 0;
       });
 
-      const selectedEdition = bestEdition || docs[0];
+      const selectedEdition = bestEdition || entries[0];
 
       console.log('[getBestEditionForWork] Selected edition:', {
         workId: args.openLibraryId,
@@ -195,7 +195,7 @@ export const getBestEditionForWork = action({
         title: selectedEdition.title,
         pageCount: selectedEdition.number_of_pages,
         hasValidPageCount: bestEdition !== undefined,
-        totalEditions: docs.length,
+        totalEditions: entries.length,
       });
 
       return selectedEdition;

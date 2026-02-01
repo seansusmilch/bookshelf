@@ -208,3 +208,50 @@ export const completeBook = mutation({
     return args.bookId;
   },
 });
+
+export const uncompleteBook = mutation({
+  args: {
+    bookId: v.id('books'),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new Error('User not authenticated');
+    }
+
+    const userId = identity.subject;
+
+    const book = await ctx.db.get(args.bookId);
+
+    if (!book || book.userId !== userId) {
+      throw new Error('Book not found');
+    }
+
+    if (book.status !== 'completed') {
+      throw new Error('Book is not completed');
+    }
+
+    const latestSession = await ctx.db
+      .query('readingSessions')
+      .withIndex('by_book', (q) => q.eq('bookId', args.bookId))
+      .order('desc')
+      .first();
+
+    if (!latestSession) {
+      throw new Error('No reading session found');
+    }
+
+    const previousPage = latestSession.startPage;
+
+    await ctx.db.patch(args.bookId, {
+      currentPage: previousPage,
+      status: 'reading',
+      updatedAt: Date.now(),
+    });
+
+    await ctx.db.delete(latestSession._id);
+
+    return args.bookId;
+  },
+});
