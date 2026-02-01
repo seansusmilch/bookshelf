@@ -69,7 +69,7 @@ export const addBook = mutation({
     isbn13: v.optional(v.string()),
     totalPages: v.number(),
     status: v.string(),
-    googleBooksId: v.optional(v.string()),
+    openLibraryId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
@@ -91,7 +91,7 @@ export const addBook = mutation({
       totalPages: args.totalPages,
       currentPage: args.status === 'completed' ? args.totalPages : 0,
       status: args.status,
-      googleBooksId: args.googleBooksId,
+      openLibraryId: args.openLibraryId,
       createdAt: now,
       updatedAt: now,
     });

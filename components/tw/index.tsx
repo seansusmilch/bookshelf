@@ -96,3 +96,5 @@ export const TouchableHighlight = (
   return useCssElement(XXTouchableHighlight, props, { className: "style" });
 };
 TouchableHighlight.displayName = "CSS(TouchableHighlight)";
+
+export { Image } from "./image";

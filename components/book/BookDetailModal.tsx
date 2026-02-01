@@ -1,7 +1,6 @@
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
-import { View, Text, Pressable, ScrollView } from '@/tw';
-import { Image } from 'expo-image';
+import { View, Text, Pressable, ScrollView, Image } from '@/tw';
 import { useState } from 'react';
 import { ProgressSlider } from '../ui/ProgressSlider';
 import { RatingPicker } from '../ui/RatingPicker';
@@ -73,7 +72,7 @@ export const BookDetailModal = ({ visible, bookId, onClose }: BookDetailModalPro
           <Image
             source={{ uri: book.coverUrl }}
             className="w-full h-72"
-            contentFit="cover"
+            resizeMode="cover"
           />
         ) : (
           <View className="w-full h-72 bg-gray-100 items-center justify-center">

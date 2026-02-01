@@ -5,12 +5,12 @@ import { useState, useCallback } from 'react';
 export const useSearchBooks = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const searchBooks = useAction(api.googleSearch.searchBooks);
+  const searchBooks = useAction(api.openLibrarySearch.searchBooks);
 
   const executeSearch = useCallback(
     async (query: string) => {
       if (!query || query.length < 2) {
-        return { items: [], totalItems: 0 };
+        return { docs: [], num_found: 0, start: 0, num_found_exact: false };
       }
 
       setIsLoading(true);
@@ -21,7 +21,7 @@ export const useSearchBooks = () => {
         return data;
       } catch (err) {
         setError(err as Error);
-        return { items: [], totalItems: 0 };
+        return { docs: [], num_found: 0, start: 0, num_found_exact: false };
       } finally {
         setIsLoading(false);
       }
@@ -32,43 +32,24 @@ export const useSearchBooks = () => {
   return { isLoading, error, searchBooks: executeSearch };
 };
 
-export interface GoogleBooksResponse {
-  items?: Array<{
-    id: string | null | undefined;
-    volumeInfo: {
-      title: string;
-      authors: string[] | undefined;
-      description: string | undefined;
-      imageLinks?: {
-        thumbnail: string | undefined;
-        smallThumbnail: string | undefined;
-      } | undefined;
-      pageCount: number | undefined;
-      publishedDate: string | undefined;
-      industryIdentifiers: Array<{
-        type: string;
-        identifier: string;
-      }> | undefined;
-    };
-  }>;
-  totalItems: number;
+export interface OpenLibraryResponse {
+  start: number;
+  num_found: number;
+  num_found_exact: boolean;
+  docs: OpenLibraryBook[];
 }
 
-export interface GoogleBook {
-  id: string | null | undefined;
-  volumeInfo: {
-    title: string;
-    authors: string[] | undefined;
-    description: string | undefined;
-    imageLinks?: {
-      thumbnail: string | undefined;
-      smallThumbnail: string | undefined;
-    } | undefined;
-    pageCount: number | undefined;
-    publishedDate: string | undefined;
-    industryIdentifiers: Array<{
-      type: string;
-      identifier: string;
-    }> | undefined;
-  };
+export interface OpenLibraryBook {
+  key: string;
+  title: string;
+  author_name: string[];
+  author_key: string[];
+  cover_i?: number;
+  first_publish_year?: number;
+  edition_count?: number;
+  isbn?: string[];
+  language?: string[];
+  publisher?: string[];
+  publish_year?: number[];
+  subject?: string[];
 }

@@ -13,7 +13,7 @@ type AddBookArgs = {
   isbn13?: string;
   totalPages: number;
   status: string;
-  googleBooksId?: string;
+  openLibraryId?: string;
 };
 
 export const useAddBook = () => {

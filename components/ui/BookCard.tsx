@@ -1,7 +1,6 @@
 import { Pressable } from 'react-native';
-import { Image } from 'expo-image';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { View, Text } from '@/tw';
+import { View, Text, Image } from '@/tw';
 import { Id } from 'convex/_generated/dataModel';
 
 type BookProps = {
@@ -32,7 +31,7 @@ export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
             <Image
               source={{ uri: book.coverUrl }}
               className="w-full h-full"
-              contentFit="cover"
+              resizeMode="cover"
             />
           ) : (
             <View className="w-full h-full items-center justify-center bg-gray-100">

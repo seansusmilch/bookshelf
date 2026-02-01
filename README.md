@@ -1,5 +1,7 @@
 # Welcome to your Expo app 👋
 
+Open Library API: <https://openlibrary.org/developers/api>
+
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
@@ -48,6 +50,7 @@ export default function MyScreen() {
 ```
 
 **Note:** The CSS-wrapped components are located in `components/tw/`.
+
 ```
 
 ### Available Components

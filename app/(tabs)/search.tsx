@@ -1,10 +1,9 @@
-import { View, Text, ScrollView, TextInput, Pressable } from '@/tw';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { Image } from 'expo-image';
-import { useSearchBooks, GoogleBook, GoogleBooksResponse } from '@/hooks/useSearchBooks';
-import { useAddBook } from '@/hooks/useAddBook';
 import { AddBookSheet } from '@/components/book/AddBookSheet';
+import { useAddBook } from '@/hooks/useAddBook';
+import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
+import { Image, Pressable, ScrollView, Text, TextInput, View } from '@/tw';
+import { useEffect, useRef, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SearchResult = {
   id: string;
@@ -16,40 +15,78 @@ type SearchResult = {
   publishedDate?: string;
   isbn10?: string;
   isbn13?: string;
-  googleBooksId?: string;
+  openLibraryId?: string;
 };
+
+function extractOLID(key: string): string {
+  const match = key.match(/\/(?:books|works|authors)\/([A-Za-z0-9]+)/);
+  return match ? match[1] : key;
+}
+
+function getBookCoverURL(
+  coverId: number | undefined,
+  olid: string,
+  isbn?: string[]
+): string | undefined {
+  if (isbn && isbn.length > 0) {
+    return `https://covers.openlibrary.org/b/isbn/${isbn[0]}-M.jpg?default=false`;
+  }
+  if (coverId) {
+    return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg?default=false`;
+  }
+  if (olid) {
+    return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg?default=false`;
+  }
+  console.log('No cover source available');
+  return undefined;
+}
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
   const [selectedBook, setSelectedBook] = useState<SearchResult | null>(null);
   const [showAddSheet, setShowAddSheet] = useState(false);
-  const [searchResults, setSearchResults] = useState<GoogleBooksResponse | null>(null);
+  const [searchResults, setSearchResults] = useState<OpenLibraryResponse | null>(null);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+  const debounceTimeoutRef = useRef<number | null>(null);
 
   const { isLoading, searchBooks: executeSearch } = useSearchBooks();
   const addBook = useAddBook();
 
-  const handleSearch = async (text: string) => {
+  const handleSearch = (text: string) => {
     setQuery(text);
-    if (text.length >= 2) {
+
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(async () => {
+      console.log('Executing search for:', text);
       const results = await executeSearch(text);
       setSearchResults(results);
-    } else {
-      setSearchResults(null);
-    }
+    }, 250);
   };
 
-  const handleBookPress = async (book: GoogleBook) => {
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleBookPress = async (book: OpenLibraryBook) => {
+    const olid = extractOLID(book.key);
     const result: SearchResult = {
-      id: book.id || crypto.randomUUID(),
-      title: book.volumeInfo.title,
-      author: book.volumeInfo.authors?.join(', ') || 'Unknown Author',
-      coverUrl: book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail,
-      description: book.volumeInfo.description,
-      pageCount: book.volumeInfo.pageCount,
-      publishedDate: book.volumeInfo.publishedDate,
-      isbn10: book.volumeInfo.industryIdentifiers?.find((i: { type: string; identifier: string }) => i.type === 'ISBN_10')?.identifier,
-      isbn13: book.volumeInfo.industryIdentifiers?.find((i: { type: string; identifier: string }) => i.type === 'ISBN_13')?.identifier,
-      googleBooksId: book.id || undefined,
+      id: olid,
+      title: book.title,
+      author: book.author_name?.join(', ') || 'Unknown Author',
+      coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
+      description: undefined,
+      pageCount: undefined,
+      publishedDate: book.first_publish_year?.toString(),
+      isbn10: book.isbn?.find(isbn => isbn.length === 10),
+      isbn13: book.isbn?.find(isbn => isbn.length === 13),
+      openLibraryId: olid,
     };
     setSelectedBook(result);
   };
@@ -65,7 +102,7 @@ export default function SearchScreen() {
         isbn13: selectedBook.isbn13,
         totalPages: selectedBook.pageCount || 0,
         status,
-        googleBooksId: selectedBook.googleBooksId,
+        openLibraryId: selectedBook.openLibraryId,
       });
       setShowAddSheet(false);
       setSelectedBook(null);
@@ -77,31 +114,31 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
-      <View className="bg-white px-4 py-3 border-b border-gray-200">
+    <View className="flex-1 bg-gray-50">
+      <SafeAreaView className="bg-white px-4 py-3 border-b border-gray-200" edges={['top']}>
         <TextInput
           value={query}
           onChangeText={handleSearch}
           placeholder="Search for books..."
           className="px-4 py-3 bg-gray-100 rounded-xl text-base text-gray-900"
         />
-      </View>
+      </SafeAreaView>
 
       <ScrollView className="flex-1 px-4 pt-4">
         {query.length < 2 ? (
-          <View className="flex-1 items-center justify-center py-12">
+          <View className="items-center justify-center py-12">
             <Text className="text-4xl mb-4">🔍</Text>
             <Text className="text-xl font-semibold text-gray-900 mb-2">Search for books</Text>
             <Text className="text-center text-gray-600">
-              Enter a title, author, or keyword to find books from Google Books.
+              Enter a title, author, or keyword to find books from Open Library.
             </Text>
           </View>
         ) : isLoading ? (
-          <View className="flex-1 items-center justify-center py-12">
+          <View className="items-center justify-center py-12">
             <Text className="text-gray-600">Searching...</Text>
           </View>
-        ) : !searchResults || searchResults.items?.length === 0 ? (
-          <View className="flex-1 items-center justify-center py-12">
+        ) : !searchResults || searchResults.docs?.length === 0 ? (
+          <View className="items-center justify-center py-12">
             <Text className="text-4xl mb-4">📚</Text>
             <Text className="text-xl font-semibold text-gray-900 mb-2">No results found</Text>
             <Text className="text-center text-gray-600">
@@ -110,66 +147,70 @@ export default function SearchScreen() {
           </View>
         ) : (
           <View className="gap-3">
-            {searchResults.items?.map((book: GoogleBook) => (
-              <Pressable
-                key={book.id}
-                onPress={() => handleBookPress(book)}
-                className="bg-white rounded-xl shadow-sm p-3"
-              >
-                <View className="flex-row gap-3">
-                  <View className="w-20 h-28 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                    {book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail ? (
-                      <Image
-                        source={{
-                          uri:
-                            book.volumeInfo.imageLinks?.thumbnail ||
-                            book.volumeInfo.imageLinks?.smallThumbnail,
-                        }}
-                        className="w-full h-full"
-                        contentFit="cover"
-                      />
-                    ) : (
-                      <View className="w-full h-full items-center justify-center bg-gray-100">
-                        <Text className="text-gray-400 text-xs">No cover</Text>
-                      </View>
-                    )}
-                  </View>
-
-                  <View className="flex-1 justify-between py-1">
-                    <View>
-                      <Text className="text-base font-semibold text-gray-900" numberOfLines={2}>
-                        {book.volumeInfo.title}
-                      </Text>
-                      <Text className="text-sm text-gray-500 mt-1" numberOfLines={1}>
-                        {book.volumeInfo.authors?.join(', ') || 'Unknown Author'}
-                      </Text>
-                      {book.volumeInfo.pageCount && (
-                        <Text className="text-xs text-gray-400 mt-1">
-                          {book.volumeInfo.pageCount} pages
-                        </Text>
+            {searchResults.docs?.map((book: OpenLibraryBook) => {
+              const olid = extractOLID(book.key);
+              const coverUrl = getBookCoverURL(book.cover_i, olid, book.isbn);
+              return (
+                <Pressable
+                  key={book.key}
+                  onPress={() => handleBookPress(book)}
+                  className="bg-white rounded-xl shadow-sm p-3"
+                >
+                  <View className="flex-row gap-3">
+                    <View className="w-20 h-28 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                      {coverUrl && !failedImages.has(coverUrl) ? (
+                        <Image
+                          source={{ uri: coverUrl }}
+                          className="w-full h-full"
+                          resizeMode="cover"
+                          onError={() => {
+                            console.log('Image load error:', coverUrl);
+                            setFailedImages(prev => new Set(prev).add(coverUrl));
+                          }}
+                        />
+                      ) : (
+                        <View className="w-full h-full items-center justify-center bg-gray-100">
+                          <Text className="text-gray-400 text-xs">No cover</Text>
+                        </View>
                       )}
                     </View>
 
-                    {selectedBook?.id === book.id && (
-                      <Pressable
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          setShowAddSheet(true);
-                        }}
-                        className="py-2 px-4 bg-blue-500 rounded-lg self-start mt-2"
-                      >
-                        <Text className="text-white text-sm font-semibold">Add</Text>
-                      </Pressable>
-                    )}
+                    <View className="flex-1 justify-between py-1">
+                      <View>
+                        <Text className="text-base font-semibold text-gray-900" numberOfLines={2}>
+                          {book.title}
+                        </Text>
+                        <Text className="text-sm text-gray-500 mt-1" numberOfLines={1}>
+                          {book.author_name?.join(', ') || 'Unknown Author'}
+                        </Text>
+                        {book.edition_count && (
+                          <Text className="text-xs text-gray-400 mt-1">
+                            {book.edition_count} {book.edition_count === 1 ? 'edition' : 'editions'}
+                          </Text>
+                        )}
+                      </View>
+
+                      {selectedBook?.id === olid && (
+                        <Pressable
+                          onPress={(e) => {
+                            e.stopPropagation();
+                            setShowAddSheet(true);
+                          }}
+                          className="py-2 px-4 bg-blue-500 rounded-lg self-start mt-2"
+                        >
+                          <Text className="text-white text-sm font-semibold">Add</Text>
+                        </Pressable>
+                      )}
+                    </View>
                   </View>
-                </View>
-              </Pressable>
-            ))}
+                </Pressable>
+              );
+            })}
           </View>
         )}
       </ScrollView>
 
       <AddBookSheet visible={showAddSheet} onClose={handleCloseSheet} onAdd={handleAdd} />
-    </SafeAreaView>
+    </View>
   );
 }

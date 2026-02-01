@@ -13,12 +13,26 @@ export default defineSchema({
     totalPages: v.number(),
     currentPage: v.number(),
     status: v.string(),
-    googleBooksId: v.optional(v.string()),
+    openLibraryId: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index('by_user', ['userId'])
     .index('by_user_status', ['userId', 'status']),
+
+  searchCache: defineTable({
+    query: v.string(),
+    results: v.any(),
+    cachedAt: v.number(),
+  })
+    .index('by_query', ['query']),
+
+  bookCache: defineTable({
+    openLibraryId: v.string(),
+    bookData: v.any(),
+    cachedAt: v.number(),
+  })
+    .index('by_olid', ['openLibraryId']),
 
   lists: defineTable({
     userId: v.string(),

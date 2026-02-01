@@ -92,6 +92,51 @@ See `./references/route-structure.md` for detailed route conventions.
 - Use flexbox instead of Dimensions API
 - ALWAYS prefer `useWindowDimensions` over `Dimensions.get()` to measure screen size
 
+### SafeAreaView + ScrollView on Android
+
+**CRITICAL:** On Android, avoid wrapping `ScrollView` in `SafeAreaView` when the SafeAreaView wraps the entire screen. This causes layout issues where ScrollView content fails to render properly.
+
+**Problem Pattern (broken on Android):**
+```tsx
+<SafeAreaView className="flex-1" edges={['top']}>
+  <View className="bg-white p-4">
+    <TextInput />
+  </View>
+  <ScrollView className="flex-1">
+    {/* content not visible */}
+  </ScrollView>
+</SafeAreaView>
+```
+
+**Working Pattern:**
+```tsx
+<View className="flex-1">
+  <SafeAreaView className="bg-white p-4" edges={['top']}>
+    <TextInput />
+  </SafeAreaView>
+  <ScrollView className="flex-1">
+    {/* content renders correctly */}
+  </ScrollView>
+</View>
+```
+
+**Why this works:**
+- SafeAreaView only handles the fixed-height component (search bar, header, etc.)
+- ScrollView is a direct child of a regular View, giving it unambiguous layout context
+- Avoids Android's layout system failing to calculate available space when SafeAreaView wraps both fixed and scrollable components
+
+**Alternative using contentInsetAdjustmentBehavior (preferred):**
+```tsx
+<View className="flex-1">
+  <View className="bg-white p-4">
+    <TextInput />
+  </View>
+  <ScrollView className="flex-1" contentInsetAdjustmentBehavior="automatic">
+    {/* content renders correctly with automatic insets */}
+  </ScrollView>
+</View>
+```
+
 ## Behavior
 
 - Use expo-haptics conditionally on iOS to make more delightful experiences
