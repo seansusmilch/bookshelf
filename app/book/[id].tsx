@@ -1,8 +1,10 @@
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { View, Text, Pressable, ScrollView, Image } from '@/tw';
-import { useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState, useLayoutEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { ProgressSlider } from '@/components/ui/ProgressSlider';
 import { RatingPicker } from '@/components/ui/RatingPicker';
 import { ListSelector } from '@/components/ui/ListSelector';
@@ -12,7 +14,7 @@ import { useCreateList } from '../../hooks/useCreateList';
 import { useRateBook } from '../../hooks/useRateBook';
 import { useUpdateProgress } from '../../hooks/useUpdateProgress';
 import { Id } from 'convex/_generated/dataModel';
-import { FontAwesome } from '@expo/vector-icons';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 type BookDetail = {
   _id: Id<'books'>;
@@ -28,7 +30,9 @@ type BookDetail = {
 
 export default function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
+  const navigation = useNavigation();
+  const headerHeight = useHeaderHeight();
+  const colorScheme = useColorScheme();
   const bookDetail = useQuery(api.books.getBookById, id ? { bookId: id as Id<'books'> } : 'skip');
   const lists = useQuery(api.lists.getUserLists, {});
   const updateProgress = useUpdateProgress();
@@ -42,6 +46,12 @@ export default function BookDetailScreen() {
   const [showRatingPicker, setShowRatingPicker] = useState(false);
 
   const book = bookDetail as BookDetail | null | undefined;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTintColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
+    });
+  }, [colorScheme, navigation]);
 
   const handleProgressUpdate = (newPage: number) => {
     if (!book) return;
@@ -81,21 +91,18 @@ export default function BookDetailScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <Pressable
-        onPress={() => router.back()}
-        className="absolute top-12 left-4 z-10 w-10 h-10 bg-black/30 rounded-full items-center justify-center"
-      >
-        <FontAwesome name="chevron-left" size={24} color="white" />
-      </Pressable>
-
       {book.coverUrl ? (
         <Image
           source={{ uri: book.coverUrl }}
-          className="w-full h-64"
+          className="w-full"
+          style={{ height: 256 + headerHeight }}
           resizeMode="cover"
         />
       ) : (
-        <View className="w-full h-64 bg-gray-100 items-center justify-center">
+        <View
+          className="w-full bg-gray-100 items-center justify-center"
+          style={{ height: 256 + headerHeight }}
+        >
           <Text className="text-gray-400 text-4xl">📚</Text>
         </View>
       )}

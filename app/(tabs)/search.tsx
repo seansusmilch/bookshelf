@@ -1,9 +1,12 @@
 import { AddBookSheet } from '@/components/book/AddBookSheet';
 import { useAddBook } from '@/hooks/useAddBook';
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
-import { Image, Pressable, ScrollView, Text, TextInput, View } from '@/tw';
+import { useAppTheme } from '@/components/material3-provider';
+import { Image, Pressable, ScrollView, Text, View } from '@/tw';
 import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Searchbar } from 'react-native-paper';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { api } from 'convex/_generated/api';
 import { useAction } from 'convex/react';
 
@@ -45,6 +48,7 @@ function getBookCoverURL(
 }
 
 export default function SearchScreen() {
+  const { colors } = useAppTheme();
   const [query, setQuery] = useState('');
   const [selectedBook, setSelectedBook] = useState<SearchResult | null>(null);
   const [showAddSheet, setShowAddSheet] = useState(false);
@@ -145,33 +149,38 @@ export default function SearchScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <SafeAreaView className="bg-white px-4 py-3 border-b border-gray-200" edges={['top']}>
-        <TextInput
-          value={query}
-          onChangeText={handleSearch}
+      <SafeAreaView className="bg-white py-4 border-b border-gray-200" edges={['top']}>
+        <Searchbar
           placeholder="Search for books..."
-          className="px-4 py-3 bg-gray-100 rounded-xl text-base text-gray-900"
+          onChangeText={handleSearch}
+          value={query}
+          mode="bar"
+          elevation={2}
+          loading={isLoading}
+          icon={() => <MaterialIcons name="search" size={24} color={colors.onSurfaceVariant} />}
+          style={{ marginHorizontal: 20 }}
         />
       </SafeAreaView>
 
       <ScrollView className="flex-1 px-4 pt-4">
         {query.length < 2 ? (
           <View className="items-center justify-center py-12">
-            <Text className="text-4xl mb-4">🔍</Text>
-            <Text className="text-xl font-semibold text-gray-900 mb-2">Search for books</Text>
-            <Text className="text-center text-gray-600">
+            <MaterialIcons name="search" size={64} color={colors.onSurfaceVariant} />
+            <Text className="text-xl font-semibold text-gray-900 mt-4 mb-2">Search for books</Text>
+            <Text className="text-center text-gray-600 px-8">
               Enter a title, author, or keyword to find books from Open Library.
             </Text>
           </View>
         ) : isLoading ? (
           <View className="items-center justify-center py-12">
-            <Text className="text-gray-600">Searching...</Text>
+            <MaterialIcons name="hourglass-empty" size={48} color={colors.primary} />
+            <Text className="text-gray-600 mt-4">Searching...</Text>
           </View>
         ) : !searchResults || searchResults.docs?.length === 0 ? (
           <View className="items-center justify-center py-12">
-            <Text className="text-4xl mb-4">📚</Text>
-            <Text className="text-xl font-semibold text-gray-900 mb-2">No results found</Text>
-            <Text className="text-center text-gray-600">
+            <MaterialIcons name="menu-book" size={64} color={colors.onSurfaceVariant} />
+            <Text className="text-xl font-semibold text-gray-900 mt-4 mb-2">No results found</Text>
+            <Text className="text-center text-gray-600 px-8">
               Try a different search term or check your spelling.
             </Text>
           </View>
@@ -231,7 +240,8 @@ export default function SearchScreen() {
                               e.stopPropagation();
                               setShowAddSheet(true);
                             }}
-                            className="py-2 px-4 bg-blue-500 rounded-lg self-start mt-2"
+                            style={{ backgroundColor: colors.primary }}
+                            className="py-2 px-4 rounded-lg self-start mt-2"
                           >
                             <Text className="text-white text-sm font-semibold">Add</Text>
                           </Pressable>
