@@ -23,8 +23,10 @@ type BookCardProps = {
 export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
   const progressPercent = book.totalPages > 0 ? (book.currentPage / book.totalPages) * 100 : 0;
 
+  console.log('BookCard rendering:', book.title);
+
   return (
-    <Pressable onPress={onPress} className="mb-3 bg-white rounded-xl shadow-sm">
+    <Pressable onPress={onPress} className="mb-3 bg-white rounded-xl shadow-sm min-h-[120px]">
       <View className="flex-row p-3 gap-3">
         <View className="w-20 h-28 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
           {book.coverUrl ? (

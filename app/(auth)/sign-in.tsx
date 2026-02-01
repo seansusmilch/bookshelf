@@ -66,7 +66,7 @@ export default function AuthScreen() {
 
       if (createdSessionId) {
         setActiveOAuth!({ session: createdSessionId });
-        router.replace('/(tabs)');
+        router.replace('/(tabs)/shelf');
       }
     } catch (err: unknown) {
       console.error('OAuth error', JSON.stringify(err, null, 2));
@@ -89,7 +89,7 @@ export default function AuthScreen() {
 
       if (createdSessionId) {
         setActiveOAuth!({ session: createdSessionId });
-        router.replace('/(tabs)');
+        router.replace('/(tabs)/shelf');
       }
     } catch (err: unknown) {
       console.error('OAuth error', JSON.stringify(err, null, 2));
@@ -111,7 +111,7 @@ export default function AuthScreen() {
           if (result.createdSessionId) {
             await setSignInActive({ session: result.createdSessionId });
           }
-          router.replace('/(tabs)');
+          router.replace('/(tabs)/shelf');
           return;
         }
 
@@ -178,7 +178,7 @@ export default function AuthScreen() {
           if (attempt.createdSessionId) {
             await setSignInActive({ session: attempt.createdSessionId });
           }
-          router.replace('/(tabs)');
+          router.replace('/(tabs)/shelf');
           return;
         } else {
           console.error(JSON.stringify(attempt, null, 2));
@@ -195,7 +195,7 @@ export default function AuthScreen() {
             if (signUpAttempt.createdSessionId) {
               await setSignUpActive({ session: signUpAttempt.createdSessionId });
             }
-            router.replace('/(tabs)');
+            router.replace('/(tabs)/shelf');
             return;
           } else {
             console.error(JSON.stringify(signUpAttempt, null, 2));

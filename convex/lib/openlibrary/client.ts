@@ -29,16 +29,25 @@ export async function fetchOpenLibrary<T = unknown>(
     });
 
     if (!response.ok) {
-      throw new OpenLibraryError(
+      const error = new OpenLibraryError(
         `HTTP ${response.status}: ${response.statusText}`,
         response.status,
         endpoint
       );
+      console.error('[OpenLibrary] API Error:', {
+        statusCode: response.status,
+        statusText: response.statusText,
+        endpoint: url,
+        retryAttempt: retryCount + 1,
+        willRetry: retryCount < MAX_RETRIES && shouldRetry(error),
+      });
+      throw error;
     }
 
     return await response.json();
   } catch (error) {
     if (retryCount < MAX_RETRIES && shouldRetry(error)) {
+      console.warn(`[OpenLibrary] Retrying request (${retryCount + 1}/${MAX_RETRIES}):`, url);
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
       return fetchOpenLibrary<T>(endpoint, {
         ...options,
@@ -46,6 +55,11 @@ export async function fetchOpenLibrary<T = unknown>(
       });
     }
 
+    console.error('[OpenLibrary] Request failed after retries:', {
+      endpoint: url,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      retryAttempts: retryCount + 1,
+    });
     throw error;
   }
 }

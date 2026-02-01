@@ -5,6 +5,7 @@ type AddBookSheetProps = {
   visible: boolean;
   onClose: () => void;
   onAdd: (status: string, listId?: string) => void;
+  pageCount?: number;
 };
 
 const STATUS_OPTIONS = [
@@ -13,7 +14,7 @@ const STATUS_OPTIONS = [
   { value: 'completed', label: 'Completed', icon: '✅' },
 ];
 
-export const AddBookSheet = ({ visible, onClose, onAdd }: AddBookSheetProps) => {
+export const AddBookSheet = ({ visible, onClose, onAdd, pageCount }: AddBookSheetProps) => {
   const [selectedStatus, setSelectedStatus] = useState<string>('want_to_read');
 
   if (!visible) return null;
@@ -26,6 +27,14 @@ export const AddBookSheet = ({ visible, onClose, onAdd }: AddBookSheetProps) => 
           <Text className="text-2xl text-gray-400">✕</Text>
         </Pressable>
       </View>
+
+      {pageCount && pageCount > 0 && (
+        <View className="mb-4 p-3 bg-gray-50 rounded-lg">
+          <Text className="text-sm text-gray-600">
+            {pageCount} {pageCount === 1 ? 'page' : 'pages'}
+          </Text>
+        </View>
+      )}
 
       <Text className="text-sm text-gray-600 mb-3">Select reading status</Text>
       <View className="gap-3 mb-6">

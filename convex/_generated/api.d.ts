@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as auth from "../auth.js";
 import type * as books from "../books.js";
 import type * as cache from "../cache.js";
 import type * as lib_openlibrary_books from "../lib/openlibrary/books.js";
@@ -30,7 +29,6 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  auth: typeof auth;
   books: typeof books;
   cache: typeof cache;
   "lib/openlibrary/books": typeof lib_openlibrary_books;

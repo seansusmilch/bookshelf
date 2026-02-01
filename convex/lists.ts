@@ -1,15 +1,16 @@
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
-import { auth } from './auth';
 
 export const getUserLists = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       return [];
     }
+
+    const userId = identity.subject;
 
     const lists = await ctx.db
       .query('lists')
@@ -25,11 +26,13 @@ export const getBooksInList = query({
     listId: v.id('lists'),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       return [];
     }
+
+    const userId = identity.subject;
 
     const memberships = await ctx.db
       .query('bookListMembership')
@@ -48,11 +51,13 @@ export const createList = mutation({
     name: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
 
     const now = Date.now();
 
@@ -73,11 +78,13 @@ export const addBookToList = mutation({
     listId: v.id('lists'),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
 
     const book = await ctx.db.get(args.bookId);
     const list = await ctx.db.get(args.listId);
@@ -119,11 +126,13 @@ export const removeBookFromList = mutation({
     listId: v.id('lists'),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
 
     const membership = await ctx.db
       .query('bookListMembership')
@@ -146,11 +155,13 @@ export const deleteList = mutation({
     listId: v.id('lists'),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
 
     const list = await ctx.db.get(args.listId);
 

@@ -8,6 +8,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { QueryProvider } from '~/lib/query-client';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -27,32 +28,34 @@ const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
 });
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  initialRouteName: 'index',
 };
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <SafeAreaProvider>
-      <QueryProvider>
-        <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-          <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <ErrorBoundary>
-                <ToastProvider>
-                  <Stack>
-                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-                  </Stack>
-                  <StatusBar style="auto" />
-                </ToastProvider>
-              </ErrorBoundary>
-            </ThemeProvider>
-          </ConvexProviderWithClerk>
-        </ClerkProvider>
-      </QueryProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <QueryProvider>
+          <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+            <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <ErrorBoundary>
+                  <ToastProvider>
+                    <Stack>
+                      <Stack.Screen name="index" options={{ headerShown: false }} />
+                      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    </Stack>
+                    <StatusBar style="auto" />
+                  </ToastProvider>
+                </ErrorBoundary>
+              </ThemeProvider>
+            </ConvexProviderWithClerk>
+          </ClerkProvider>
+        </QueryProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -27,7 +27,7 @@ export const FilterTabs = ({ selectedStatus, onStatusChange }: FilterTabsProps) 
   };
 
   return (
-    <View className="bg-white border-b border-gray-200 px-4 py-2">
+    <View className="px-4 py-2">
       <RNScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="flex-row gap-2">
           {STATUS_OPTIONS.map((option) => (

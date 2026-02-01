@@ -1,6 +1,6 @@
 import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
-import { useAuth } from '@clerk/clerk-expo';
+import { useConvexAuth, AuthLoading } from 'convex/react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -8,14 +8,14 @@ import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const colorScheme = useColorScheme();
 
-  if (!isLoaded) {
-    return null;
+  if (isLoading) {
+    return <AuthLoading>{null}</AuthLoading>;
   }
 
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     return <Redirect href="/sign-in" />;
   }
 

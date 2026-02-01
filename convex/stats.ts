@@ -1,17 +1,18 @@
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
-import { auth } from './auth';
 
 export const getReadingStats = query({
   args: {
     year: v.number(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       return null;
     }
+
+    const userId = identity.subject;
 
     const currentYear = args.year;
     const startOfYear = new Date(currentYear, 0, 1).getTime();
@@ -58,11 +59,13 @@ export const setYearlyGoal = mutation({
     goal: v.number(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
 
     const existing = await ctx.db
       .query('yearlyGoals')

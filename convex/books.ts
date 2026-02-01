@@ -1,17 +1,23 @@
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
-import { auth } from './auth';
 
 export const getUserBooks = query({
   args: {
     status: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    console.log('getUserBooks - identity:', identity);
+
+    if (identity === null) {
+      console.log('getUserBooks - no identity found');
       return [];
     }
+
+    const userId = identity.subject;
+    console.log('getUserBooks - userId:', userId);
+    console.log('getUserBooks - status filter:', args.status);
 
     let books;
 
@@ -29,6 +35,9 @@ export const getUserBooks = query({
         .collect();
     }
 
+    console.log('getUserBooks - books found:', books);
+    console.log('getUserBooks - books count:', books.length);
+
     return books;
   },
 });
@@ -38,11 +47,13 @@ export const getBookById = query({
     bookId: v.id('books'),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       return null;
     }
+
+    const userId = identity.subject;
 
     const book = await ctx.db.get(args.bookId);
 
@@ -72,11 +83,17 @@ export const addBook = mutation({
     openLibraryId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    console.log('addBook - identity:', identity);
+    console.log('addBook - args:', args);
+
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
+    console.log('addBook - userId:', userId);
 
     const now = Date.now();
 
@@ -95,6 +112,8 @@ export const addBook = mutation({
       createdAt: now,
       updatedAt: now,
     });
+
+    console.log('addBook - book inserted with ID:', bookId);
 
     if (args.status === 'completed') {
       await ctx.db.insert('readingSessions', {
@@ -118,11 +137,13 @@ export const updateProgress = mutation({
     currentPage: v.number(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
 
     const book = await ctx.db.get(args.bookId);
 
@@ -152,11 +173,13 @@ export const completeBook = mutation({
     bookId: v.id('books'),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!userId) {
+    if (identity === null) {
       throw new Error('User not authenticated');
     }
+
+    const userId = identity.subject;
 
     const book = await ctx.db.get(args.bookId);
 

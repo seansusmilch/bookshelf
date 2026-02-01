@@ -4,6 +4,8 @@ import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/us
 import { Image, Pressable, ScrollView, Text, TextInput, View } from '@/tw';
 import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { api } from 'convex/_generated/api';
+import { useAction } from 'convex/react';
 
 type SearchResult = {
   id: string;
@@ -47,10 +49,12 @@ export default function SearchScreen() {
   const [showAddSheet, setShowAddSheet] = useState(false);
   const [searchResults, setSearchResults] = useState<OpenLibraryResponse | null>(null);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+  const [isFetchingEdition, setIsFetchingEdition] = useState(false);
   const debounceTimeoutRef = useRef<number | null>(null);
 
   const { isLoading, searchBooks: executeSearch } = useSearchBooks();
   const addBook = useAddBook();
+  const getBestEditionForWork = useAction(api.openLibrarySearch.getBestEditionForWork);
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -76,24 +80,47 @@ export default function SearchScreen() {
 
   const handleBookPress = async (book: OpenLibraryBook) => {
     const olid = extractOLID(book.key);
-    const result: SearchResult = {
-      id: olid,
-      title: book.title,
-      author: book.author_name?.join(', ') || 'Unknown Author',
-      coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
-      description: undefined,
-      pageCount: undefined,
-      publishedDate: book.first_publish_year?.toString(),
-      isbn10: book.isbn?.find(isbn => isbn.length === 10),
-      isbn13: book.isbn?.find(isbn => isbn.length === 13),
-      openLibraryId: olid,
-    };
-    setSelectedBook(result);
+    setIsFetchingEdition(true);
+
+    try {
+      const edition = await getBestEditionForWork({ openLibraryId: olid });
+      const editionOLID = extractOLID(edition.key);
+      const result: SearchResult = {
+        id: editionOLID,
+        title: book.title,
+        author: book.author_name?.join(', ') || 'Unknown Author',
+        coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
+        description: undefined,
+        pageCount: edition.number_of_pages || 0,
+        publishedDate: book.first_publish_year?.toString(),
+        isbn10: edition.isbn_10?.[0],
+        isbn13: edition.isbn_13?.[0],
+        openLibraryId: editionOLID,
+      };
+      setSelectedBook(result);
+    } catch (error) {
+      console.error('Failed to fetch edition:', error);
+      const result: SearchResult = {
+        id: olid,
+        title: book.title,
+        author: book.author_name?.join(', ') || 'Unknown Author',
+        coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
+        description: undefined,
+        pageCount: 0,
+        publishedDate: book.first_publish_year?.toString(),
+        isbn10: book.isbn?.find(isbn => isbn.length === 10),
+        isbn13: book.isbn?.find(isbn => isbn.length === 13),
+        openLibraryId: olid,
+      };
+      setSelectedBook(result);
+    } finally {
+      setIsFetchingEdition(false);
+    }
   };
 
-  const handleAdd = (status: string) => {
+  const handleAdd = async (status: string) => {
     if (selectedBook) {
-      addBook.mutate({
+      await addBook.mutate({
         title: selectedBook.title,
         author: selectedBook.author,
         description: selectedBook.description,
@@ -190,17 +217,23 @@ export default function SearchScreen() {
                         )}
                       </View>
 
-                      {selectedBook?.id === olid && (
-                        <Pressable
-                          onPress={(e) => {
-                            e.stopPropagation();
-                            setShowAddSheet(true);
-                          }}
-                          className="py-2 px-4 bg-blue-500 rounded-lg self-start mt-2"
-                        >
-                          <Text className="text-white text-sm font-semibold">Add</Text>
-                        </Pressable>
-                      )}
+                      {selectedBook?.id === olid ? (
+                        isFetchingEdition ? (
+                          <View className="py-2 px-4 bg-gray-200 rounded-lg self-start mt-2">
+                            <Text className="text-gray-600 text-sm font-semibold">Loading...</Text>
+                          </View>
+                        ) : (
+                          <Pressable
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              setShowAddSheet(true);
+                            }}
+                            className="py-2 px-4 bg-blue-500 rounded-lg self-start mt-2"
+                          >
+                            <Text className="text-white text-sm font-semibold">Add</Text>
+                          </Pressable>
+                        )
+                      ) : null}
                     </View>
                   </View>
                 </Pressable>
@@ -210,7 +243,7 @@ export default function SearchScreen() {
         )}
       </ScrollView>
 
-      <AddBookSheet visible={showAddSheet} onClose={handleCloseSheet} onAdd={handleAdd} />
+      <AddBookSheet visible={showAddSheet} onClose={handleCloseSheet} onAdd={handleAdd} pageCount={selectedBook?.pageCount} />
     </View>
   );
 }

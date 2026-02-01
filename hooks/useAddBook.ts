@@ -1,8 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useConvex } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { useToast } from '@/hooks/useToast';
-import { bookSchema } from '~/lib/validations';
 
 type AddBookArgs = {
   title: string;
@@ -18,18 +16,21 @@ type AddBookArgs = {
 
 export const useAddBook = () => {
   const toast = useToast();
-  const queryClient = useQueryClient();
-  const convex = useConvex();
+  const addBookMutation = useMutation(api.books.addBook);
 
-  return useMutation({
-    mutationFn: (args: AddBookArgs) => convex.mutation(api.books.addBook, args),
-    onSuccess: () => {
-      toast.showSuccess('Book added to library');
-      queryClient.invalidateQueries({ queryKey: ['books'] });
+  return {
+    ...addBookMutation,
+    mutate: (args: AddBookArgs) => {
+      console.log('useAddBook.mutate called with:', args);
+      return addBookMutation(args)
+        .then((result) => {
+          console.log('useAddBook.mutate success:', result);
+          toast.showSuccess('Book added to library');
+        })
+        .catch((error: Error) => {
+          console.error('useAddBook.mutate error:', error);
+          toast.showError('Failed to add book');
+        });
     },
-    onError: (error: Error) => {
-      toast.showError('Failed to add book');
-      console.error('Add book error:', error);
-    },
-  });
+  };
 };

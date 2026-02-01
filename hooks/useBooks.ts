@@ -1,12 +1,21 @@
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { Id } from 'convex/_generated/dataModel';
+import { useEffect } from 'react';
 
 export const useBooks = (statusFilter?: string) => {
-  return useQuery(
+  const books = useQuery(
     api.books.getUserBooks,
     statusFilter ? { status: statusFilter } : {}
   );
+
+  useEffect(() => {
+    console.log('useBooks called with statusFilter:', statusFilter);
+    console.log('Books returned:', books);
+    console.log('Books length:', books?.length);
+  }, [books, statusFilter]);
+
+  return books;
 };
 
 export const useBookDetail = (bookId: string | null) => {
