@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { StatsCard } from '@/components/ui/StatsCard';
 import { useStats } from '@/hooks/useStats';
 import { useUpdateGoal } from '@/hooks/useUpdateGoal';
+import { StatsCardSkeleton } from '@/components/ui/Skeleton';
 
 export default function StatsScreen() {
   const [showGoalModal, setShowGoalModal] = useState(false);
@@ -23,7 +24,7 @@ export default function StatsScreen() {
   const handleSaveGoal = () => {
     const goal = parseInt(newGoal, 10);
     if (goal > 0 && goal <= 1000) {
-      updateGoal({ year: new Date().getFullYear(), goal });
+      updateGoal.mutate(goal);
       setShowGoalModal(false);
       setNewGoal('');
     }
@@ -34,20 +35,24 @@ export default function StatsScreen() {
     setNewGoal('');
   };
 
-  const booksRead = stats?.booksRead || 0;
-  const yearlyGoal = stats?.goal || 0;
-  const pagesRead = stats?.totalPagesRead || 0;
+   const booksRead = stats?.booksRead || 0;
+   const yearlyGoal = stats?.goal || 0;
+   const pagesRead = stats?.totalPagesRead || 0;
 
-  return (
-    <>
-      <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
-        <View className="px-4 pt-4">
-          <StatsCard
-            booksRead={booksRead}
-            yearlyGoal={yearlyGoal}
-            pagesRead={pagesRead}
-            onSetGoalPress={handleSetGoalPress}
-          />
+   return (
+     <>
+       <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
+         <View className="px-4 pt-4">
+           {stats === undefined ? (
+             <StatsCardSkeleton />
+           ) : (
+             <StatsCard
+               booksRead={booksRead}
+               yearlyGoal={yearlyGoal}
+               pagesRead={pagesRead}
+               onSetGoalPress={handleSetGoalPress}
+             />
+           )}
 
           <View className="mt-6">
             <Text className="text-lg font-semibold text-gray-900 mb-4">Yearly Overview</Text>

@@ -168,30 +168,30 @@ This plan breaks down the implementation of the bookshelf reading tracker into p
 
 ### 6.1 Validation
 
-- [ ] Add Zod schemas for:
-  - [ ] Book data
-  - [ ] Progress updates
-  - [ ] Ratings
-  - [ ] List names
-  - [ ] Yearly goals
+- [x] Add Zod schemas for:
+  - [x] Book data
+  - [x] Progress updates
+  - [x] Ratings
+  - [x] List names
+  - [x] Yearly goals
 
 ### 6.2 Error Boundaries
 
-- [ ] Create error boundary component
-- [ ] Wrap screens with error boundary
+- [x] Create error boundary component
+- [x] Wrap screens with error boundary
 
 ### 6.3 Toast Notifications
 
-- [ ] Add toast notifications for:
-  - [ ] Success messages (book added, progress updated)
-  - [ ] Error messages (network failed, validation error)
+- [x] Add toast notifications for:
+  - [x] Success messages (book added, progress updated)
+  - [x] Error messages (network failed, validation error)
 
 ### 6.4 Loading States
 
-- [ ] Add skeleton loaders for:
-  - [ ] Book cards
-  - [ ] List items
-  - [ ] Stats cards
+- [x] Add skeleton loaders for:
+  - [x] Book cards
+  - [x] List items
+  - [x] Stats cards
 
 ## Phase 7: Testing & Polish
 

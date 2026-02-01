@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TextInput, Pressable } from '@/tw';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { Image } from 'expo-image';
-import { useSearchBooks, GoogleBook } from '@/hooks/useSearchBooks';
+import { useSearchBooks, GoogleBook, GoogleBooksResponse } from '@/hooks/useSearchBooks';
 import { useAddBook } from '@/hooks/useAddBook';
 import { AddBookSheet } from '@/components/book/AddBookSheet';
 
@@ -21,37 +21,42 @@ type SearchResult = {
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [selectedBook, setSelectedBook] = useState<SearchResult | null>(null);
   const [showAddSheet, setShowAddSheet] = useState(false);
+  const [searchResults, setSearchResults] = useState<GoogleBooksResponse | null>(null);
 
-  const { data: searchResults, isLoading } = useSearchBooks(debouncedQuery);
+  const { isLoading, searchBooks: executeSearch } = useSearchBooks();
   const addBook = useAddBook();
 
-  const handleSearch = (text: string) => {
+  const handleSearch = async (text: string) => {
     setQuery(text);
-    setTimeout(() => setDebouncedQuery(text), 300);
+    if (text.length >= 2) {
+      const results = await executeSearch(text);
+      setSearchResults(results);
+    } else {
+      setSearchResults(null);
+    }
   };
 
-  const handleBookPress = (book: GoogleBook) => {
+  const handleBookPress = async (book: GoogleBook) => {
     const result: SearchResult = {
-      id: book.id,
+      id: book.id || crypto.randomUUID(),
       title: book.volumeInfo.title,
       author: book.volumeInfo.authors?.join(', ') || 'Unknown Author',
       coverUrl: book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail,
       description: book.volumeInfo.description,
       pageCount: book.volumeInfo.pageCount,
       publishedDate: book.volumeInfo.publishedDate,
-      isbn10: book.volumeInfo.industryIdentifiers?.find((i) => i.type === 'ISBN_10')?.identifier,
-      isbn13: book.volumeInfo.industryIdentifiers?.find((i) => i.type === 'ISBN_13')?.identifier,
-      googleBooksId: book.id,
+      isbn10: book.volumeInfo.industryIdentifiers?.find((i: { type: string; identifier: string }) => i.type === 'ISBN_10')?.identifier,
+      isbn13: book.volumeInfo.industryIdentifiers?.find((i: { type: string; identifier: string }) => i.type === 'ISBN_13')?.identifier,
+      googleBooksId: book.id || undefined,
     };
     setSelectedBook(result);
   };
 
   const handleAdd = (status: string) => {
     if (selectedBook) {
-      addBook({
+      addBook.mutate({
         title: selectedBook.title,
         author: selectedBook.author,
         description: selectedBook.description,
@@ -105,7 +110,7 @@ export default function SearchScreen() {
           </View>
         ) : (
           <View className="gap-3">
-            {searchResults.items?.map((book) => (
+            {searchResults.items?.map((book: GoogleBook) => (
               <Pressable
                 key={book.id}
                 onPress={() => handleBookPress(book)}

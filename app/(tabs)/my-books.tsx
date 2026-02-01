@@ -6,6 +6,7 @@ import { BookCard } from '@/components/ui/BookCard';
 import { FilterTabs } from '@/components/ui/FilterTabs';
 import { BookDetailModal } from '@/components/book/BookDetailModal';
 import { useBooks } from '@/hooks/useBooks';
+import { BookCardSkeleton } from '@/components/ui/Skeleton';
 
 export default function MyBooksScreen() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -37,26 +38,9 @@ export default function MyBooksScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           className="flex-1 px-4 pt-4"
         >
-          <View className="mb-3 bg-white rounded-xl shadow-sm p-3 gap-3">
-            <View className="flex-row gap-3">
-              <View className="w-20 h-28 bg-gray-200 rounded-lg animate-pulse" />
-              <View className="flex-1 py-1 gap-2">
-                <View className="h-6 bg-gray-200 rounded w-3/4 animate-pulse" />
-                <View className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
-                <View className="h-2 bg-gray-200 rounded mt-4 animate-pulse" />
-              </View>
-            </View>
-          </View>
-          <View className="mb-3 bg-white rounded-xl shadow-sm p-3 gap-3">
-            <View className="flex-row gap-3">
-              <View className="w-20 h-28 bg-gray-200 rounded-lg animate-pulse" />
-              <View className="flex-1 py-1 gap-2">
-                <View className="h-6 bg-gray-200 rounded w-3/4 animate-pulse" />
-                <View className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
-                <View className="h-2 bg-gray-200 rounded mt-4 animate-pulse" />
-              </View>
-            </View>
-          </View>
+          <BookCardSkeleton />
+          <BookCardSkeleton />
+          <BookCardSkeleton />
         </ScrollView>
       ) : books.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">

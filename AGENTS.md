@@ -6,6 +6,7 @@
 
 - `pnpm lint` - Run ESLint and Prettier checks
 - `pnpm format` - Auto-fix linting and format code
+- `pnpm type-check` - Run TypeScript type checking (run this after completing work)
 
 ### Testing
 

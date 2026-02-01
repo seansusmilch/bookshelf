@@ -11,6 +11,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { QueryProvider } from '~/lib/query-client';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ErrorBoundary } from '@/components/error/ErrorBoundary';
+import { ToastProvider } from '@/hooks/useToast';
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -37,12 +39,16 @@ export default function RootLayout() {
         <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
           <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <Stack>
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-              </Stack>
-              <StatusBar style="auto" />
+              <ErrorBoundary>
+                <ToastProvider>
+                  <Stack>
+                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </ToastProvider>
+              </ErrorBoundary>
             </ThemeProvider>
           </ConvexProviderWithClerk>
         </ClerkProvider>

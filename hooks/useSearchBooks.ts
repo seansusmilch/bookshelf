@@ -1,50 +1,74 @@
-import { useQuery } from '@tanstack/react-query';
+import { useAction } from 'convex/react';
+import { api } from 'convex/_generated/api';
+import { useState, useCallback } from 'react';
 
-type GoogleBook = {
-  id: string;
+export const useSearchBooks = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const searchBooks = useAction(api.googleSearch.searchBooks);
+
+  const executeSearch = useCallback(
+    async (query: string) => {
+      if (!query || query.length < 2) {
+        return { items: [], totalItems: 0 };
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const data = await searchBooks({ query });
+        return data;
+      } catch (err) {
+        setError(err as Error);
+        return { items: [], totalItems: 0 };
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [searchBooks]
+  );
+
+  return { isLoading, error, searchBooks: executeSearch };
+};
+
+export interface GoogleBooksResponse {
+  items?: Array<{
+    id: string | null | undefined;
+    volumeInfo: {
+      title: string;
+      authors: string[] | undefined;
+      description: string | undefined;
+      imageLinks?: {
+        thumbnail: string | undefined;
+        smallThumbnail: string | undefined;
+      } | undefined;
+      pageCount: number | undefined;
+      publishedDate: string | undefined;
+      industryIdentifiers: Array<{
+        type: string;
+        identifier: string;
+      }> | undefined;
+    };
+  }>;
+  totalItems: number;
+}
+
+export interface GoogleBook {
+  id: string | null | undefined;
   volumeInfo: {
     title: string;
-    authors?: string[];
-    description?: string;
+    authors: string[] | undefined;
+    description: string | undefined;
     imageLinks?: {
-      thumbnail?: string;
-      smallThumbnail?: string;
-    };
-    pageCount?: number;
-    publishedDate?: string;
-    industryIdentifiers?: Array<{
+      thumbnail: string | undefined;
+      smallThumbnail: string | undefined;
+    } | undefined;
+    pageCount: number | undefined;
+    publishedDate: string | undefined;
+    industryIdentifiers: Array<{
       type: string;
       identifier: string;
-    }>;
+    }> | undefined;
   };
-};
-
-type GoogleBooksResponse = {
-  items?: GoogleBook[];
-  totalItems: number;
-};
-
-export const useSearchBooks = (query: string) => {
-  return useQuery({
-    queryKey: ['searchBooks', query],
-    queryFn: async (): Promise<GoogleBooksResponse> => {
-      if (!query) {
-        return { totalItems: 0 };
-      }
-
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=20`
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to search books');
-      }
-
-      return response.json();
-    },
-    enabled: !!query && query.length >= 2,
-    staleTime: 1000 * 60 * 10,
-  });
-};
-
-export type { GoogleBook };
+}

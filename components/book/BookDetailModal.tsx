@@ -47,21 +47,21 @@ export const BookDetailModal = ({ visible, bookId, onClose }: BookDetailModalPro
   if (!visible || !book) return null;
 
   const handleProgressUpdate = (newPage: number) => {
-    updateProgress({ bookId: book._id, currentPage: newPage });
+    updateProgress.mutate({ bookId: book._id, currentPage: newPage });
     setShowProgressSlider(false);
   };
 
   const handleRatingUpdate = (rating: number) => {
-    rateBook({ bookId: book._id, rating });
+    rateBook.mutate({ bookId: book._id, rating });
     setShowRatingPicker(false);
   };
 
   const handleComplete = () => {
-    completeBook({ bookId: book._id });
+    completeBook.mutate(book._id);
   };
 
   const handleCreateList = (name: string) => {
-    createList({ name });
+    createList.mutate(name);
   };
 
   const progressPercent = book.totalPages > 0 ? (book.currentPage / book.totalPages) * 100 : 0;

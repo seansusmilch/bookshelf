@@ -10,6 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as books from "../books.js";
+import type * as googleSearch from "../googleSearch.js";
 import type * as lists from "../lists.js";
 import type * as ratings from "../ratings.js";
 import type * as stats from "../stats.js";
@@ -23,6 +24,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   books: typeof books;
+  googleSearch: typeof googleSearch;
   lists: typeof lists;
   ratings: typeof ratings;
   stats: typeof stats;
