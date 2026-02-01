@@ -1,5 +1,3 @@
-import { AddBookSheet } from '@/components/book/AddBookSheet';
-import { useAddBook } from '@/hooks/useAddBook';
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
 import { useAppTheme } from '@/components/material3-provider';
 import { Image, Pressable, ScrollView, Text, View } from '@/tw';
@@ -7,22 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Searchbar } from 'react-native-paper';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { api } from 'convex/_generated/api';
-import { useAction } from 'convex/react';
-
-type SearchResult = {
-  id: string;
-  workId: string;
-  title: string;
-  author: string;
-  coverUrl?: string;
-  description?: string;
-  pageCount?: number;
-  publishedDate?: string;
-  isbn10?: string;
-  isbn13?: string;
-  openLibraryId?: string;
-};
+import { useRouter } from 'expo-router';
 
 function extractOLID(key: string): string {
   const match = key.match(/\/(?:books|works|authors)\/([A-Za-z0-9]+)/);
@@ -34,14 +17,14 @@ function getBookCoverURL(
   olid: string,
   isbn?: string[]
 ): string | undefined {
-  if (isbn && isbn.length > 0) {
-    return `https://covers.openlibrary.org/b/isbn/${isbn[0]}-M.jpg?default=false`;
-  }
   if (coverId) {
-    return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg?default=false`;
+    return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
+  }
+  if (isbn && isbn.length > 0) {
+    return `https://covers.openlibrary.org/b/isbn/${isbn[0]}-M.jpg`;
   }
   if (olid) {
-    return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg?default=false`;
+    return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg`;
   }
   console.log('No cover source available');
   return undefined;
@@ -49,17 +32,13 @@ function getBookCoverURL(
 
 export default function SearchScreen() {
   const { colors } = useAppTheme();
+  const router = useRouter();
   const [query, setQuery] = useState('');
-  const [selectedBook, setSelectedBook] = useState<SearchResult | null>(null);
-  const [showAddSheet, setShowAddSheet] = useState(false);
   const [searchResults, setSearchResults] = useState<OpenLibraryResponse | null>(null);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
-  const [isFetchingEdition, setIsFetchingEdition] = useState(false);
   const debounceTimeoutRef = useRef<number | null>(null);
 
   const { isLoading, searchBooks: executeSearch } = useSearchBooks();
-  const addBook = useAddBook();
-  const getBestEditionForWork = useAction(api.openLibrarySearch.getBestEditionForWork);
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -83,68 +62,13 @@ export default function SearchScreen() {
     };
   }, []);
 
-  const handleBookPress = async (book: OpenLibraryBook) => {
+  const handleBookPress = (book: OpenLibraryBook) => {
     const olid = extractOLID(book.key);
-    setIsFetchingEdition(true);
-
-    try {
-      const edition = await getBestEditionForWork({ openLibraryId: olid });
-      const editionOLID = extractOLID(edition.key);
-      const result: SearchResult = {
-        id: editionOLID,
-        workId: olid,
-        title: book.title,
-        author: book.author_name?.join(', ') || 'Unknown Author',
-        coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
-        description: undefined,
-        pageCount: edition.number_of_pages || 0,
-        publishedDate: book.first_publish_year?.toString(),
-        isbn10: edition.isbn_10?.[0],
-        isbn13: edition.isbn_13?.[0],
-        openLibraryId: editionOLID,
-      };
-      setSelectedBook(result);
-    } catch (error) {
-      console.error('Failed to fetch edition:', error);
-      const result: SearchResult = {
-        id: olid,
-        workId: olid,
-        title: book.title,
-        author: book.author_name?.join(', ') || 'Unknown Author',
-        coverUrl: getBookCoverURL(book.cover_i, olid, book.isbn),
-        description: undefined,
-        pageCount: 0,
-        publishedDate: book.first_publish_year?.toString(),
-        isbn10: book.isbn?.find(isbn => isbn.length === 10),
-        isbn13: book.isbn?.find(isbn => isbn.length === 13),
-        openLibraryId: olid,
-      };
-      setSelectedBook(result);
-    } finally {
-      setIsFetchingEdition(false);
-    }
-  };
-
-  const handleAdd = async (status: string) => {
-    if (selectedBook) {
-      await addBook.mutate({
-        title: selectedBook.title,
-        author: selectedBook.author,
-        description: selectedBook.description,
-        coverUrl: selectedBook.coverUrl,
-        isbn10: selectedBook.isbn10,
-        isbn13: selectedBook.isbn13,
-        totalPages: selectedBook.pageCount || 0,
-        status,
-        openLibraryId: selectedBook.openLibraryId,
-      });
-      setShowAddSheet(false);
-      setSelectedBook(null);
-    }
-  };
-
-  const handleCloseSheet = () => {
-    setShowAddSheet(false);
+    console.log('🔍 [SearchScreen] handleBookPress called');
+    console.log('🔍 [SearchScreen] book.key:', book.key);
+    console.log('🔍 [SearchScreen] extracted olid:', olid);
+    console.log('🔍 [SearchScreen] Navigating to: /add-book/', olid);
+    router.push(`/add-book/${olid}` as any);
   };
 
   return (
@@ -224,29 +148,10 @@ export default function SearchScreen() {
                         </Text>
                         {book.edition_count && (
                           <Text className="text-xs text-gray-400 mt-1">
-                            {book.edition_count} {book.edition_count === 1 ? 'edition' : 'editions'}
+                            {book.edition_count} {book.edition_count ===1 ? 'edition' : 'editions'}
                           </Text>
                         )}
                       </View>
-
-                      {selectedBook?.workId === olid ? (
-                        isFetchingEdition ? (
-                          <View className="py-2 px-4 bg-gray-200 rounded-lg self-start mt-2">
-                            <Text className="text-gray-600 text-sm font-semibold">Loading...</Text>
-                          </View>
-                        ) : (
-                          <Pressable
-                            onPress={(e) => {
-                              e.stopPropagation();
-                              setShowAddSheet(true);
-                            }}
-                            style={{ backgroundColor: colors.primary }}
-                            className="py-2 px-4 rounded-lg self-start mt-2"
-                          >
-                            <Text className="text-white text-sm font-semibold">Add</Text>
-                          </Pressable>
-                        )
-                      ) : null}
                     </View>
                   </View>
                 </Pressable>
@@ -255,8 +160,6 @@ export default function SearchScreen() {
           </View>
         )}
       </ScrollView>
-
-      <AddBookSheet visible={showAddSheet} onClose={handleCloseSheet} onAdd={handleAdd} pageCount={selectedBook?.pageCount} />
     </View>
   );
 }

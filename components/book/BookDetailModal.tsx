@@ -1,7 +1,8 @@
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { View, Text, Pressable, ScrollView, Image } from '@/tw';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { ProgressSlider } from '../ui/ProgressSlider';
 import { RatingPicker } from '../ui/RatingPicker';
 import { ListSelector } from '../ui/ListSelector';
@@ -30,7 +31,10 @@ type BookDetailModalProps = {
 };
 
 export const BookDetailModal = ({ visible, bookId, onClose }: BookDetailModalProps) => {
-  const bookDetail = useQuery(api.books.getBookById, bookId ? { bookId: bookId as Id<'books'> } : 'skip');
+  const bookDetail = useQuery(
+    api.books.getBookById,
+    bookId ? { bookId: bookId as any } : 'skip'
+  );
   const lists = useQuery(api.lists.getUserLists, {});
   const updateProgress = useUpdateProgress();
   const rateBook = useRateBook();
@@ -40,10 +44,39 @@ export const BookDetailModal = ({ visible, bookId, onClose }: BookDetailModalPro
   const [selectedListIds, setSelectedListIds] = useState<string[]>([]);
   const [showProgressSlider, setShowProgressSlider] = useState(false);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const book = bookDetail as BookDetail | null | undefined;
 
-  if (!visible || !book) return null;
+  useEffect(() => {
+    if (bookId === undefined || bookId === null || bookId === '') {
+      setIsLoading(false);
+    } else if (bookDetail !== undefined) {
+      setIsLoading(false);
+    }
+  }, [bookId, bookDetail]);
+
+  if (!visible) return null;
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#3b82f6" />
+        <Text className="text-gray-600 mt-4">Loading book details...</Text>
+      </View>
+    );
+  }
+
+  if (!book) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white px-8">
+        <Text className="text-center text-gray-900">Book not found</Text>
+        <Text className="text-center text-gray-600 text-sm mt-2">
+          This book may have been deleted or you don&apos;t have access to it.
+        </Text>
+      </View>
+    );
+  }
 
   const handleProgressUpdate = (newPage: number) => {
     updateProgress.mutate({ bookId: book._id, currentPage: newPage });
@@ -125,16 +158,16 @@ export const BookDetailModal = ({ visible, bookId, onClose }: BookDetailModalPro
 
         {showProgressSlider && (
           <ProgressSlider
-            currentPage={book.currentPage}
-            totalPages={book.totalPages}
-            onProgressChange={handleProgressUpdate}
+            value={book.currentPage}
+            max={book.totalPages}
+            onChange={handleProgressUpdate}
           />
         )}
 
         {showRatingPicker && (
           <RatingPicker
-            currentRating={book.rating?.rating}
-            onRatingChange={handleRatingUpdate}
+            value={book.rating?.rating}
+            onChange={handleRatingUpdate}
           />
         )}
 

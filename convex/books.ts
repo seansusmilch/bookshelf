@@ -47,17 +47,27 @@ export const getBookById = query({
     bookId: v.id('books'),
   },
   handler: async (ctx, args) => {
+    console.log('🔍 [getBookById] Query called with args:', args);
+    console.log('🔍 [getBookById] bookId:', args.bookId);
+    console.log('🔍 [getBookById] bookId type:', typeof args.bookId);
+
     const identity = await ctx.auth.getUserIdentity();
+    console.log('🔍 [getBookById] identity:', identity);
 
     if (identity === null) {
+      console.log('🔍 [getBookById] No identity, returning null');
       return null;
     }
 
     const userId = identity.subject;
+    console.log('🔍 [getBookById] userId:', userId);
 
     const book = await ctx.db.get(args.bookId);
+    console.log('🔍 [getBookById] Book from DB:', book);
+    console.log('🔍 [getBookById] Book userId matches?', book?.userId === userId);
 
     if (!book || book.userId !== userId) {
+      console.log('🔍 [getBookById] Book not found or not owned by user, returning null');
       return null;
     }
 
@@ -65,6 +75,9 @@ export const getBookById = query({
       .query('ratings')
       .withIndex('by_user_book', (q) => q.eq('userId', userId).eq('bookId', args.bookId))
       .first();
+
+    console.log('🔍 [getBookById] Rating:', rating);
+    console.log('🔍 [getBookById] Returning book with rating');
 
     return { ...book, rating };
   },

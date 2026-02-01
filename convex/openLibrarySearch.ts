@@ -6,11 +6,12 @@ import {
   searchBooks as searchBooksAPI,
   getBook as getBookAPI,
   getBookByISBN as getBookByISBNAPI,
-  getWorkEditions,
+  getWorkEditions as getWorkEditionsAPI,
   type SearchQuery,
   type Book,
   type SearchResponse,
 } from './lib/openlibrary';
+import type { EditionsResponse } from './lib/openlibrary/types';
 
 export const searchBooks = action({
   args: {
@@ -174,7 +175,7 @@ export const getBestEditionForWork = action({
     console.log('[getBestEditionForWork] Finding best edition for work:', args.openLibraryId);
 
     try {
-      const editionsResponse = await getWorkEditions(args.openLibraryId);
+      const editionsResponse = await getWorkEditionsAPI(args.openLibraryId);
       const entries = editionsResponse.entries;
 
       if (!entries || entries.length === 0) {
@@ -182,7 +183,7 @@ export const getBestEditionForWork = action({
         throw new Error(`No editions found for work: ${args.openLibraryId}`);
       }
 
-      const bestEdition = entries.find((edition) => {
+      const bestEdition = entries.find((edition: any) => {
         const pageCount = edition.number_of_pages;
         return pageCount !== undefined && pageCount > 0;
       });
@@ -208,6 +209,33 @@ export const getBestEditionForWork = action({
       throw new Error(
         `Failed to find best edition for work: ${args.openLibraryId}`
       );
+    }
+  },
+});
+
+export const getWorkEditions = action({
+  args: {
+    openLibraryId: v.string(),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args): Promise<EditionsResponse> => {
+    console.log('[getWorkEditions] Fetching editions for work:', args.openLibraryId);
+
+    try {
+      const editionsResponse = await getWorkEditionsAPI(args.openLibraryId, args.limit || 50);
+
+      console.log('[getWorkEditions] Successfully fetched editions:', {
+        workId: args.openLibraryId,
+        count: editionsResponse.entries.length,
+      });
+
+      return editionsResponse;
+    } catch (error) {
+      console.error('[getWorkEditions] Error:', {
+        workId: args.openLibraryId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw new Error(`Failed to fetch editions for work: ${args.openLibraryId}`);
     }
   },
 });

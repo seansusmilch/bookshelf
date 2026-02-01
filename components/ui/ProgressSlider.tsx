@@ -1,57 +1,213 @@
+import { Pressable, View, Text } from '@/tw';
 import { useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import { View, Text, Pressable } from '@/tw';
+import { useAppTheme } from '@/components/material3-provider';
 
 type ProgressSliderProps = {
-  currentPage: number;
-  totalPages: number;
-  onProgressChange: (page: number) => void;
+  value: number;
+  max: number;
+  onChange: (value: number) => void;
+  showLabel?: boolean;
+  disabled?: boolean;
+  className?: string;
 };
 
 export const ProgressSlider = ({
-  currentPage,
-  totalPages,
-  onProgressChange,
+  value,
+  max,
+  onChange,
+  showLabel = true,
+  disabled = false,
+  className = '',
 }: ProgressSliderProps) => {
-  const [sliderWidth, setSliderWidth] = useState(0);
-  const progressPercent = totalPages > 0 ? (currentPage / totalPages) * 100 : 0;
+  const { colors } = useAppTheme();
+  const [width, setWidth] = useState(0);
+  const progress = max > 0 ? value / max : 0;
 
   const handleLayout = (event: LayoutChangeEvent) => {
-    setSliderWidth(event.nativeEvent.layout.width);
+    setWidth(event.nativeEvent.layout.width);
   };
 
-  const handlePress = (e: any) => {
-    const { locationX } = e.nativeEvent;
-    if (sliderWidth > 0) {
-      const percentage = Math.max(0, Math.min(1, locationX / sliderWidth));
-      const newPage = Math.round(percentage * totalPages);
-      onProgressChange(Math.max(0, Math.min(totalPages, newPage)));
-    }
+  const handlePress = (event: any) => {
+    if (disabled || width === 0) return;
+    const { locationX } = event.nativeEvent;
+    const newProgress = Math.max(0, Math.min(1, locationX / width));
+    const newValue = Math.round(newProgress * max);
+    onChange(Math.max(0, Math.min(max, newValue)));
   };
 
   return (
-    <View className="px-4 py-3 bg-white rounded-lg">
-      <View className="flex-row justify-between items-center mb-3">
-        <Text className="text-sm text-gray-600">Progress</Text>
-        <Text className="text-sm font-semibold text-gray-900">
-          {currentPage} / {totalPages} pages
-        </Text>
-      </View>
+    <View className={className}>
+      {showLabel && (
+        <View className="flex-row justify-between items-center mb-3">
+          <Text className="text-sm" style={{ color: colors.onSurfaceVariant }}>
+            Progress
+          </Text>
+          <Text className="text-sm font-semibold" style={{ color: colors.onSurface }}>
+            {value} / {max}
+          </Text>
+        </View>
+      )}
 
       <Pressable
         onPress={handlePress}
         onLayout={handleLayout}
-        className="h-8 bg-gray-200 rounded-full overflow-hidden active:bg-gray-300"
+        disabled={disabled}
+        className="h-6 rounded-full overflow-hidden active:opacity-80"
+        style={{
+          backgroundColor: colors.surfaceContainerHighest,
+        }}
       >
         <View
-          className="h-full bg-blue-500 rounded-full transition-all"
-          style={{ width: `${progressPercent}%` }}
+          className="h-full rounded-full"
+          style={{
+            width: `${progress * 100}%`,
+            backgroundColor: disabled ? colors.surfaceContainerHighest : colors.primary,
+          }}
         />
       </Pressable>
 
-      <Text className="text-xs text-gray-500 mt-2 text-center">
-        Tap to set your current page
-      </Text>
+      {!disabled && (
+        <Text className="text-xs text-center mt-2" style={{ color: colors.onSurfaceVariant }}>
+          Tap to update progress
+        </Text>
+      )}
+    </View>
+  );
+};
+
+type LinearProgressProps = {
+  value: number;
+  max: number;
+  variant?: 'determinate' | 'indeterminate';
+  className?: string;
+};
+
+export const LinearProgress = ({ value, max, variant = 'determinate', className = '' }: LinearProgressProps) => {
+  const { colors } = useAppTheme();
+  const progress = max > 0 ? value / max : 0;
+
+  if (variant === 'indeterminate') {
+    return (
+      <View className={`h-1 overflow-hidden rounded-full ${className}`} style={{ backgroundColor: colors.surfaceContainerHighest }}>
+        <View
+          className="h-full"
+          style={{
+            backgroundColor: colors.primary,
+            width: '30%',
+          }}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <View className={`h-1 overflow-hidden rounded-full ${className}`} style={{ backgroundColor: colors.surfaceContainerHighest }}>
+      <View
+        className="h-full rounded-full transition-all"
+        style={{
+          width: `${Math.min(100, Math.max(0, progress * 100))}%`,
+          backgroundColor: colors.primary,
+        }}
+      />
+    </View>
+  );
+};
+
+type CircularProgressProps = {
+  value: number;
+  max: number;
+  size?: number;
+  strokeWidth?: number;
+  className?: string;
+};
+
+export const CircularProgress = ({
+  value,
+  max,
+  size = 48,
+  strokeWidth = 4,
+  className = '',
+}: CircularProgressProps) => {
+  const { colors } = useAppTheme();
+  const progress = max > 0 ? value / max : 0;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (progress * circumference);
+
+  return (
+    <View className={`items-center justify-center ${className}`} style={{ width: size, height: size }}>
+      <svg width={size} height={size}>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={colors.surfaceContainerHighest}
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={colors.primary}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      </svg>
+      <View className="absolute">
+        <Text className="text-xs font-semibold" style={{ color: colors.onSurface }}>
+          {Math.round(progress * 100)}%
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+type ProgressCardProps = {
+  label: string;
+  value: number;
+  max: number;
+  onEdit?: () => void;
+  className?: string;
+};
+
+export const ProgressCard = ({ label, value, max, onEdit, className = '' }: ProgressCardProps) => {
+  const { colors } = useAppTheme();
+  const progress = max > 0 ? (value / max) * 100 : 0;
+
+  return (
+    <View className={`p-4 rounded-xl ${className}`} style={{ backgroundColor: colors.surfaceContainerLow }}>
+      <View className="flex-row justify-between items-start mb-2">
+        <Text className="text-sm" style={{ color: colors.onSurfaceVariant }}>
+          {label}
+        </Text>
+        {onEdit && (
+          <Pressable onPress={onEdit} className="px-2 py-1 rounded-full" style={{ backgroundColor: colors.primaryContainer }}>
+            <Text className="text-xs font-semibold" style={{ color: colors.onPrimaryContainer }}>
+              Edit
+            </Text>
+          </Pressable>
+        )}
+      </View>
+
+      <View className="flex-row items-baseline gap-1 mb-2">
+        <Text className="text-2xl font-bold" style={{ color: colors.onSurface }}>
+          {value}
+        </Text>
+        <Text className="text-sm" style={{ color: colors.onSurfaceVariant }}>
+          / {max}
+        </Text>
+        <Text className="text-sm ml-auto font-semibold" style={{ color: colors.primary }}>
+          {Math.round(progress)}%
+        </Text>
+      </View>
+
+      <LinearProgress value={value} max={max} />
     </View>
   );
 };

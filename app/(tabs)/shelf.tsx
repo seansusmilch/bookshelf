@@ -15,10 +15,11 @@ export default function MyBooksScreen() {
 
   const books = useBooks(selectedStatus === 'all' ? undefined : selectedStatus);
 
-  console.log('Shelf screen - books:', books);
-  console.log('Shelf screen - books is undefined?:', books === undefined);
-  console.log('Shelf screen - books length:', books?.length);
-  console.log('Shelf screen - selectedStatus:', selectedStatus);
+  console.log('📚 [ShelfScreen] Component rendered');
+  console.log('📚 [ShelfScreen] books:', books);
+  console.log('📚 [ShelfScreen] books is undefined?:', books === undefined);
+  console.log('📚 [ShelfScreen] books length:', books?.length);
+  console.log('📚 [ShelfScreen] selectedStatus:', selectedStatus);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -27,6 +28,9 @@ export default function MyBooksScreen() {
   };
 
   const handleBookPress = (bookId: string) => {
+    console.log('📚 [ShelfScreen] handleBookPress called with bookId:', bookId);
+    console.log('📚 [ShelfScreen] bookId type:', typeof bookId);
+    console.log('📚 [ShelfScreen] bookId value:', JSON.stringify(bookId));
     router.push(`/book/${bookId}` as any);
   };
 
@@ -61,7 +65,9 @@ export default function MyBooksScreen() {
         >
           <Text className="text-xl font-bold mb-4">Books ({books.length})</Text>
           {books.map((book: any, index: number) => {
-            console.log(`Rendering book ${index}:`, book);
+            console.log(`📚 [ShelfScreen] Rendering book ${index}:`, book);
+            console.log(`📚 [ShelfScreen] Book ${index} _id:`, book._id);
+            console.log(`📚 [ShelfScreen] Book ${index} _id type:`, typeof book._id);
             return (
               <BookCard
                 key={book._id}

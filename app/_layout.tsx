@@ -57,6 +57,14 @@ export default function RootLayout() {
                             headerShadowVisible: false,
                           }}
                         />
+                        <Stack.Screen
+                          name="add-book/[workId]"
+                          options={{
+                            headerTitle: '',
+                            headerTransparent: true,
+                            headerShadowVisible: false,
+                          }}
+                        />
                       </Stack>
                       <StatusBar style="auto" />
                     </ToastProvider>
