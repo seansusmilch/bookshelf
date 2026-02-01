@@ -26,9 +26,21 @@
 - `app/` - Expo Router pages (file-based routing)
 - `components/` - Reusable UI components
 - `components/tw/` - Tailwind CSS-wrapped components (View, Text, ScrollView, etc.)
+- `components/ui/` - Generic UI components (buttons, cards, inputs, etc.)
+- `components/book/` - Book-specific components (modals, sheets, menus)
+- `components/list/` - List-related components
 - `convex/` - Convex backend functions and schema
+- `hooks/` - Custom React hooks (useBooks, useStats, useAddBook, etc.)
+- `lib/` - Utility libraries and providers (query-client, etc.)
 - `assets/` - Images and fonts
 - `global.css` - Global Tailwind imports
+
+### Folder Rules
+
+- **NO `src/` folder** - All code should be at the root level in appropriate directories
+- `lib/` - For providers, utilities, and helper functions (e.g., `lib/query-client.tsx`)
+- `hooks/` - For all custom React hooks
+- `components/` - For all React components, organized by domain (ui, book, list, etc.)
 
 ## Available Skills
 
@@ -44,19 +56,29 @@ Use these skills when relevant
 - **root-cause-analysis** - Systematic debugging methodology
 - **log-analysis** - Log analysis and error patterns
 
+## Folder Rules
+
+- **NO `src/` folder** - All code should be at the root level in appropriate directories
+- `lib/` - For providers, utilities, and helper functions (e.g., `lib/query-client.tsx`)
+- `hooks/` - For all custom React hooks
+- `components/` - For all React components, organized by domain (ui, book, list, etc.)
+
 ## Code Style
 
 ### Imports
 
 - Order: React Native → Third-party → Local
-- Use path aliases: `@/*` or `~/*` for root imports (e.g., `~/components/ScreenContent`)
+- Use path aliases: `@/*`, `~/lib/*`, or `~/*` for root imports
+  - `@/*` - Root-level imports (e.g., `@/components`, `@/hooks`)
+  - `~/lib/*` - Library utilities (e.g., `~/lib/query-client`)
 - No default exports for components (use named exports)
 - Keep imports organized and deduplicated
 
 ```typescript
 import { View, Text } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { ScreenContent } from '~/components/ScreenContent';
+import { ScreenContent } from '@/components/ScreenContent';
+import { QueryProvider } from '~/lib/query-client';
 ```
 
 ### Components

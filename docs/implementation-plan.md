@@ -126,43 +126,43 @@ This plan breaks down the implementation of the bookshelf reading tracker into p
 
 ### 4.1 My Books Screen
 
-- [ ] `app/(tabs)/my-books.tsx`
-  - [ ] Filter tabs at top
-  - [ ] BookCard list
-  - [ ] Empty state
-  - [ ] Loading state (skeleton)
-  - [ ] Pull-to-refresh
+- [x] `app/(tabs)/my-books.tsx`
+  - [x] Filter tabs at top
+  - [x] BookCard list
+  - [x] Empty state
+  - [x] Loading state (skeleton)
+  - [x] Pull-to-refresh
 
 ### 4.2 Search Screen
 
-- [ ] `app/(tabs)/search.tsx`
-  - [ ] Search bar
-  - [ ] API results list
-  - [ ] Result card with thumbnail, title, author
-  - [ ] Tap to view details
-  - [ ] Add button opens AddBookSheet
+- [x] `app/(tabs)/search.tsx`
+  - [x] Search bar
+  - [x] API results list
+  - [x] Result card with thumbnail, title, author
+  - [x] Tap to view details
+  - [x] Add button opens AddBookSheet
 
 ### 4.3 Stats Screen
 
-- [ ] `app/(tabs)/stats.tsx`
-  - [ ] StatsCard with goal progress
-  - [ ] "Set Goal" button
-  - [ ] Pages read display
+- [x] `app/(tabs)/stats.tsx`
+  - [x] StatsCard with goal progress
+  - [x] "Set Goal" button
+  - [x] Pages read display
   - [ ] Simple charts (optional)
 
 ## Phase 5: Navigation & Routing
 
 ### 5.1 Update Tab Layout
 
-- [ ] Update `app/(tabs)/_layout.tsx`
-  - [ ] Add "My Books", "Search", "Stats" tabs
-  - [ ] Configure tab icons
+- [x] Update `app/(tabs)/_layout.tsx`
+  - [x] Add "My Books", "Search", "Stats" tabs
+  - [x] Configure tab icons
 
 ### 5.2 Modal Routes
 
-- [ ] Create modal routes for:
-  - [ ] Book detail view
-  - [ ] Goal settings
+- [x] Create modal routes for:
+  - [x] Book detail view
+  - [x] Goal settings
 
 ## Phase 6: Error Handling & Validation
 

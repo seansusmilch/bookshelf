@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -246,6 +247,62 @@ export default function AuthScreen() {
 
   if (showOTP) {
     return (
+      <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1, backgroundColor: '#f9fafb' }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={{ justifyContent: 'center', padding: 24, paddingTop: 48, paddingBottom: 48 }}>
+              <View style={{ width: '100%', maxWidth: 384, marginHorizontal: 'auto' }}>
+              <Text className="text-3xl font-bold text-gray-900 mb-2 text-center">Verification</Text>
+              <Text className="text-base text-gray-600 mb-2 text-center">
+                We&apos;ve sent a 6-digit code to
+              </Text>
+                <Text className="text-base text-gray-900 font-semibold mb-8 text-center">
+                  {emailAddress}
+                </Text>
+
+                <TextInput
+                  className="bg-white border border-gray-300 rounded-xl p-4 text-base mb-6 text-center text-2xl tracking-widest"
+                  value={code}
+                  placeholder="000000"
+                  placeholderTextColor="#9ca3af"
+                  onChangeText={(code) => setCode(code)}
+                  keyboardType="numeric"
+                  maxLength={6}
+                />
+
+                <Button onPress={onVerifyOTPPress} disabled={loading || code.length !== 6}>
+                  {loading ? 'Verifying...' : 'Continue'}
+                </Button>
+
+                <Pressable onPress={onResendCode} className="mt-4 py-2">
+                  <Text className="text-blue-600 text-center text-sm font-semibold">Resend code</Text>
+                </Pressable>
+
+                {error && (
+                  <Text className="text-red-600 text-center text-sm mt-4">{error}</Text>
+                )}
+
+                <Button onPress={() => setShowOTP(false)} variant="outline" className="mt-6">
+                  Use a different email
+                </Button>
+              </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+  }
+
+  return (
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       <KeyboardAvoidingView
         style={{ flex: 1, backgroundColor: '#f9fafb' }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -258,123 +315,71 @@ export default function AuthScreen() {
         >
           <View style={{ justifyContent: 'center', padding: 24, paddingTop: 48, paddingBottom: 48 }}>
             <View style={{ width: '100%', maxWidth: 384, marginHorizontal: 'auto' }}>
-            <Text className="text-3xl font-bold text-gray-900 mb-2 text-center">Verification</Text>
-            <Text className="text-base text-gray-600 mb-2 text-center">
-              We&apos;ve sent a 6-digit code to
-            </Text>
-              <Text className="text-base text-gray-900 font-semibold mb-8 text-center">
-                {emailAddress}
+              <Text className="text-4xl font-bold text-gray-900 mb-3 text-center">Welcome!</Text>
+              <Text className="text-base text-gray-600 mb-10 text-center">
+                Sign in or create an account to get started
               </Text>
 
-              <TextInput
-                className="bg-white border border-gray-300 rounded-xl p-4 text-base mb-6 text-center text-2xl tracking-widest"
-                value={code}
-                placeholder="000000"
-                placeholderTextColor="#9ca3af"
-                onChangeText={(code) => setCode(code)}
-                keyboardType="numeric"
-                maxLength={6}
-              />
-
-              <Button onPress={onVerifyOTPPress} disabled={loading || code.length !== 6}>
-                {loading ? 'Verifying...' : 'Continue'}
+              <Button onPress={onGooglePress} variant="outline" className="mb-3">
+                <View className="flex-row items-center gap-3">
+                  <FontAwesome name="google" size={20} color="#4285F4" />
+                  <Text>Continue with Google</Text>
+                </View>
               </Button>
 
-              <Pressable onPress={onResendCode} className="mt-4 py-2">
-                <Text className="text-blue-600 text-center text-sm font-semibold">Resend code</Text>
-              </Pressable>
+              {Platform.OS === 'ios' && (
+                <Button onPress={onApplePress} variant="outline" className="mb-6">
+                  <View className="flex-row items-center gap-3">
+                    <FontAwesome name="apple" size={20} color="#000000" />
+                    <Text>Continue with Apple</Text>
+                  </View>
+                </Button>
+              )}
+
+              <View className="flex-row items-center my-8">
+                <View className="flex-1 h-px bg-gray-300" />
+                <Text className="px-4 text-gray-500 text-sm">or continue with email</Text>
+                <View className="flex-1 h-px bg-gray-300" />
+              </View>
+
+              <Text className="text-sm font-semibold text-gray-700 mb-2">Email</Text>
+              <TextInput
+                className="bg-white border border-gray-300 rounded-xl p-4 text-base mb-4"
+                autoCapitalize="none"
+                value={emailAddress}
+                placeholder="Enter your email address"
+                placeholderTextColor="#9ca3af"
+                onChangeText={(email) => setEmailAddress(email)}
+                keyboardType="email-address"
+              />
+
+              {otpSent ? (
+                <View className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+                  <Text className="text-green-800 font-semibold mb-1">Code sent successfully!</Text>
+                  <Text className="text-green-700 text-sm">
+                    Check your inbox for verification code.
+                  </Text>
+                </View>
+              ) : (
+                <Button onPress={onSendOTPPress} disabled={!emailAddress || loading}>
+                  {loading ? 'Sending...' : 'Send code'}
+                </Button>
+              )}
 
               {error && (
                 <Text className="text-red-600 text-center text-sm mt-4">{error}</Text>
               )}
 
-              <Button onPress={() => setShowOTP(false)} variant="outline" className="mt-6">
-                Use a different email
-              </Button>
+              <View className="flex-row justify-center items-center gap-2 mt-8">
+                <Text className="text-gray-600 text-sm">By continuing, you agree to our</Text>
+                <Text className="text-blue-600 text-sm font-semibold">Terms</Text>
+                <Text className="text-gray-600 text-sm">&</Text>
+                <Text className="text-blue-600 text-sm font-semibold">Privacy Policy</Text>
+              </View>
             </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    );
-  }
-
-  return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#f9fafb' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-    >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={{ justifyContent: 'center', padding: 24, paddingTop: 48, paddingBottom: 48 }}>
-          <View style={{ width: '100%', maxWidth: 384, marginHorizontal: 'auto' }}>
-            <Text className="text-4xl font-bold text-gray-900 mb-3 text-center">Welcome!</Text>
-            <Text className="text-base text-gray-600 mb-10 text-center">
-              Sign in or create an account to get started
-            </Text>
-
-            <Button onPress={onGooglePress} variant="outline" className="mb-3">
-              <View className="flex-row items-center gap-3">
-                <FontAwesome name="google" size={20} color="#4285F4" />
-                <Text>Continue with Google</Text>
-              </View>
-            </Button>
-
-            {Platform.OS === 'ios' && (
-              <Button onPress={onApplePress} variant="outline" className="mb-6">
-                <View className="flex-row items-center gap-3">
-                  <FontAwesome name="apple" size={20} color="#000000" />
-                  <Text>Continue with Apple</Text>
-                </View>
-              </Button>
-            )}
-
-            <View className="flex-row items-center my-8">
-              <View className="flex-1 h-px bg-gray-300" />
-              <Text className="px-4 text-gray-500 text-sm">or continue with email</Text>
-              <View className="flex-1 h-px bg-gray-300" />
-            </View>
-
-            <Text className="text-sm font-semibold text-gray-700 mb-2">Email</Text>
-            <TextInput
-              className="bg-white border border-gray-300 rounded-xl p-4 text-base mb-4"
-              autoCapitalize="none"
-              value={emailAddress}
-              placeholder="Enter your email address"
-              placeholderTextColor="#9ca3af"
-              onChangeText={(email) => setEmailAddress(email)}
-              keyboardType="email-address"
-            />
-
-            {otpSent ? (
-              <View className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
-                <Text className="text-green-800 font-semibold mb-1">Code sent successfully!</Text>
-                <Text className="text-green-700 text-sm">
-                  Check your inbox for the verification code.
-                </Text>
-              </View>
-            ) : (
-              <Button onPress={onSendOTPPress} disabled={!emailAddress || loading}>
-                {loading ? 'Sending...' : 'Send code'}
-              </Button>
-            )}
-
-            {error && (
-              <Text className="text-red-600 text-center text-sm mt-4">{error}</Text>
-            )}
-
-            <View className="flex-row justify-center items-center gap-2 mt-8">
-              <Text className="text-gray-600 text-sm">By continuing, you agree to our</Text>
-              <Text className="text-blue-600 text-sm font-semibold">Terms</Text>
-              <Text className="text-gray-600 text-sm">&</Text>
-              <Text className="text-blue-600 text-sm font-semibold">Privacy Policy</Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
