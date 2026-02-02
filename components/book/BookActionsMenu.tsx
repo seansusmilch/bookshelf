@@ -1,5 +1,4 @@
-import { Pressable, View, Text } from '@/tw';
-import { Modal } from 'react-native';
+import { Pressable, View, Text, Modal } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type Action = {

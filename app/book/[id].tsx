@@ -1,8 +1,7 @@
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
-import { View, Text } from '@/tw';
 import { useState, useLayoutEffect, useEffect, useRef } from 'react';
-import { Animated, ScrollView } from 'react-native';
+import { View, Text, Animated, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from '@/hooks/use-color-scheme';

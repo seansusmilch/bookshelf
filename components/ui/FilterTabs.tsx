@@ -1,5 +1,4 @@
-import { ScrollView as RNScrollView } from 'react-native';
-import { View, Text, Pressable } from '@/tw';
+import { ScrollView, View, Text, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
 
 type FilterTabsProps = {
@@ -28,7 +27,7 @@ export const FilterTabs = ({ selectedStatus, onStatusChange }: FilterTabsProps) 
 
   return (
     <View className="px-4 py-2">
-      <RNScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="flex-row gap-2">
           {STATUS_OPTIONS.map((option) => (
             <Pressable
@@ -48,7 +47,7 @@ export const FilterTabs = ({ selectedStatus, onStatusChange }: FilterTabsProps) 
             </Pressable>
           ))}
         </View>
-      </RNScrollView>
+      </ScrollView>
     </View>
   );
 };

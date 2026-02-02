@@ -8,9 +8,11 @@ export async function searchBooks(
 ): Promise<SearchResponse> {
   const params = new URLSearchParams({
     q: query.q,
-    fields: query.fields || 'key,title,author_name,author_key,cover_i,first_publish_year,edition_count,isbn,language,publisher,publish_year,subject',
+    fields: query.fields || 'key,title,author_name,author_key,cover_i,cover_edition_key,first_publish_year,edition_count,isbn,language,publisher,publish_year,subject,editions,editions.key,editions.title,editions.covers,editions.publish_date,editions.number_of_pages,editions.languages',
     limit: (query.limit || 20).toString(),
   });
+
+  if (query.lang) params.append('lang', query.lang);
 
   if (query.offset) params.append('offset', query.offset.toString());
   if (query.page) params.append('page', query.page.toString());

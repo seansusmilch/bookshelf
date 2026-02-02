@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable } from '@/tw';
+import { View, Text, Image, Pressable } from 'react-native';
 import { useAppTheme } from '@/components/material3-provider';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 

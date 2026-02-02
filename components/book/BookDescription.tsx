@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from '@/tw';
+import { View, Text, Pressable } from 'react-native';
 import { useState } from 'react';
 import { useAppTheme } from '@/components/material3-provider';
 

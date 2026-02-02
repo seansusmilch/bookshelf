@@ -1,6 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
-import { View as StyledView, Text as StyledText } from '@/tw';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -41,18 +40,18 @@ export const ErrorBoundary = class ErrorBoundary extends Component<
       }
 
       return (
-        <StyledView className="flex-1 bg-gray-50 px-6 items-center justify-center">
-          <StyledView className="w-full max-w-sm bg-white rounded-lg p-6 shadow-sm">
-            <StyledText className="text-2xl font-bold text-red-500 mb-2">
+        <View className="flex-1 bg-gray-50 px-6 items-center justify-center">
+          <View className="w-full max-w-sm bg-white rounded-lg p-6 shadow-sm">
+            <Text className="text-2xl font-bold text-red-500 mb-2">
               Oops!
-            </StyledText>
-            <StyledText className="text-gray-600 mb-4">
+            </Text>
+            <Text className="text-gray-600 mb-4">
               Something went wrong. Please try again.
-            </StyledText>
+            </Text>
             {this.state.error && (
-              <StyledText className="text-gray-400 text-sm mb-4 font-mono">
+              <Text className="text-gray-400 text-sm mb-4 font-mono">
                 {this.state.error.message}
-              </StyledText>
+              </Text>
             )}
             <TouchableOpacity
               onPress={this.handleReset}
@@ -62,8 +61,8 @@ export const ErrorBoundary = class ErrorBoundary extends Component<
                 Try Again
               </Text>
             </TouchableOpacity>
-          </StyledView>
-        </StyledView>
+          </View>
+        </View>
       );
     }
 

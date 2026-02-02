@@ -33,10 +33,10 @@ This project is set up with Tailwind CSS v4 and NativeWind v5 for utility-first 
 
 ### Usage
 
-Import CSS-wrapped components from `@/tw`:
+Import React Native components directly. className is supported via Babel plugin:
 
 ```tsx
-import { View, Text, ScrollView } from "@/tw";
+import { View, Text, ScrollView } from "react-native";
 
 export default function MyScreen() {
   return (

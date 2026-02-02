@@ -1,20 +1,19 @@
-import '@/global.css';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
-import { ConvexProviderWithClerk } from 'convex/react-clerk';
-import { ConvexReactClient } from 'convex/react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { ConvexReactClient } from 'convex/react';
+import { ConvexProviderWithClerk } from 'convex/react-clerk';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { QueryProvider } from '~/lib/query-client';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary } from '@/components/error/ErrorBoundary';
-import { ToastProvider } from '@/hooks/useToast';
 import { Material3Provider } from '@/components/material3-provider';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ToastProvider } from '@/hooks/useToast';
+import { QueryProvider } from '~/lib/query-client';
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 

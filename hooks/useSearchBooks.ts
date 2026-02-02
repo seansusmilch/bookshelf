@@ -45,6 +45,7 @@ export interface OpenLibraryBook {
   author_name: string[];
   author_key: string[];
   cover_i?: number;
+  cover_edition_key?: string;
   first_publish_year?: number;
   edition_count?: number;
   isbn?: string[];
@@ -52,4 +53,17 @@ export interface OpenLibraryBook {
   publisher?: string[];
   publish_year?: number[];
   subject?: string[];
+  editions?: {
+    num_found: number;
+    start: number;
+    num_found_exact: boolean;
+    docs: Array<{
+      key: string;
+      title: string;
+      covers?: number[];
+      publish_date?: string;
+      number_of_pages?: number;
+      languages?: Array<{ key: string }>;
+    }>;
+  };
 }

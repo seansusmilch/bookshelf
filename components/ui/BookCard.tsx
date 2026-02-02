@@ -1,6 +1,5 @@
-import { Pressable } from 'react-native';
+import { Pressable, View, Text, Image } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { View, Text, Image } from '@/tw';
 import { Id } from 'convex/_generated/dataModel';
 
 type BookProps = {

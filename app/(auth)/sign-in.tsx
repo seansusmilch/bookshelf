@@ -1,12 +1,11 @@
 import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser';
-import { Pressable, ScrollView, Text, TextInput, View } from '@/tw';
+import { Pressable, ScrollView, Text, TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { useOAuth, useSignIn, useSignUp } from '@clerk/clerk-expo';
 import { EmailCodeFactor, SignInFirstFactor } from '@clerk/types';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type ButtonProps = {

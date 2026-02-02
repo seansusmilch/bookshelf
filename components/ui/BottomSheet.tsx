@@ -1,7 +1,6 @@
-import { View, Pressable, Text, ScrollView } from '@/tw';
+import { View, Pressable, Text, ScrollView, Modal, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { useEffect } from 'react';
 import { useAppTheme } from '@/components/material3-provider';
-import { Modal, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 
 type BottomSheetProps = {
   visible: boolean;

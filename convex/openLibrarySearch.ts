@@ -1,15 +1,17 @@
 'use node';
 
-import { action } from './_generated/server';
 import { v } from 'convex/values';
+import { action } from './_generated/server';
 import {
-  searchBooks as searchBooksAPI,
   getBook as getBookAPI,
+  getWork as getWorkAPI,
   getBookByISBN as getBookByISBNAPI,
   getWorkEditions as getWorkEditionsAPI,
-  type SearchQuery,
+  searchBooks as searchBooksAPI,
   type Book,
+  type SearchQuery,
   type SearchResponse,
+  type Work,
 } from './lib/openlibrary';
 import type { EditionsResponse } from './lib/openlibrary/types';
 
@@ -34,6 +36,7 @@ export const searchBooks = action({
 
     const searchQuery: SearchQuery = {
       q: args.query,
+      lang: 'eng',
       limit: 20,
     };
 
@@ -167,6 +170,60 @@ export const getBookByISBN = action({
   },
 });
 
+function scoreEdition(edition: Book): number {
+  let score = 0;
+
+  // Prefer editions with covers (highest priority)
+  if (edition.covers && edition.covers.length > 0) {
+    score += 100;
+  }
+
+  // Prefer English language
+  const hasEnglish = edition.languages?.some(l => l.key === '/languages/eng');
+  if (hasEnglish) {
+    score += 50;
+  }
+
+  // Prefer more recent editions (within last 30 years)
+  if (edition.publish_date) {
+    const year = parseInt(edition.publish_date.split('-')[0]);
+    const currentYear = new Date().getFullYear();
+    if (!isNaN(year)) {
+      if (year >= currentYear - 5) {
+        score += 30;
+      } else if (year >= currentYear - 15) {
+        score += 20;
+      } else if (year >= 1990) {
+        score += 10;
+      }
+    }
+  }
+
+  // Prefer physical books over ebooks
+  if (edition.physical_format && edition.physical_format !== 'ebook') {
+    score += 15;
+  }
+
+  // Prefer editions with ISBN
+  const hasISBN = (edition.isbn_13 && edition.isbn_13.length > 0) ||
+                   (edition.isbn_10 && edition.isbn_10.length > 0);
+  if (hasISBN) {
+    score += 25;
+  }
+
+  // Prefer editions with page count
+  if (edition.number_of_pages) {
+    score += 10;
+  }
+
+  // Prefer editions with publishers (indicates more complete metadata)
+  if (edition.publishers && edition.publishers.length > 0) {
+    score += 5;
+  }
+
+  return score;
+}
+
 export const getBestEditionForWork = action({
   args: {
     openLibraryId: v.string(),
@@ -183,20 +240,26 @@ export const getBestEditionForWork = action({
         throw new Error(`No editions found for work: ${args.openLibraryId}`);
       }
 
-      const bestEdition = entries.find((edition: any) => {
-        const pageCount = edition.number_of_pages;
-        return pageCount !== undefined && pageCount > 0;
-      });
+      // Score all editions and select the best one
+      const scoredEditions = entries.map(edition => ({
+        edition,
+        score: scoreEdition(edition)
+      }));
 
-      const selectedEdition = bestEdition || entries[0];
+      const sortedEditions = scoredEditions.sort((a, b) => b.score - a.score);
+      const selectedEdition = sortedEditions[0].edition;
 
       console.log('[getBestEditionForWork] Selected edition:', {
         workId: args.openLibraryId,
         editionId: selectedEdition.key,
         title: selectedEdition.title,
+        score: sortedEditions[0].score,
         pageCount: selectedEdition.number_of_pages,
-        hasValidPageCount: bestEdition !== undefined,
         totalEditions: entries.length,
+        topScores: sortedEditions.slice(0, 3).map(s => ({
+          key: s.edition.key,
+          score: s.score
+        }))
       });
 
       return selectedEdition;
@@ -209,6 +272,33 @@ export const getBestEditionForWork = action({
       throw new Error(
         `Failed to find best edition for work: ${args.openLibraryId}`
       );
+    }
+  },
+});
+
+export const getWork = action({
+  args: {
+    openLibraryId: v.string(),
+  },
+  handler: async (ctx, args): Promise<Work> => {
+    console.log('[getWork] Fetching work details for:', args.openLibraryId);
+
+    try {
+      const work = await getWorkAPI(args.openLibraryId);
+
+      console.log('[getWork] Successfully fetched work:', {
+        openLibraryId: args.openLibraryId,
+        title: work.title,
+      });
+
+      return work;
+    } catch (error) {
+      console.error('[getWork] Error fetching work details:', {
+        openLibraryId: args.openLibraryId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        errorName: error instanceof Error ? error.name : 'Unknown',
+      });
+      throw new Error('Failed to fetch work details');
     }
   },
 });

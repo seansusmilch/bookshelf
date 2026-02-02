@@ -22,7 +22,7 @@ Core principle: Fresh subagent per task + two-stage review (spec then quality) =
 
 - **Framework**: Expo SDK 54, React Native 0.81, React 19
 - **Router**: Expo Router (file-based routing)
-- **Styling**: NativeWind v5 + Tailwind CSS v4
+- **Styling**: NativeWind v4.2.1 + Tailwind CSS v3.3.3 (Babel plugin approach)
 - **UI Components**: react-native-paper (Material Design 3)
 - **Theming**: @pchmn/expo-material3-theme (Material Design 3 dynamic colors)
 - **Backend**: Convex
@@ -35,7 +35,8 @@ Core principle: Fresh subagent per task + two-stage review (spec then quality) =
 
 - `app/` - Expo Router pages (file-based routing)
 - `components/` - Reusable UI components
-- `components/tw/` - Tailwind CSS-wrapped components (View, Text, ScrollView, etc.)
+- `components/tw/` - NativeWind-wrapped components for type safety (View, Text, ScrollView, etc.)
+- `tailwind.config.js` - Tailwind CSS configuration with nativewind preset
 - `components/ui/` - Generic UI components (buttons, cards, inputs, etc.)
 - `components/book/` - Book-specific components (modals, sheets, menus)
 - `components/list/` - List-related components
@@ -45,7 +46,8 @@ Core principle: Fresh subagent per task + two-stage review (spec then quality) =
 - `hooks/` - Custom React hooks (useBooks, useStats, useAddBook, etc.)
 - `lib/` - Utility libraries and providers (query-client, etc.)
 - `assets/` - Images and fonts
-- `global.css` - Global Tailwind imports
+- `tailwind.config.js` - Tailwind CSS configuration
+- `nativewind-env.d.ts` - TypeScript types for NativeWind v4
 
 ### Folder Rules
 
@@ -58,8 +60,9 @@ Core principle: Fresh subagent per task + two-stage review (spec then quality) =
 
 Use these skills when relevant
 
+- **openlibrary** - Book metadata, author information, search, covers API
 - **native-data-fetching** - Network requests, API calls, data fetching patterns
-- **expo-tailwind-setup** - Tailwind CSS v4 + NativeWind v5 configuration
+- **expo-tailwind-setup** - Tailwind CSS v3 + NativeWind v4 configuration
 - **building-native-ui** - Expo Router components, styling, navigation, Material Design 3
 - **convex** - All Convex patterns (functions, realtime, agents)
 - **convex-best-practices** - Production-ready Convex architecture
@@ -107,23 +110,33 @@ Button.displayName = 'Button';
 
 ### Styling
 
-- Prefer NativeWind className over StyleSheet
-- Import CSS-wrapped components from `@/tw` (e.g., `import { View, Text } from "@/tw"`)
+- Use NativeWind v4 with Tailwind CSS v3 for styling
+- Import components from `@/tw` for type safety with className props
+- Use Tailwind className directly on all components
+- className works out of the box on React Native components via Babel plugin
 - Use template literals for style objects when needed
 - Define styles as const objects at file bottom
 - Tailwind classes should follow utility-first approach
 
 ```typescript
-import { View, Text } from "@/tw";
+import { View, Text } from "react-native";
 
 // Preferred
 <View className="flex items-center justify-center p-4 bg-white" />
 
-// Alternative
+// Alternative for style objects
 const styles = {
   container: `flex flex-1 px-4 bg-white items-center justify-center`,
 };
 ```
+
+**NativeWind v4 Configuration:**
+- Babel config in `babel.config.js` includes `nativewind/babel` plugin for className transformation
+- Tailwind config in `tailwind.config.js` configures content paths (no preset needed)
+- No Metro wrapper needed (default config is fine)
+- No global.css import needed - babel plugin handles all transformations at build time
+- Components in `components/tw/` export React Native components directly
+- TypeScript types in `nativewind-env.d.ts` from nativewind/types
 
 ### TypeScript
 
@@ -239,9 +252,30 @@ export const useBooks = () => {
 - Follow Material Design 3 guidelines for UI components
 - Dynamic color generation from source color for light/dark modes
 
-## Notes
+## Configuration Notes
 
+### Styling Setup
+- NativeWind v4.2.1 uses babel plugin for className transformation
+- babel.config.js must include `nativewind/babel` plugin
+- tailwind.config.js configures content paths (no preset needed with Tailwind CSS v3)
+- metro.config.js uses default configuration (no NativeWind wrapper)
+- No global.css import needed - babel plugin handles all transformations at build time
+- Components export React Native components directly (className handled by babel plugin)
+- nativewind-env.d.ts provides TypeScript types from nativewind/types
+- Restart dev server with `-c` flag after config changes: `npx expo start -c`
+
+### Troubleshooting
+- If styles don't apply on Android/iOS: clear Metro cache with `-c` flag
+- Ensure babel.config.js has `nativewind/babel` plugin
+- Verify tailwind.config.js has correct content paths
+- Check nativewind-env.d.ts has `/// <reference types="nativewind/types" />`
+- Do NOT import global.css in app/_layout.tsx (causes PostCSS async errors)
+- Make sure `react-native-css` and `@tailwindcss/postcss` are NOT installed (v4 doesn't use them)
+- Ensure Tailwind CSS v3.3.3 is installed (v3.4+ has PostCSS 8 compatibility issues)
+- Verify components are imported from `@/tw` (className won't work with direct react-native imports)
+
+### Development Notes
 - No test framework currently - add tests when appropriate
 - No CI/CD configured yet
 - Environment files: .env.local (not committed)
-- Global styles in global.css
+- No global styles file needed - NativeWind babel plugin handles all styling

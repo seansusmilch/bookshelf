@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput } from '@/tw';
+import { View, Text, Pressable, TextInput } from 'react-native';
 import { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 

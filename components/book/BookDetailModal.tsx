@@ -1,8 +1,7 @@
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
-import { View, Text, Pressable, ScrollView, Image } from '@/tw';
 import { useState, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { ProgressSlider } from '../ui/ProgressSlider';
 import { RatingPicker } from '../ui/RatingPicker';
 import { ListSelector } from '../ui/ListSelector';

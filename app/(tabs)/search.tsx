@@ -1,6 +1,6 @@
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
 import { useAppTheme } from '@/components/material3-provider';
-import { Image, Pressable, ScrollView, Text, View } from '@/tw';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Searchbar } from 'react-native-paper';
@@ -15,7 +15,8 @@ function extractOLID(key: string): string {
 function getBookCoverURL(
   coverId: number | undefined,
   olid: string,
-  isbn?: string[]
+  isbn?: string[],
+  editionKey?: string
 ): string | undefined {
   if (coverId) {
     return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
@@ -26,8 +27,16 @@ function getBookCoverURL(
   if (olid) {
     return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg`;
   }
+  if (editionKey) {
+    const editionOlid = extractOLID(editionKey);
+    return `https://covers.openlibrary.org/b/olid/${editionOlid}-M.jpg`;
+  }
   console.log('No cover source available');
   return undefined;
+}
+
+function getTopEdition(book: OpenLibraryBook) {
+  return book.editions?.docs?.[0];
 }
 
 export default function SearchScreen() {
@@ -63,12 +72,14 @@ export default function SearchScreen() {
   }, []);
 
   const handleBookPress = (book: OpenLibraryBook) => {
-    const olid = extractOLID(book.key);
+    const topEdition = getTopEdition(book);
+    const editionOlid = topEdition?.key ? extractOLID(topEdition.key) : extractOLID(book.key);
     console.log('🔍 [SearchScreen] handleBookPress called');
     console.log('🔍 [SearchScreen] book.key:', book.key);
-    console.log('🔍 [SearchScreen] extracted olid:', olid);
-    console.log('🔍 [SearchScreen] Navigating to: /add-book/', olid);
-    router.push(`/add-book/${olid}` as any);
+    console.log('🔍 [SearchScreen] topEdition:', topEdition);
+    console.log('🔍 [SearchScreen] extracted edition olid:', editionOlid);
+    console.log('🔍 [SearchScreen] Navigating to: /add-book/', editionOlid);
+    router.push(`/add-book/${editionOlid}` as any);
   };
 
   return (
@@ -111,8 +122,8 @@ export default function SearchScreen() {
         ) : (
           <View className="gap-3">
             {searchResults.docs?.map((book: OpenLibraryBook) => {
-              const olid = extractOLID(book.key);
-              const coverUrl = getBookCoverURL(book.cover_i, olid, book.isbn);
+              const workOlid = extractOLID(book.key);
+              const coverUrl = getBookCoverURL(book.cover_i, workOlid, book.isbn, book.cover_edition_key);
               return (
                 <Pressable
                   key={book.key}

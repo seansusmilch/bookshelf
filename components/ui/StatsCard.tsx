@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from '@/tw';
+import { View, Text, Pressable } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type StatsCardProps = {

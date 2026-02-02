@@ -1,5 +1,4 @@
-import { View, Text, Pressable } from '@/tw';
-import { ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useAppTheme } from '@/components/material3-provider';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 

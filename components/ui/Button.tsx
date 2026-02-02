@@ -1,5 +1,4 @@
-import { Pressable, Text, View } from '@/tw';
-import { ActivityIndicator } from 'react-native';
+import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { forwardRef } from 'react';
 import { useAppTheme } from '@/components/material3-provider';
 

@@ -24,6 +24,12 @@ export interface SearchResultDoc {
   publisher?: string[];
   publish_year?: number[];
   subject?: string[];
+  editions?: {
+    num_found: number;
+    start: number;
+    num_found_exact: boolean;
+    docs: EditionDoc[];
+  };
   [key: string]: any;
 }
 

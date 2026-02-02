@@ -1,6 +1,5 @@
-import { View } from '@/tw';
 import { useState, useCallback, useEffect, useRef, useLayoutEffect } from 'react';
-import { Animated, ScrollView } from 'react-native';
+import { View, Animated, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useAction } from 'convex/react';
@@ -30,19 +29,16 @@ type Edition = {
 };
 
 export default function AddBookScreen() {
-  const { workId } = useLocalSearchParams<{ workId: string }>();
   const router = useRouter();
   const navigation = useNavigation();
   const { colors } = useAppTheme();
+  const { workId: paramId } = useLocalSearchParams<{ workId: string }>();
   const addBook = useAddBook();
   const getWorkEditions = useAction(api.openLibrarySearch.getWorkEditions);
-  const getBestEditionForWork = useAction(api.openLibrarySearch.getBestEditionForWork);
+  const getBookDetails = useAction(api.openLibrarySearch.getBookDetails);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   console.log('🔍 [AddBookScreen] Component rendered');
-  console.log('🔍 [AddBookScreen] workId from params:', workId);
-  console.log('🔍 [AddBookScreen] workId type:', typeof workId);
-  console.log('🔍 [AddBookScreen] workId value:', JSON.stringify(workId));
 
   const [selectedEdition, setSelectedEdition] = useState<Edition | null>(null);
   const [allEditions, setAllEditions] = useState<Edition[]>([]);
@@ -50,19 +46,52 @@ export default function AddBookScreen() {
   const [isEditionsLoading, setIsEditionsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [editionError, setEditionError] = useState<string | null>(null);
-  const [workDetails, setWorkDetails] = useState<{ author: string; description?: string } | null>(null);
+  const [workDetails, setWorkDetails] = useState<{ author: string; description: string | undefined } | null>(null);
   const [showWorkDetailsLoader, setShowWorkDetailsLoader] = useState(true);
+  const [actualEditionId, setActualEditionId] = useState<string | undefined>(undefined);
+  const [actualWorkId, setActualWorkId] = useState<string | undefined>(undefined);
 
   const loadEditions = useCallback(async () => {
     console.log('🔍 [AddBookScreen] loadEditions called');
-    console.log('🔍 [AddBookScreen] workId:', workId);
+    console.log('🔍 [AddBookScreen] paramId:', paramId);
 
     try {
       setIsEditionsLoading(true);
       setEditionError(null);
 
-      console.log('🔍 [AddBookScreen] Calling getWorkEditions with workId:', workId);
-      const editionsResponse = await getWorkEditions({ openLibraryId: workId!, limit: 50 });
+      if (!paramId) {
+        throw new Error('workId parameter is missing');
+      }
+
+      let actualWorkId: string = paramId;
+      let editionId: string | undefined = undefined;
+
+      const isEditionParam = paramId.match(/^OL\d+M$/);
+
+      if (isEditionParam) {
+        console.log('🔍 [AddBookScreen] paramId is an edition, fetching edition details first');
+        const olid = paramId.startsWith('/') ? paramId : `/books/${paramId}`;
+        const edition = await getBookDetails({ openLibraryId: olid });
+
+        if (edition.works && edition.works.length > 0) {
+          actualWorkId = edition.works[0].key.split('/').pop() || paramId;
+          editionId = paramId;
+          console.log('🔍 [AddBookScreen] Extracted work ID from edition:', actualWorkId);
+        } else {
+          console.warn('🔍 [AddBookScreen] Edition has no works array, using paramId directly');
+          actualWorkId = paramId;
+          editionId = undefined;
+        }
+      } else {
+        actualWorkId = paramId;
+        editionId = undefined;
+      }
+
+      setActualEditionId(editionId);
+      setActualWorkId(actualWorkId);
+
+      console.log('🔍 [AddBookScreen] Calling getWorkEditions with workId:', actualWorkId);
+      const editionsResponse = await getWorkEditions({ openLibraryId: actualWorkId, limit: 50 });
       console.log('🔍 [AddBookScreen] getWorkEditions response:', editionsResponse);
       console.log('🔍 [AddBookScreen] editions count:', editionsResponse?.entries?.length);
 
@@ -79,22 +108,8 @@ export default function AddBookScreen() {
       setAllEditions(editions);
       console.log('🔍 [AddBookScreen] Processed editions:', editions.length);
 
-      console.log('🔍 [AddBookScreen] Calling getBestEditionForWork with workId:', workId);
-      const bestEdition = await getBestEditionForWork({ openLibraryId: workId! });
-      console.log('🔍 [AddBookScreen] bestEdition:', bestEdition);
-
-      const formattedBestEdition = {
-        key: bestEdition.key,
-        title: bestEdition.title,
-        pageCount: bestEdition.number_of_pages,
-        publishDate: bestEdition.publish_date,
-        coverUrl: bestEdition.covers?.[0] ? `https://covers.openlibrary.org/b/id/${bestEdition.covers[0]}-M.jpg` : undefined,
-        isbn10: bestEdition.isbn_10,
-        isbn13: bestEdition.isbn_13,
-        publishers: bestEdition.publishers,
-      };
-      setSelectedEdition(formattedBestEdition);
-      console.log('🔍 [AddBookScreen] Selected edition set:', formattedBestEdition.title);
+      setSelectedEdition(editions[0]);
+      console.log('🔍 [AddBookScreen] Selected edition set:', editions[0].title);
     } catch (err) {
       console.error('🔍 [AddBookScreen] Error loading editions:', err);
       setEditionError('Failed to load book editions. Please try again.');
@@ -102,13 +117,13 @@ export default function AddBookScreen() {
       console.log('🔍 [AddBookScreen] loadEditions finished, setting loading false');
       setIsEditionsLoading(false);
     }
-  }, [workId, getWorkEditions, getBestEditionForWork]);
+  }, [paramId, getWorkEditions, getBookDetails]);
 
   useEffect(() => {
     console.log('🔍 [AddBookScreen] useEffect triggered');
     console.log('🔍 [AddBookScreen] Calling loadEditions...');
     loadEditions();
-  }, [workId, loadEditions]);
+  }, [loadEditions]);
 
   const headerOpacity = scrollY.interpolate({
     inputRange: [0, 100],
@@ -216,10 +231,11 @@ export default function AddBookScreen() {
         />
 
         <View className="px-4 -mt-4 pb-24">
-          {showWorkDetailsLoader && (
+          {showWorkDetailsLoader && actualWorkId && (
             <>
               <WorkDetailLoader
-                workId={workId!}
+                workId={actualWorkId}
+                editionId={actualEditionId || undefined}
                 onLoad={(data) => {
                   console.log('🔍 [AddBookScreen] WorkDetailLoader loaded:', data);
                   setWorkDetails(data);
@@ -227,7 +243,7 @@ export default function AddBookScreen() {
                 }}
                 onError={(error) => {
                   console.error('🔍 [AddBookScreen] WorkDetailLoader error:', error);
-                  setWorkDetails({ author: 'Unknown Author' });
+                  setWorkDetails({ author: 'Unknown Author', description: undefined });
                   setShowWorkDetailsLoader(false);
                 }}
               />

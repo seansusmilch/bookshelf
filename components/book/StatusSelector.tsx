@@ -1,4 +1,4 @@
-import { View } from '@/tw';
+import { View } from 'react-native';
 import { Card, CardContent } from '@/components/ui/Card';
 import { RadioGroup } from '@/components/ui/Chips';
 

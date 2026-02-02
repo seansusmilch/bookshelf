@@ -1,8 +1,8 @@
-import { Redirect } from 'expo-router';
-import { useConvexAuth } from 'convex/react';
-import { View, Text } from '@/tw';
+import '@/assets/globals.css';
 import { FontAwesome } from '@expo/vector-icons';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { useConvexAuth } from 'convex/react';
+import { Redirect } from 'expo-router';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 export default function Index() {
   const { isAuthenticated, isLoading } = useConvexAuth();

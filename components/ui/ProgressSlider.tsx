@@ -1,6 +1,5 @@
-import { Pressable, View, Text } from '@/tw';
+import { Pressable, View, Text, LayoutChangeEvent } from 'react-native';
 import { useState } from 'react';
-import { LayoutChangeEvent } from 'react-native';
 import { useAppTheme } from '@/components/material3-provider';
 
 type ProgressSliderProps = {

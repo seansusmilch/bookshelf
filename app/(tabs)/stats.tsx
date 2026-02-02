@@ -1,5 +1,4 @@
-import { View, Text, TextInput, Pressable } from '@/tw';
-import { Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { StatsCard } from '@/components/ui/StatsCard';
