@@ -1,5 +1,5 @@
-import { View, Pressable, Text, ScrollView, Modal, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
-import { useEffect } from 'react';
+import { View, Pressable, Text, ScrollView, Modal, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, PanResponder, Animated } from 'react-native';
+import { useEffect, useRef } from 'react';
 import { useAppTheme } from '@/components/material3-provider';
 
 type BottomSheetProps = {
@@ -9,6 +9,7 @@ type BottomSheetProps = {
   subtitle?: string;
   children: React.ReactNode;
   maxHeight?: number;
+  minHeight?: number;
 };
 
 export const BottomSheet = ({
@@ -18,19 +19,59 @@ export const BottomSheet = ({
   subtitle,
   children,
   maxHeight,
+  minHeight,
 }: BottomSheetProps) => {
   const { colors } = useAppTheme();
+  const translateY = useRef(new Animated.Value(0)).current;
+  const sheetHeight = useRef(0);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return Math.abs(gestureState.dy) > 5 && gestureState.dy > 0;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dy > 0) {
+          translateY.setValue(gestureState.dy);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dy > 150) {
+          Animated.timing(translateY, {
+            toValue: sheetHeight.current || 500,
+            duration: 250,
+            useNativeDriver: true,
+          }).start(onClose);
+        } else {
+          Animated.spring(translateY, {
+            toValue: 0,
+            useNativeDriver: true,
+            tension: 50,
+            friction: 8,
+          }).start();
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     if (visible) {
+      translateY.setValue(600);
+      Animated.spring(translateY, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 50,
+        friction: 8,
+      }).start();
     }
-  }, [visible]);
+  }, [visible, translateY]);
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="none"
       onRequestClose={onClose}
     >
       <TouchableWithoutFeedback onPress={onClose}>
@@ -40,35 +81,43 @@ export const BottomSheet = ({
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}
+        pointerEvents="box-none"
       >
-        <View
+        <Animated.View
           className="rounded-t-3xl overflow-hidden"
           style={{
             backgroundColor: colors.surface,
             maxHeight,
+            minHeight,
+            transform: [{ translateY }],
+          }}
+          onLayout={(e) => {
+            sheetHeight.current = e.nativeEvent.layout.height;
           }}
         >
-          <Pressable onPress={onClose} className="items-center py-3">
-            <View
-              className="w-10 h-1 rounded-full"
-              style={{ backgroundColor: colors.surfaceContainerHighest }}
-            />
-          </Pressable>
+          <View {...panResponder.panHandlers}>
+            <Pressable onPress={onClose} className="items-center py-3">
+              <View
+                className="w-10 h-1 rounded-full"
+                style={{ backgroundColor: colors.surfaceContainerHighest }}
+              />
+            </Pressable>
 
-          {(title || subtitle) && (
-            <View className="px-6 pb-4 border-b" style={{ borderColor: colors.outlineVariant }}>
-              {title && (
-                <Text className="text-xl font-semibold" style={{ color: colors.onSurface }}>
-                  {title}
-                </Text>
-              )}
-              {subtitle && (
-                <Text className="text-sm mt-1" style={{ color: colors.onSurfaceVariant }}>
-                  {subtitle}
-                </Text>
-              )}
-            </View>
-          )}
+            {(title || subtitle) && (
+              <View className="px-6 pb-4 border-b" style={{ borderColor: colors.outlineVariant }}>
+                {title && (
+                  <Text className="text-xl font-semibold" style={{ color: colors.onSurface }}>
+                    {title}
+                  </Text>
+                )}
+                {subtitle && (
+                  <Text className="text-sm mt-1" style={{ color: colors.onSurfaceVariant }}>
+                    {subtitle}
+                  </Text>
+                )}
+              </View>
+            )}
+          </View>
 
           <ScrollView
             className="flex-1"
@@ -77,7 +126,7 @@ export const BottomSheet = ({
           >
             {children}
           </ScrollView>
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </Modal>
   );

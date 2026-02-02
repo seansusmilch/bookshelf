@@ -168,10 +168,6 @@ export const updateProgress = mutation({
       throw new Error('Current page cannot exceed total pages');
     }
 
-    if (args.currentPage < book.currentPage) {
-      throw new Error('Current page cannot be less than previous page');
-    }
-
     await ctx.db.patch(args.bookId, {
       currentPage: args.currentPage,
       updatedAt: Date.now(),
@@ -264,6 +260,58 @@ export const uncompleteBook = mutation({
     });
 
     await ctx.db.delete(latestSession._id);
+
+    return args.bookId;
+  },
+});
+
+export const deleteBook = mutation({
+  args: {
+    bookId: v.id('books'),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new Error('User not authenticated');
+    }
+
+    const userId = identity.subject;
+
+    const book = await ctx.db.get(args.bookId);
+
+    if (!book || book.userId !== userId) {
+      throw new Error('Book not found');
+    }
+
+    const listMemberships = await ctx.db
+      .query('bookListMembership')
+      .withIndex('by_book', (q) => q.eq('bookId', args.bookId))
+      .collect();
+
+    for (const membership of listMemberships) {
+      await ctx.db.delete(membership._id);
+    }
+
+    const rating = await ctx.db
+      .query('ratings')
+      .withIndex('by_book', (q) => q.eq('bookId', args.bookId))
+      .first();
+
+    if (rating) {
+      await ctx.db.delete(rating._id);
+    }
+
+    const readingSessions = await ctx.db
+      .query('readingSessions')
+      .withIndex('by_book', (q) => q.eq('bookId', args.bookId))
+      .collect();
+
+    for (const session of readingSessions) {
+      await ctx.db.delete(session._id);
+    }
+
+    await ctx.db.delete(args.bookId);
 
     return args.bookId;
   },

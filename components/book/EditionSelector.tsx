@@ -1,9 +1,9 @@
-import { View, Text, Image } from 'react-native';
-import { useState } from 'react';
 import { useAppTheme } from '@/components/material3-provider';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { BottomSheet, BottomSheetListItem } from '@/components/ui/BottomSheet';
 import { Card, CardContent } from '@/components/ui/Card';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useState } from 'react';
+import { Image, Text, View } from 'react-native';
 
 type Edition = {
   key: string;
@@ -14,6 +14,7 @@ type Edition = {
   isbn10?: string[];
   isbn13?: string[];
   publishers?: { name: string }[];
+  authors?: any[];
 };
 
 type EditionSelectorProps = {
@@ -95,7 +96,8 @@ export const EditionSelector = ({
         onClose={() => setShowSheet(false)}
         title="Select Edition"
         subtitle={`${editionsToShow.length} editions available`}
-        maxHeight={500}
+        maxHeight={700}
+        minHeight={500}
       >
         <View className="gap-3">
           {editionsToShow.map((edition) => {

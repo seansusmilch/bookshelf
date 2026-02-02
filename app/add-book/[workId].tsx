@@ -26,13 +26,16 @@ type Edition = {
   isbn10?: string[];
   isbn13?: string[];
   publishers?: { name: string }[];
+  languages?: { key: string }[];
+  covers?: number[];
+  authors?: any[];
 };
 
 export default function AddBookScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const { colors } = useAppTheme();
-  const { workId: paramId } = useLocalSearchParams<{ workId: string }>();
+  const { workId: paramId, author: authorFallback } = useLocalSearchParams<{ workId: string; author?: string }>();
   const addBook = useAddBook();
   const getWorkEditions = useAction(api.openLibrarySearch.getWorkEditions);
   const getBookDetails = useAction(api.openLibrarySearch.getBookDetails);
@@ -91,7 +94,7 @@ export default function AddBookScreen() {
       setActualWorkId(actualWorkId);
 
       console.log('🔍 [AddBookScreen] Calling getWorkEditions with workId:', actualWorkId);
-      const editionsResponse = await getWorkEditions({ openLibraryId: actualWorkId, limit: 50 });
+      const editionsResponse = await getWorkEditions({ openLibraryId: `/works/${actualWorkId}`, limit: 50 });
       console.log('🔍 [AddBookScreen] getWorkEditions response:', editionsResponse);
       console.log('🔍 [AddBookScreen] editions count:', editionsResponse?.entries?.length);
 
@@ -104,12 +107,64 @@ export default function AddBookScreen() {
         isbn10: entry.isbn_10,
         isbn13: entry.isbn_13,
         publishers: entry.publishers,
+        languages: entry.languages,
+        covers: entry.covers,
+        authors: entry.authors,
       }));
-      setAllEditions(editions);
-      console.log('🔍 [AddBookScreen] Processed editions:', editions.length);
 
-      setSelectedEdition(editions[0]);
-      console.log('🔍 [AddBookScreen] Selected edition set:', editions[0].title);
+      const editionsWithAuthors = editions.filter((edition: any) => {
+        const hasAuthors = edition.authors && edition.authors.length > 0;
+        if (!hasAuthors) {
+          console.log('🔍 [AddBookScreen] Filtering out edition without authors:', edition.key);
+        }
+        return hasAuthors;
+      });
+
+      console.log('🔍 [AddBookScreen] Processed editions:', editions.length, 'with authors:', editionsWithAuthors.length);
+
+      if (editionsWithAuthors.length === 0) {
+        console.warn('🔍 [AddBookScreen] No editions found with author information out of', editions.length, 'total editions');
+        throw new Error('This book has no author information available');
+      }
+
+      const scoreEdition = (edition: Edition) => {
+        let score = 0;
+
+        const hasPageCount = edition.pageCount && edition.pageCount > 0;
+        const hasEnglish = edition.languages?.some((l: any) => l.key === '/languages/eng');
+        const hasCover = edition.coverUrl || (edition.covers && edition.covers.length > 0);
+        const hasAuthors = edition.authors && edition.authors.length > 0 && edition.authors[0]?.name;
+
+        if (hasPageCount) {
+          score += 100;
+        }
+
+        if (hasEnglish) {
+          score += 50;
+        }
+
+        if (hasCover) {
+          score += 75;
+        }
+
+        if (hasAuthors) {
+          score += 60;
+        }
+
+        return score;
+      };
+
+      const scoredEditions = editionsWithAuthors.map((edition) => ({
+        edition,
+        score: scoreEdition(edition),
+      }));
+
+      const sortedEditions = scoredEditions.sort((a, b) => b.score - a.score);
+      const selected = sortedEditions[0].edition;
+
+      setAllEditions(editionsWithAuthors);
+      setSelectedEdition(selected);
+      console.log('🔍 [AddBookScreen] Selected edition:', selected.title, 'score:', sortedEditions[0].score);
     } catch (err) {
       console.error('🔍 [AddBookScreen] Error loading editions:', err);
       setEditionError('Failed to load book editions. Please try again.');
@@ -173,13 +228,28 @@ export default function AddBookScreen() {
   }, [navigation, colors, scrollY, selectedEdition?.title, headerOpacity, titleOpacity]);
 
   const handleAddBook = async () => {
-    if (!selectedEdition || !workDetails) return;
+    console.log('🔍 [AddBookScreen] handleAddBook called', { selectedEdition: !!selectedEdition, workDetails, showWorkDetailsLoader });
+
+    if (!selectedEdition || !workDetails) {
+      console.log('🔍 [AddBookScreen] Cannot add book - missing data');
+      return;
+    }
+
+    if (!workDetails.author || typeof workDetails.author !== 'string' || workDetails.author.trim() === '') {
+      console.error('🔍 [AddBookScreen] Author is invalid:', workDetails);
+      return;
+    }
+
+    if (!selectedEdition.title || selectedEdition.title.trim() === '') {
+      console.error('🔍 [AddBookScreen] Title is invalid:', selectedEdition);
+      return;
+    }
 
     try {
       setIsAdding(true);
       await addBook.mutate({
         title: selectedEdition.title,
-        author: workDetails.author,
+        author: workDetails.author.trim(),
         description: workDetails.description,
         coverUrl: selectedEdition.coverUrl,
         isbn10: selectedEdition.isbn10?.[0],
@@ -236,14 +306,15 @@ export default function AddBookScreen() {
               <WorkDetailLoader
                 workId={actualWorkId}
                 editionId={actualEditionId || undefined}
+                authorFallback={authorFallback ? decodeURIComponent(authorFallback) : undefined}
                 onLoad={(data) => {
                   console.log('🔍 [AddBookScreen] WorkDetailLoader loaded:', data);
                   setWorkDetails(data);
                   setShowWorkDetailsLoader(false);
                 }}
                 onError={(error) => {
-                  console.error('🔍 [AddBookScreen] WorkDetailLoader error:', error);
-                  setWorkDetails({ author: 'Unknown Author', description: undefined });
+                  console.error('🔍 [AddBookScreen] WorkDetailLoader error:', error, 'Using fallback author:', authorFallback);
+                  setWorkDetails({ author: authorFallback ? decodeURIComponent(authorFallback) : 'Unknown Author', description: undefined });
                   setShowWorkDetailsLoader(false);
                 }}
               />

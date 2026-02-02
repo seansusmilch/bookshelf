@@ -1,5 +1,5 @@
-import { Pressable, View, Text, LayoutChangeEvent } from 'react-native';
-import { useState } from 'react';
+import { View, Text, Pressable, TextInput } from 'react-native';
+import { useState, useEffect } from 'react';
 import { useAppTheme } from '@/components/material3-provider';
 
 type ProgressSliderProps = {
@@ -20,19 +20,46 @@ export const ProgressSlider = ({
   className = '',
 }: ProgressSliderProps) => {
   const { colors } = useAppTheme();
-  const [width, setWidth] = useState(0);
-  const progress = max > 0 ? value / max : 0;
+  const [inputValue, setInputValue] = useState(value.toString());
+  const [displayValue, setDisplayValue] = useState(value);
 
-  const handleLayout = (event: LayoutChangeEvent) => {
-    setWidth(event.nativeEvent.layout.width);
+  useEffect(() => {
+    setInputValue(value.toString());
+    setDisplayValue(value);
+  }, [value]);
+
+  const handleMinus = () => {
+    const newValue = Math.max(0, displayValue - 10);
+    setDisplayValue(newValue);
+    setInputValue(newValue.toString());
+    onChange(newValue);
   };
 
-  const handlePress = (event: any) => {
-    if (disabled || width === 0) return;
-    const { locationX } = event.nativeEvent;
-    const newProgress = Math.max(0, Math.min(1, locationX / width));
-    const newValue = Math.round(newProgress * max);
-    onChange(Math.max(0, Math.min(max, newValue)));
+  const handlePlus = () => {
+    const newValue = Math.min(max, displayValue + 10);
+    setDisplayValue(newValue);
+    setInputValue(newValue.toString());
+    onChange(newValue);
+  };
+
+  const handleTextChange = (text: string) => {
+    setInputValue(text);
+    const parsed = parseInt(text, 10);
+    if (!isNaN(parsed)) {
+      const newValue = Math.max(0, Math.min(max, parsed));
+      setDisplayValue(newValue);
+      onChange(newValue);
+    }
+  };
+
+  const handleTextSubmit = () => {
+    const parsed = parseInt(inputValue, 10);
+    if (!isNaN(parsed)) {
+      const newValue = Math.max(0, Math.min(max, parsed));
+      setDisplayValue(newValue);
+      setInputValue(newValue.toString());
+      onChange(newValue);
+    }
   };
 
   return (
@@ -43,34 +70,59 @@ export const ProgressSlider = ({
             Progress
           </Text>
           <Text className="text-sm font-semibold" style={{ color: colors.onSurface }}>
-            {value} / {max}
+            {displayValue} / {max}
           </Text>
         </View>
       )}
 
-      <Pressable
-        onPress={handlePress}
-        onLayout={handleLayout}
-        disabled={disabled}
-        className="h-6 rounded-full overflow-hidden active:opacity-80"
-        style={{
-          backgroundColor: colors.surfaceContainerHighest,
-        }}
-      >
-        <View
-          className="h-full rounded-full"
+      <View className="flex-row items-center gap-3">
+        <Pressable
+          onPress={handleMinus}
+          disabled={disabled || displayValue === 0}
+          className="w-12 h-12 rounded-full items-center justify-center"
           style={{
-            width: `${progress * 100}%`,
-            backgroundColor: disabled ? colors.surfaceContainerHighest : colors.primary,
+            backgroundColor: disabled || displayValue === 0 ? colors.surfaceContainerHighest : colors.primary,
           }}
-        />
-      </Pressable>
+        >
+          <Text className="text-2xl font-bold" style={{ color: disabled || displayValue === 0 ? colors.onSurfaceDisabled : colors.onPrimary }}>
+            -
+          </Text>
+        </Pressable>
 
-      {!disabled && (
-        <Text className="text-xs text-center mt-2" style={{ color: colors.onSurfaceVariant }}>
-          Tap to update progress
-        </Text>
-      )}
+        <View className="flex-1">
+          <TextInput
+            value={inputValue}
+            onChangeText={handleTextChange}
+            onSubmitEditing={handleTextSubmit}
+            onEndEditing={handleTextSubmit}
+            keyboardType="number-pad"
+            editable={!disabled}
+            className="h-12 px-4 rounded-lg text-center text-lg font-semibold"
+            style={{
+              backgroundColor: colors.surfaceContainerHighest,
+              color: disabled ? colors.onSurfaceDisabled : colors.onSurface,
+            }}
+            placeholder="0"
+          />
+        </View>
+
+        <Pressable
+          onPress={handlePlus}
+          disabled={disabled || displayValue >= max}
+          className="w-12 h-12 rounded-full items-center justify-center"
+          style={{
+            backgroundColor: disabled || displayValue >= max ? colors.surfaceContainerHighest : colors.primary,
+          }}
+        >
+          <Text className="text-2xl font-bold" style={{ color: disabled || displayValue >= max ? colors.onSurfaceDisabled : colors.onPrimary }}>
+            +
+          </Text>
+        </Pressable>
+      </View>
+
+      <Text className="text-xs text-center mt-2" style={{ color: colors.onSurfaceVariant }}>
+        Type pages or use buttons
+      </Text>
     </View>
   );
 };

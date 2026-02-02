@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useAction } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { InlineLoading } from '@/components/ui/StateComponents';
-import { fetchOpenLibrary } from 'convex/lib/openlibrary/client';
+import { fetchOpenLibrary, extractOLID } from 'convex/lib/openlibrary/client';
 
 type AuthorEntry = {
   type?: { key: string };
@@ -14,11 +14,12 @@ type AuthorEntry = {
 type WorkDetailLoaderProps = {
   workId: string;
   editionId?: string;
+  authorFallback?: string;
   onLoad: (data: { author: string; description: string | undefined }) => void;
   onError: (error: string) => void;
 };
 
-export const WorkDetailLoader = ({ workId, editionId, onLoad, onError }: WorkDetailLoaderProps) => {
+export const WorkDetailLoader = ({ workId, editionId, authorFallback, onLoad, onError }: WorkDetailLoaderProps) => {
   const getBookDetails = useAction(api.openLibrarySearch.getBookDetails);
   const getWork = useAction(api.openLibrarySearch.getWork);
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -47,10 +48,30 @@ export const WorkDetailLoader = ({ workId, editionId, onLoad, onError }: WorkDet
         console.log('🔍 [WorkDetailLoader] Fetching edition details:', olidToFetch);
         const book = await getBookDetails({ openLibraryId: olidToFetch });
         console.log('🔍 [WorkDetailLoader] getBookDetails response:', book);
+        console.log('🔍 [WorkDetailLoader] book.authors:', book.authors);
 
         if (book.authors && book.authors.length > 0) {
-          author = book.authors[0].name;
-          console.log('🔍 [WorkDetailLoader] Author found:', author);
+          const firstAuthor = book.authors[0];
+          console.log('🔍 [WorkDetailLoader] firstAuthor:', firstAuthor);
+
+          if (firstAuthor.name) {
+            author = firstAuthor.name;
+            console.log('🔍 [WorkDetailLoader] Author found from name:', author);
+          } else if (firstAuthor.key) {
+            try {
+              const authorOlad = extractOLID(firstAuthor.key, 'author');
+              console.log('🔍 [WorkDetailLoader] Fetching author details from key:', authorOlad);
+              const authorData = await fetchOpenLibrary<{ name: string }>(`/authors/${authorOlad}.json`);
+              if (authorData.name) {
+                author = authorData.name;
+                console.log('🔍 [WorkDetailLoader] Author found from fetch:', author);
+              } else {
+                console.warn('🔍 [WorkDetailLoader] Author data has no name');
+              }
+            } catch (err) {
+              console.error('🔍 [WorkDetailLoader] Error fetching author details:', err);
+            }
+          }
         }
 
         if (book.description) {
@@ -68,19 +89,26 @@ export const WorkDetailLoader = ({ workId, editionId, onLoad, onError }: WorkDet
           const authorKey = authorEntry.author?.key;
           const isAuthorRole = typeKey === '/type/author_role';
 
-          if (isAuthorRole && authorKey) {
-            const authorOlad = authorKey.startsWith('/') ? authorKey : authorKey;
-            console.log('🔍 [WorkDetailLoader] Fetching author details from:', authorOlad);
-            const authorData = await fetchOpenLibrary<{ name: string }>(`/authors/${authorOlad}.json`);
-            if (authorData.name) {
-              author = authorData.name;
+          try {
+            if (isAuthorRole && authorKey) {
+              const authorOlad = extractOLID(authorKey, 'author');
+              console.log('🔍 [WorkDetailLoader] Fetching author details from:', authorOlad);
+              const authorData = await fetchOpenLibrary<{ name: string }>(`/authors/${authorOlad}.json`);
+              if (authorData.name) {
+                author = authorData.name;
+              } else {
+                console.warn('🔍 [WorkDetailLoader] Author data has no name, falling back to Unknown Author');
+              }
+            } else if (typeKey) {
+              author = typeKey;
+            } else if (authorEntry.name) {
+              author = authorEntry.name;
             }
-          } else if (typeKey) {
-            author = typeKey;
-          } else if (authorEntry.name) {
-            author = authorEntry.name;
+            console.log('🔍 [WorkDetailLoader] Author found:', author);
+          } catch (err) {
+            console.error('🔍 [WorkDetailLoader] Error fetching author details:', err);
+            author = 'Unknown Author';
           }
-          console.log('🔍 [WorkDetailLoader] Author found:', author);
         }
 
         if (work.description) {
@@ -89,8 +117,9 @@ export const WorkDetailLoader = ({ workId, editionId, onLoad, onError }: WorkDet
         }
       }
 
-      console.log('🔍 [WorkDetailLoader] Calling onLoad with data');
-      onLoad({ author, description });
+      const finalAuthor = (typeof author === 'string' && author.trim()) ? author.trim() : authorFallback || 'Unknown Author';
+      console.log('🔍 [WorkDetailLoader] Calling onLoad with data', { author: finalAuthor, descriptionLength: description?.length, usedFallback: !author || author === 'Unknown Author' });
+      onLoad({ author: finalAuthor, description });
       setHasLoaded(true);
     } catch (error) {
       console.error('🔍 [WorkDetailLoader] Error:', error);

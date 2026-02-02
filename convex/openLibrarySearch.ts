@@ -1,11 +1,10 @@
-'use node';
-
 import { v } from 'convex/values';
 import { action } from './_generated/server';
 import {
+  extractOLID,
   getBook as getBookAPI,
-  getWork as getWorkAPI,
   getBookByISBN as getBookByISBNAPI,
+  getWork as getWorkAPI,
   getWorkEditions as getWorkEditionsAPI,
   searchBooks as searchBooksAPI,
   type Book,
@@ -109,7 +108,7 @@ export const getBookDetails = action({
     }
 
     try {
-      const book = await getBookAPI(args.openLibraryId);
+      const book = await getBookAPI(extractOLID(args.openLibraryId, 'book'));
 
       await ctx.runMutation('cache:cacheBookDetails' as any, {
         openLibraryId: args.openLibraryId,
@@ -232,7 +231,7 @@ export const getBestEditionForWork = action({
     console.log('[getBestEditionForWork] Finding best edition for work:', args.openLibraryId);
 
     try {
-      const editionsResponse = await getWorkEditionsAPI(args.openLibraryId);
+      const editionsResponse = await getWorkEditionsAPI(extractOLID(args.openLibraryId, 'work'));
       const entries = editionsResponse.entries;
 
       if (!entries || entries.length === 0) {
@@ -284,7 +283,7 @@ export const getWork = action({
     console.log('[getWork] Fetching work details for:', args.openLibraryId);
 
     try {
-      const work = await getWorkAPI(args.openLibraryId);
+      const work = await getWorkAPI(extractOLID(args.openLibraryId, 'work'));
 
       console.log('[getWork] Successfully fetched work:', {
         openLibraryId: args.openLibraryId,
@@ -312,7 +311,7 @@ export const getWorkEditions = action({
     console.log('[getWorkEditions] Fetching editions for work:', args.openLibraryId);
 
     try {
-      const editionsResponse = await getWorkEditionsAPI(args.openLibraryId, args.limit || 50);
+      const editionsResponse = await getWorkEditionsAPI(extractOLID(args.openLibraryId, 'work'), args.limit || 50);
 
       console.log('[getWorkEditions] Successfully fetched editions:', {
         workId: args.openLibraryId,

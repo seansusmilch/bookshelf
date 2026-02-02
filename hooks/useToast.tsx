@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useCallback, ReactNode } from 'react';
+import { useAppTheme } from '@/components/material3-provider';
+import React, { createContext, ReactNode, useCallback, useContext } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 type ToastContextType = {
@@ -10,37 +12,130 @@ type ToastContextType = {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
+const SuccessToast = ({ message }: { message: string }) => {
+  const { colors } = useAppTheme();
+
+  return (
+    <View
+      style={[
+        styles.toastContainer,
+        { backgroundColor: colors.surface, borderColor: colors.primary },
+      ]}
+    >
+      <View style={styles.iconContainer}>
+        <Text style={[styles.icon, { color: colors.primary }]}>✓</Text>
+      </View>
+      <Text style={[styles.message, { color: colors.onSurface }]}>{message}</Text>
+    </View>
+  );
+};
+
+const ErrorToast = ({ message }: { message: string }) => {
+  const { colors } = useAppTheme();
+
+  return (
+    <View
+      style={[
+        styles.toastContainer,
+        { backgroundColor: colors.surface, borderColor: colors.error },
+      ]}
+    >
+      <View style={styles.iconContainer}>
+        <Text style={[styles.icon, { color: colors.error }]}>✕</Text>
+      </View>
+      <Text style={[styles.message, { color: colors.onSurface }]}>{message}</Text>
+    </View>
+  );
+};
+
+const InfoToast = ({ message }: { message: string }) => {
+  const { colors } = useAppTheme();
+
+  return (
+    <View
+      style={[
+        styles.toastContainer,
+        { backgroundColor: colors.surface, borderColor: colors.primary },
+      ]}
+    >
+      <View style={styles.iconContainer}>
+        <Text style={[styles.icon, { color: colors.primary }]}>ℹ</Text>
+      </View>
+      <Text style={[styles.message, { color: colors.onSurface }]}>{message}</Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  toastContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginHorizontal: 16,
+  },
+  iconContainer: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  icon: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  message: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 20,
+  },
+});
+
+const toastConfig = {
+  success: ({ props }: any) => <SuccessToast {...props} />,
+  error: ({ props }: any) => <ErrorToast {...props} />,
+  info: ({ props }: any) => <InfoToast {...props} />,
+};
+
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const showSuccess = useCallback((message: string) => {
     Toast.show({
       type: 'success',
-      text1: 'Success',
-      text2: message,
+      props: { message },
       position: 'bottom',
       visibilityTime: 3000,
       autoHide: true,
+      bottomOffset: Platform.OS === 'ios' ? 90 : 120,
     });
   }, []);
 
   const showError = useCallback((message: string) => {
     Toast.show({
       type: 'error',
-      text1: 'Error',
-      text2: message,
+      props: { message },
       position: 'bottom',
       visibilityTime: 4000,
       autoHide: true,
+      bottomOffset: Platform.OS === 'ios' ? 90 : 120,
     });
   }, []);
 
   const showInfo = useCallback((message: string) => {
     Toast.show({
       type: 'info',
-      text1: 'Info',
-      text2: message,
+      props: { message },
       position: 'bottom',
       visibilityTime: 3000,
       autoHide: true,
+      bottomOffset: Platform.OS === 'ios' ? 90 : 120,
     });
   }, []);
 
@@ -53,7 +148,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   return (
     <ToastContext.Provider value={contextValue}>
       {children}
-      <Toast />
+      <Toast config={toastConfig} />
     </ToastContext.Provider>
   );
 };

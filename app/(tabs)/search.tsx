@@ -1,6 +1,7 @@
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
+import { usePreviousSearches } from '@/hooks/usePreviousSearches';
 import { useAppTheme } from '@/components/material3-provider';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Searchbar } from 'react-native-paper';
@@ -48,6 +49,15 @@ export default function SearchScreen() {
   const debounceTimeoutRef = useRef<number | null>(null);
 
   const { isLoading, searchBooks: executeSearch } = useSearchBooks();
+  const { searches, saveSearch, deleteSearch } = usePreviousSearches();
+
+  const executeSearchAndSave = async (searchQuery: string) => {
+    const results = await executeSearch(searchQuery);
+    setSearchResults(results);
+    if (results && results.docs && results.docs.length > 0) {
+      saveSearch(searchQuery);
+    }
+  };
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -57,9 +67,10 @@ export default function SearchScreen() {
     }
 
     debounceTimeoutRef.current = setTimeout(async () => {
-      console.log('Executing search for:', text);
-      const results = await executeSearch(text);
-      setSearchResults(results);
+      if (text.length >= 2) {
+        console.log('Executing search for:', text);
+        await executeSearchAndSave(text);
+      }
     }, 250);
   };
 
@@ -74,12 +85,14 @@ export default function SearchScreen() {
   const handleBookPress = (book: OpenLibraryBook) => {
     const topEdition = getTopEdition(book);
     const editionOlid = topEdition?.key ? extractOLID(topEdition.key) : extractOLID(book.key);
+    const authorName = book.author_name?.[0] || 'Unknown Author';
     console.log('🔍 [SearchScreen] handleBookPress called');
     console.log('🔍 [SearchScreen] book.key:', book.key);
     console.log('🔍 [SearchScreen] topEdition:', topEdition);
     console.log('🔍 [SearchScreen] extracted edition olid:', editionOlid);
+    console.log('🔍 [SearchScreen] authorName from search:', authorName);
     console.log('🔍 [SearchScreen] Navigating to: /add-book/', editionOlid);
-    router.push(`/add-book/${editionOlid}` as any);
+    router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}` as any);
   };
 
   return (
@@ -99,13 +112,45 @@ export default function SearchScreen() {
 
       <ScrollView className="flex-1 px-4 pt-4">
         {query.length < 2 ? (
-          <View className="items-center justify-center py-12">
-            <MaterialIcons name="search" size={64} color={colors.onSurfaceVariant} />
-            <Text className="text-xl font-semibold text-gray-900 mt-4 mb-2">Search for books</Text>
-            <Text className="text-center text-gray-600 px-8">
-              Enter a title, author, or keyword to find books from Open Library.
-            </Text>
-          </View>
+          searches.length > 0 ? (
+            <View>
+              <Text className="text-sm font-semibold text-gray-600 mb-3">Previous searches</Text>
+              <View className="gap-2">
+                {searches.map((search, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                      setQuery(search);
+                      executeSearchAndSave(search);
+                    }}
+                    className="bg-white rounded-xl shadow-sm p-3 flex-row items-center justify-between"
+                  >
+                    <View className="flex-1 flex-row items-center gap-3">
+                      <MaterialIcons name="search" size={20} color={colors.onSurfaceVariant} />
+                      <Text className="text-base text-gray-900 flex-1" numberOfLines={1}>
+                        {search}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => deleteSearch(search)}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      className="ml-2"
+                    >
+                      <MaterialIcons name="close" size={20} color={colors.onSurfaceVariant} />
+                    </TouchableOpacity>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          ) : (
+            <View className="items-center justify-center py-12">
+              <MaterialIcons name="search" size={64} color={colors.onSurfaceVariant} />
+              <Text className="text-xl font-semibold text-gray-900 mt-4 mb-2">Search for books</Text>
+              <Text className="text-center text-gray-600 px-8">
+                Enter a title, author, or keyword to find books from Open Library.
+              </Text>
+            </View>
+          )
         ) : isLoading ? (
           <View className="items-center justify-center py-12">
             <MaterialIcons name="hourglass-empty" size={48} color={colors.primary} />

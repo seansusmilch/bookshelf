@@ -1,17 +1,19 @@
-import { View, Text, TextInput, Pressable, Modal } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { StatsCard } from '@/components/ui/StatsCard';
-import { useStats } from '@/hooks/useStats';
-import { useUpdateGoal } from '@/hooks/useUpdateGoal';
-import { StatsCardSkeleton } from '@/components/ui/Skeleton';
+ import { View, Text, TextInput, Pressable, Modal } from 'react-native';
+ import { SafeAreaView } from 'react-native-safe-area-context';
+ import { useState } from 'react';
+ import { useAuth } from '@clerk/clerk-expo';
+ import { StatsCard } from '@/components/ui/StatsCard';
+ import { useStats } from '@/hooks/useStats';
+ import { useUpdateGoal } from '@/hooks/useUpdateGoal';
+ import { StatsCardSkeleton } from '@/components/ui/Skeleton';
 
-export default function StatsScreen() {
-  const [showGoalModal, setShowGoalModal] = useState(false);
-  const [newGoal, setNewGoal] = useState('');
+ export default function StatsScreen() {
+   const { signOut } = useAuth();
+   const [showGoalModal, setShowGoalModal] = useState(false);
+   const [newGoal, setNewGoal] = useState('');
 
-  const stats = useStats();
-  const updateGoal = useUpdateGoal();
+   const stats = useStats();
+   const updateGoal = useUpdateGoal();
 
   const handleSetGoalPress = () => {
     if (stats) {
@@ -32,6 +34,10 @@ export default function StatsScreen() {
   const handleCancelGoal = () => {
     setShowGoalModal(false);
     setNewGoal('');
+  };
+
+  const handleSignOut = () => {
+    signOut();
   };
 
    const booksRead = stats?.booksRead || 0;
@@ -88,18 +94,25 @@ export default function StatsScreen() {
           </View>
 
           {yearlyGoal === 0 && (
-            <Pressable
-              onPress={handleSetGoalPress}
-              className="mt-6 bg-blue-500 rounded-xl p-4"
-            >
-              <Text className="text-white text-center font-semibold">Set Your Reading Goal</Text>
-              <Text className="text-blue-100 text-center text-sm mt-1">
-                Start tracking your reading journey
-              </Text>
-            </Pressable>
-          )}
-        </View>
-      </SafeAreaView>
+             <Pressable
+               onPress={handleSetGoalPress}
+               className="mt-6 bg-blue-500 rounded-xl p-4"
+             >
+               <Text className="text-white text-center font-semibold">Set Your Reading Goal</Text>
+               <Text className="text-blue-100 text-center text-sm mt-1">
+                 Start tracking your reading journey
+               </Text>
+             </Pressable>
+           )}
+
+           <Pressable
+             onPress={handleSignOut}
+             className="mt-6 bg-red-500 rounded-xl p-4"
+           >
+             <Text className="text-white text-center font-semibold">Sign Out</Text>
+           </Pressable>
+         </View>
+       </SafeAreaView>
 
       {showGoalModal && (
         <Modal

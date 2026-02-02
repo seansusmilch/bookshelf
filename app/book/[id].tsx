@@ -9,6 +9,7 @@ import { useCompleteBook } from '@/hooks/useCompleteBook';
 import { useUncompleteBook } from '@/hooks/useUncompleteBook';
 import { useRateBook } from '@/hooks/useRateBook';
 import { useUpdateProgress } from '@/hooks/useUpdateProgress';
+import { useRemoveBook } from '@/hooks/useRemoveBook';
 import { Id } from 'convex/_generated/dataModel';
 import { BookHeader } from '@/components/book/BookHeader';
 import { BookDescription } from '@/components/book/BookDescription';
@@ -61,11 +62,13 @@ export default function BookDetailScreen() {
   const rateBook = useRateBook();
   const completeBook = useCompleteBook();
   const uncompleteBook = useUncompleteBook();
+  const removeBook = useRemoveBook();
 
   const [selectedListIds, setSelectedListIds] = useState<string[]>([]);
   const [showProgressSlider, setShowProgressSlider] = useState(false);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
   const [showListSelector, setShowListSelector] = useState(false);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const book = bookDetail as BookDetail | null | undefined;
@@ -146,7 +149,6 @@ export default function BookDetailScreen() {
   const handleProgressUpdate = (newPage: number) => {
     if (!book) return;
     updateProgress.mutate({ bookId: book._id, currentPage: newPage });
-    setShowProgressSlider(false);
   };
 
   const handleRatingUpdate = (rating: number) => {
@@ -163,6 +165,11 @@ export default function BookDetailScreen() {
   const handleUncomplete = () => {
     if (!book) return;
     uncompleteBook.mutate(book._id);
+  };
+
+  const handleRemove = () => {
+    if (!book) return;
+    removeBook.mutate(book._id);
   };
 
   const toggleList = (listId: string) => {
@@ -248,7 +255,7 @@ export default function BookDetailScreen() {
                     size="medium"
                     className="flex-1"
                   >
-                    Update Progress
+                    {showProgressSlider ? 'Done' : 'Update Progress'}
                   </Button>
 
                   {isCompleted ? (
@@ -332,6 +339,20 @@ export default function BookDetailScreen() {
               pageCount={book.totalPages}
             />
           </Section>
+
+          <Section title="Manage Book" className="mb-6">
+            <Card variant="outlined">
+              <CardContent className="p-4">
+                <Button
+                  onPress={() => setShowRemoveDialog(true)}
+                  variant="text"
+                  className="w-full"
+                >
+                  Remove from Library
+                </Button>
+              </CardContent>
+            </Card>
+          </Section>
         </View>
       </ScrollView>
 
@@ -351,6 +372,36 @@ export default function BookDetailScreen() {
               onChange={() => toggleList(list._id)}
             />
           ))}
+        </View>
+      </BottomSheet>
+
+      <BottomSheet
+        visible={showRemoveDialog}
+        onClose={() => setShowRemoveDialog(false)}
+        title="Remove Book"
+        subtitle="Are you sure you want to remove this book from your library?"
+      >
+        <View className="gap-3">
+          <Text className="text-center" style={{ color: colors.onSurfaceVariant }}>
+            This action cannot be undone. All reading progress, ratings, and list associations will be deleted.
+          </Text>
+          <View className="flex-row gap-3 mt-4">
+            <Button
+              onPress={() => setShowRemoveDialog(false)}
+              variant="outlined"
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onPress={handleRemove}
+              variant="filled"
+              className="flex-1"
+              loading={removeBook.isPending}
+            >
+              Remove
+            </Button>
+          </View>
         </View>
       </BottomSheet>
     </View>
