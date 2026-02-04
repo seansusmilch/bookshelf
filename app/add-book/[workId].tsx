@@ -29,17 +29,50 @@ type Edition = {
   languages?: { key: string }[];
   covers?: number[];
   authors?: any[];
+  physicalFormat?: string;
 };
 
 export default function AddBookScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const { colors } = useAppTheme();
-  const { workId: paramId, author: authorFallback } = useLocalSearchParams<{ workId: string; author?: string }>();
+  const { workId: paramId, author: authorFallback, coverUrl: coverUrlFallback, title: titleFallback } = useLocalSearchParams<{ workId: string; author?: string; coverUrl?: string; title?: string }>();
   const addBook = useAddBook();
   const getWorkEditions = useAction(api.openLibrarySearch.getWorkEditions);
   const getBookDetails = useAction(api.openLibrarySearch.getBookDetails);
+  const getWork = useAction(api.openLibrarySearch.getWork);
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const listenerId = scrollY.addListener((value) => {
+      console.log('Scroll Y:', value.value);
+    });
+    return () => {
+      scrollY.removeListener(listenerId);
+    };
+  }, []);
+
+  const extractOLID = (key: string): string => {
+    const match = key.match(/\/(?:books|works|authors)\/([A-Za-z0-9]+)/);
+    return match ? match[1] : key;
+  };
+
+  const getEditionCoverUrl = (edition: Edition): string | undefined => {
+    if (edition.covers && edition.covers.length > 0) {
+      return `https://covers.openlibrary.org/b/id/${edition.covers[0]}-M.jpg`;
+    }
+    if (edition.isbn10 && edition.isbn10.length > 0) {
+      return `https://covers.openlibrary.org/b/isbn/${edition.isbn10[0]}-M.jpg`;
+    }
+    if (edition.isbn13 && edition.isbn13.length > 0) {
+      return `https://covers.openlibrary.org/b/isbn/${edition.isbn13[0]}-M.jpg`;
+    }
+    if (edition.key) {
+      const editionOlid = extractOLID(edition.key);
+      return `https://covers.openlibrary.org/b/olid/${editionOlid}-M.jpg`;
+    }
+    return undefined;
+  };
 
   console.log('🔍 [AddBookScreen] Component rendered');
 
@@ -53,10 +86,16 @@ export default function AddBookScreen() {
   const [showWorkDetailsLoader, setShowWorkDetailsLoader] = useState(true);
   const [actualEditionId, setActualEditionId] = useState<string | undefined>(undefined);
   const [actualWorkId, setActualWorkId] = useState<string | undefined>(undefined);
+  const [workTitle, setWorkTitle] = useState<string | undefined>(titleFallback ? decodeURIComponent(titleFallback) : undefined);
+  const [initialCoverUrl] = useState<string | undefined>(coverUrlFallback ? decodeURIComponent(coverUrlFallback) : undefined);
+  const [initialAuthor] = useState<string | undefined>(authorFallback ? decodeURIComponent(authorFallback) : undefined);
 
   const loadEditions = useCallback(async () => {
     console.log('🔍 [AddBookScreen] loadEditions called');
     console.log('🔍 [AddBookScreen] paramId:', paramId);
+    console.log('🔍 [AddBookScreen] initialAuthor:', initialAuthor);
+    console.log('🔍 [AddBookScreen] initialCoverUrl:', initialCoverUrl);
+    console.log('🔍 [AddBookScreen] titleFallback:', titleFallback);
 
     try {
       setIsEditionsLoading(true);
@@ -98,19 +137,29 @@ export default function AddBookScreen() {
       console.log('🔍 [AddBookScreen] getWorkEditions response:', editionsResponse);
       console.log('🔍 [AddBookScreen] editions count:', editionsResponse?.entries?.length);
 
-      const editions = editionsResponse.entries.map((entry: any) => ({
-        key: entry.key,
-        title: entry.title,
-        pageCount: entry.number_of_pages,
-        publishDate: entry.publish_date,
-        coverUrl: entry.covers?.[0] ? `https://covers.openlibrary.org/b/id/${entry.covers[0]}-M.jpg` : undefined,
-        isbn10: entry.isbn_10,
-        isbn13: entry.isbn_13,
-        publishers: entry.publishers,
-        languages: entry.languages,
-        covers: entry.covers,
-        authors: entry.authors,
-      }));
+      const editions = editionsResponse.entries.map((entry: any) => {
+        const editionData: Edition = {
+          key: entry.key,
+          title: entry.title,
+          pageCount: entry.number_of_pages,
+          publishDate: entry.publish_date,
+          coverUrl: undefined,
+          isbn10: entry.isbn_10,
+          isbn13: entry.isbn_13,
+          publishers: entry.publishers,
+          languages: entry.languages,
+          covers: entry.covers,
+          authors: entry.authors,
+          physicalFormat: entry.physical_format,
+        };
+        editionData.coverUrl = getEditionCoverUrl(editionData);
+        return editionData;
+      });
+
+      const workResponse = await getWork({ openLibraryId: `/works/${actualWorkId}` });
+      if (workResponse?.title && !titleFallback) {
+        setWorkTitle(workResponse.title);
+      }
 
       const editionsWithAuthors = editions.filter((edition: any) => {
         const hasAuthors = edition.authors && edition.authors.length > 0;
@@ -172,7 +221,7 @@ export default function AddBookScreen() {
       console.log('🔍 [AddBookScreen] loadEditions finished, setting loading false');
       setIsEditionsLoading(false);
     }
-  }, [paramId, getWorkEditions, getBookDetails]);
+  }, [paramId, getWorkEditions, getBookDetails, initialAuthor, initialCoverUrl, titleFallback]);
 
   useEffect(() => {
     console.log('🔍 [AddBookScreen] useEffect triggered');
@@ -211,7 +260,7 @@ export default function AddBookScreen() {
           }}
           numberOfLines={1}
         >
-          {selectedEdition?.title || 'Add Book'}
+          {workTitle || 'Add Book'}
         </Animated.Text>
       ),
       headerTransparent: true,
@@ -225,7 +274,7 @@ export default function AddBookScreen() {
         />
       ),
     });
-  }, [navigation, colors, scrollY, selectedEdition?.title, headerOpacity, titleOpacity]);
+  }, [navigation, colors, scrollY, workTitle, headerOpacity, titleOpacity]);
 
   const handleAddBook = async () => {
     console.log('🔍 [AddBookScreen] handleAddBook called', { selectedEdition: !!selectedEdition, workDetails, showWorkDetailsLoader });
@@ -240,18 +289,19 @@ export default function AddBookScreen() {
       return;
     }
 
-    if (!selectedEdition.title || selectedEdition.title.trim() === '') {
-      console.error('🔍 [AddBookScreen] Title is invalid:', selectedEdition);
+    const titleToSave = workTitle || selectedEdition.title;
+    if (!titleToSave || titleToSave.trim() === '') {
+      console.error('🔍 [AddBookScreen] Title is invalid:', { workTitle, selectedTitle: selectedEdition.title });
       return;
     }
 
     try {
       setIsAdding(true);
       await addBook.mutate({
-        title: selectedEdition.title,
+        title: titleToSave,
         author: workDetails.author.trim(),
         description: workDetails.description,
-        coverUrl: selectedEdition.coverUrl,
+        coverUrl: initialCoverUrl || selectedEdition.coverUrl,
         isbn10: selectedEdition.isbn10?.[0],
         isbn13: selectedEdition.isbn13?.[0],
         totalPages: selectedEdition.pageCount || 0,
@@ -295,9 +345,9 @@ export default function AddBookScreen() {
         )}
       >
         <BookHeader
-          title={selectedEdition.title}
-          author={workDetails?.author || 'Unknown Author'}
-          coverUrl={selectedEdition.coverUrl}
+          title={workTitle || selectedEdition.title}
+          author={initialAuthor || workDetails?.author || 'Unknown Author'}
+          coverUrl={initialCoverUrl}
         />
 
         <View className="px-4 -mt-4 pb-24">
@@ -324,8 +374,8 @@ export default function AddBookScreen() {
           {!showWorkDetailsLoader && workDetails && (
             <>
               <Section className="mb-6">
-                <BookDescription description={workDetails.description} />
-              </Section>
+                  <BookDescription description={workDetails.description} />
+                </Section>
 
               <Section title="Book Details" className="mb-6">
                 <BookMetaInfo

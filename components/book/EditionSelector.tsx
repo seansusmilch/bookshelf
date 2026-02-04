@@ -15,6 +15,7 @@ type Edition = {
   isbn13?: string[];
   publishers?: { name: string }[];
   authors?: any[];
+  physicalFormat?: string;
 };
 
 type EditionSelectorProps = {
@@ -74,16 +75,13 @@ export const EditionSelector = ({
                 className="text-sm mb-1"
                 style={{ color: colors.onSurfaceVariant }}
               >
-                {currentEdition.pageCount ? `${currentEdition.pageCount} pages` : 'Page count unknown'}
+                {[
+                  currentEdition.physicalFormat,
+                  currentEdition.pageCount ? `${currentEdition.pageCount} pages` : 'Page count unknown',
+                  currentEdition.publishDate,
+                  currentEdition.publishers?.[0]?.name,
+                ].filter(Boolean).join(' • ')}
               </Text>
-              {currentEdition.publishDate && (
-                <Text
-                  className="text-sm"
-                  style={{ color: colors.onSurfaceVariant }}
-                >
-                  {currentEdition.publishDate}
-                </Text>
-              )}
             </View>
 
             <MaterialIcons name="chevron-right" size={24} color={colors.onSurfaceVariant} />
@@ -108,7 +106,12 @@ export const EditionSelector = ({
               <BottomSheetListItem
                 key={edition.key}
                 title={edition.title}
-                subtitle={`${edition.pageCount ? `${edition.pageCount} pages` : 'Page count unknown'}${edition.publishDate ? ` • ${edition.publishDate}` : ''}`}
+                subtitle={[
+                  edition.physicalFormat,
+                  edition.pageCount ? `${edition.pageCount} pages` : 'Page count unknown',
+                  edition.publishDate,
+                  edition.publishers?.[0]?.name,
+                ].filter(Boolean).join(' • ')}
                 icon={
                   coverUrl ? (
                     <Image

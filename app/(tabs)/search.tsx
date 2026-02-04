@@ -1,12 +1,12 @@
-import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
-import { usePreviousSearches } from '@/hooks/usePreviousSearches';
 import { useAppTheme } from '@/components/material3-provider';
-import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { useEffect, useRef, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Searchbar } from 'react-native-paper';
+import { usePreviousSearches } from '@/hooks/usePreviousSearches';
+import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Searchbar } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function extractOLID(key: string): string {
   const match = key.match(/\/(?:books|works|authors)\/([A-Za-z0-9]+)/);
@@ -86,13 +86,16 @@ export default function SearchScreen() {
     const topEdition = getTopEdition(book);
     const editionOlid = topEdition?.key ? extractOLID(topEdition.key) : extractOLID(book.key);
     const authorName = book.author_name?.[0] || 'Unknown Author';
+    const workOlid = extractOLID(book.key);
+    const coverUrl = getBookCoverURL(book.cover_i, workOlid, book.isbn, book.cover_edition_key);
     console.log('🔍 [SearchScreen] handleBookPress called');
     console.log('🔍 [SearchScreen] book.key:', book.key);
     console.log('🔍 [SearchScreen] topEdition:', topEdition);
     console.log('🔍 [SearchScreen] extracted edition olid:', editionOlid);
     console.log('🔍 [SearchScreen] authorName from search:', authorName);
+    console.log('🔍 [SearchScreen] coverUrl from search:', coverUrl);
     console.log('🔍 [SearchScreen] Navigating to: /add-book/', editionOlid);
-    router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}` as any);
+    router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl || '')}&title=${encodeURIComponent(book.title)}`);
   };
 
   return (
