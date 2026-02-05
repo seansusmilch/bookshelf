@@ -11,7 +11,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "format": "expo lint --fix",
-    "type-check": "tsc --noEmit",
+    "check": "tsc --noEmit",
     "clear-cache": "npx expo start -c"
   },
   "dependencies": {
