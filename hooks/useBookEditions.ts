@@ -1,11 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAction } from 'convex/react';
 import { api } from 'convex/_generated/api';
-import { Edition, getEditionCoverUrl, processEditions } from '~/lib/openLibraryUtils';
+import { fetchOpenLibrary, extractOLID } from 'convex/lib/openlibrary/client';
 
-type WorkDetails = {
+type BookDetails = {
+  key: string;
+  title: string;
+  pageCount?: number;
+  publishDate?: string;
+  coverUrl?: string;
+  isbn10?: string[];
+  isbn13?: string[];
+  publishers?: { name: string }[];
   author: string;
-  description: string | undefined;
+  description?: string;
 };
 
 type UseBookEditionsProps = {
@@ -21,18 +29,12 @@ export const useBookEditions = ({
   coverUrlFallback,
   titleFallback,
 }: UseBookEditionsProps) => {
-  const getWorkEditions = useAction(api.openLibrarySearch.getWorkEditions);
-  const getBookDetails = useAction(api.openLibrarySearch.getBookDetails);
+  const getBookDetailsAction = useAction(api.openLibrarySearch.getBookDetails);
   const getWork = useAction(api.openLibrarySearch.getWork);
 
-  const [selectedEdition, setSelectedEdition] = useState<Edition | null>(null);
-  const [allEditions, setAllEditions] = useState<Edition[]>([]);
-  const [isEditionsLoading, setIsEditionsLoading] = useState(true);
-  const [editionError, setEditionError] = useState<string | null>(null);
-  const [workDetails, setWorkDetails] = useState<WorkDetails | null>(null);
-  const [showWorkDetailsLoader, setShowWorkDetailsLoader] = useState(true);
-  const [actualEditionId, setActualEditionId] = useState<string | undefined>(undefined);
-  const [actualWorkId, setActualWorkId] = useState<string | undefined>(undefined);
+  const [bookDetails, setBookDetails] = useState<BookDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [workTitle, setWorkTitle] = useState<string | undefined>(
     titleFallback ? decodeURIComponent(titleFallback) : undefined
   );
@@ -44,108 +46,99 @@ export const useBookEditions = ({
     authorFallback ? decodeURIComponent(authorFallback) : undefined
   );
 
-  const loadEditions = useCallback(async () => {
+  const loadBookDetails = useCallback(async () => {
     try {
-      setIsEditionsLoading(true);
-      setEditionError(null);
+      setIsLoading(true);
+      setError(null);
 
       if (!paramId) {
         throw new Error('workId parameter is missing');
       }
 
-      let actualWorkId: string = paramId;
-      let editionId: string | undefined = undefined;
+      const olid = paramId.startsWith('/') ? paramId : `/books/${paramId}`;
+      const edition = await getBookDetailsAction({ openLibraryId: olid });
 
-      const isEditionParam = paramId.match(/^OL\d+M$/);
-
-      if (isEditionParam) {
-        const olid = paramId.startsWith('/') ? paramId : `/books/${paramId}`;
-        const edition = await getBookDetails({ openLibraryId: olid });
-
-        if (edition.works && edition.works.length > 0) {
-          actualWorkId = edition.works[0].key.split('/').pop() || paramId;
-          editionId = paramId;
-        } else {
-          actualWorkId = paramId;
-          editionId = undefined;
+      // Resolve author
+      let author = 'Unknown Author';
+      if (edition.authors && edition.authors.length > 0) {
+        const firstAuthor = edition.authors[0];
+        if (firstAuthor.name) {
+          author = firstAuthor.name;
+        } else if (firstAuthor.key) {
+          try {
+            const authorOlid = extractOLID(firstAuthor.key, 'author');
+            const authorData = await fetchOpenLibrary<{ name: string }>(`/authors/${authorOlid}.json`);
+            if (authorData.name) {
+              author = authorData.name;
+            }
+          } catch {
+            // Fall through to default
+          }
         }
-      } else {
-        actualWorkId = paramId;
-        editionId = undefined;
       }
 
-      setActualEditionId(editionId);
-      setActualWorkId(actualWorkId);
+      // Get description from the work
+      let description: string | undefined;
+      const workKey = edition.works?.[0]?.key;
+      if (workKey) {
+        try {
+          const work = await getWork({ openLibraryId: workKey });
+          if (work.description) {
+            description = typeof work.description === 'string'
+              ? work.description
+              : work.description.value;
+          }
+          if (work.title && !titleFallback) {
+            setWorkTitle(work.title);
+          }
+        } catch {
+          // Description is optional, continue without it
+        }
+      }
 
-      const editionsResponse = await getWorkEditions({
-        openLibraryId: `/works/${actualWorkId}`,
-        limit: 50,
+      const editionOlid = edition.key.split('/').pop();
+      const coverUrl = editionOlid
+        ? `https://covers.openlibrary.org/b/olid/${editionOlid}-M.jpg`
+        : undefined;
+
+      const finalAuthor = (typeof author === 'string' && author.trim())
+        ? author.trim()
+        : (initialAuthor || 'Unknown Author');
+
+      setBookDetails({
+        key: edition.key,
+        title: edition.title,
+        pageCount: edition.number_of_pages,
+        publishDate: edition.publish_date,
+        coverUrl,
+        isbn10: edition.isbn_10,
+        isbn13: edition.isbn_13,
+        publishers: edition.publishers,
+        author: finalAuthor,
+        description,
       });
-
-      const editions = editionsResponse.entries.map((entry: any): Edition => {
-        const editionData: Edition = {
-          key: entry.key,
-          title: entry.title,
-          pageCount: entry.number_of_pages,
-          publishDate: entry.publish_date,
-          coverUrl: undefined,
-          isbn10: entry.isbn_10,
-          isbn13: entry.isbn_13,
-          publishers: entry.publishers,
-          languages: entry.languages,
-          covers: entry.covers,
-          authors: entry.authors,
-          physicalFormat: entry.physical_format,
-        };
-        editionData.coverUrl = getEditionCoverUrl(editionData);
-        return editionData;
-      });
-
-      const workResponse = await getWork({ openLibraryId: `/works/${actualWorkId}` });
-      if (workResponse?.title && !titleFallback) {
-        setWorkTitle(workResponse.title);
-      }
-
-      const processedEditions = processEditions(editions);
-
-      if (processedEditions.length === 0) {
-        throw new Error('This book has no author information available');
-      }
-
-      const selected = processedEditions[0];
-
-      setAllEditions(processedEditions);
-      setSelectedEdition(selected);
-    } catch (err) {
-      setEditionError('Failed to load book editions. Please try again.');
+    } catch {
+      setError('Failed to load book details. Please try again.');
     } finally {
-      setIsEditionsLoading(false);
+      setIsLoading(false);
     }
-  }, [paramId, getWorkEditions, getBookDetails, getWork, titleFallback]);
+  }, [paramId, getBookDetailsAction, getWork, titleFallback, initialAuthor]);
 
   const reload = useCallback(() => {
-    loadEditions();
-  }, [loadEditions]);
+    loadBookDetails();
+  }, [loadBookDetails]);
 
   useEffect(() => {
-    loadEditions();
-  }, [loadEditions]);
+    loadBookDetails();
+  }, [loadBookDetails]);
 
   return {
-    allEditions,
-    selectedEdition,
-    isEditionsLoading,
-    editionError,
-    workDetails,
-    showWorkDetailsLoader,
-    actualWorkId,
-    actualEditionId,
+    bookDetails,
+    isLoading,
+    error,
     workTitle,
     initialCoverUrl,
     initialAuthor,
-    setSelectedEdition,
-    setWorkDetails,
-    setShowWorkDetailsLoader,
     reload,
   };
 };

@@ -5,18 +5,17 @@ import {
   getBook as getBookAPI,
   getBookByISBN as getBookByISBNAPI,
   getWork as getWorkAPI,
-  getWorkEditions as getWorkEditionsAPI,
   searchBooks as searchBooksAPI,
   type Book,
   type SearchQuery,
   type SearchResponse,
   type Work,
 } from './lib/openlibrary';
-import type { EditionsResponse } from './lib/openlibrary/types';
 
 export const searchBooks = action({
   args: {
     query: v.string(),
+    skipCache: v.optional(v.boolean()),
   },
   handler: async (ctx, args): Promise<SearchResponse> => {
     if (!args.query || args.query.trim().length < 2) {
@@ -24,13 +23,15 @@ export const searchBooks = action({
       return { docs: [], num_found: 0, start: 0, num_found_exact: false };
     }
 
-    const cachedResults = await ctx.runQuery('cache:getCachedSearchResults' as any, {
-      query: args.query,
-    });
+    if (!args.skipCache) {
+      const cachedResults = await ctx.runQuery('cache:getCachedSearchResults' as any, {
+        query: args.query,
+      });
 
-    if (cachedResults) {
-      console.log('[searchBooks] Cache hit for query:', args.query);
-      return cachedResults;
+      if (cachedResults) {
+        console.log('[searchBooks] Cache hit for query:', args.query);
+        return cachedResults;
+      }
     }
 
     const searchQuery: SearchQuery = {
@@ -169,112 +170,6 @@ export const getBookByISBN = action({
   },
 });
 
-function scoreEdition(edition: Book): number {
-  let score = 0;
-
-  // Prefer editions with covers (highest priority)
-  if (edition.covers && edition.covers.length > 0) {
-    score += 100;
-  }
-
-  // Prefer English language
-  const hasEnglish = edition.languages?.some(l => l.key === '/languages/eng');
-  if (hasEnglish) {
-    score += 50;
-  }
-
-  // Prefer more recent editions (within last 30 years)
-  if (edition.publish_date) {
-    const year = parseInt(edition.publish_date.split('-')[0]);
-    const currentYear = new Date().getFullYear();
-    if (!isNaN(year)) {
-      if (year >= currentYear - 5) {
-        score += 30;
-      } else if (year >= currentYear - 15) {
-        score += 20;
-      } else if (year >= 1990) {
-        score += 10;
-      }
-    }
-  }
-
-  // Prefer physical books over ebooks
-  if (edition.physical_format && edition.physical_format !== 'ebook') {
-    score += 15;
-  }
-
-  // Prefer editions with ISBN
-  const hasISBN = (edition.isbn_13 && edition.isbn_13.length > 0) ||
-                   (edition.isbn_10 && edition.isbn_10.length > 0);
-  if (hasISBN) {
-    score += 25;
-  }
-
-  // Prefer editions with page count
-  if (edition.number_of_pages) {
-    score += 10;
-  }
-
-  // Prefer editions with publishers (indicates more complete metadata)
-  if (edition.publishers && edition.publishers.length > 0) {
-    score += 5;
-  }
-
-  return score;
-}
-
-export const getBestEditionForWork = action({
-  args: {
-    openLibraryId: v.string(),
-  },
-  handler: async (ctx, args): Promise<Book> => {
-    console.log('[getBestEditionForWork] Finding best edition for work:', args.openLibraryId);
-
-    try {
-      const editionsResponse = await getWorkEditionsAPI(extractOLID(args.openLibraryId, 'work'));
-      const entries = editionsResponse.entries;
-
-      if (!entries || entries.length === 0) {
-        console.warn('[getBestEditionForWork] No editions found for work:', args.openLibraryId);
-        throw new Error(`No editions found for work: ${args.openLibraryId}`);
-      }
-
-      // Score all editions and select the best one
-      const scoredEditions = entries.map(edition => ({
-        edition,
-        score: scoreEdition(edition)
-      }));
-
-      const sortedEditions = scoredEditions.sort((a, b) => b.score - a.score);
-      const selectedEdition = sortedEditions[0].edition;
-
-      console.log('[getBestEditionForWork] Selected edition:', {
-        workId: args.openLibraryId,
-        editionId: selectedEdition.key,
-        title: selectedEdition.title,
-        score: sortedEditions[0].score,
-        pageCount: selectedEdition.number_of_pages,
-        totalEditions: entries.length,
-        topScores: sortedEditions.slice(0, 3).map(s => ({
-          key: s.edition.key,
-          score: s.score
-        }))
-      });
-
-      return selectedEdition;
-    } catch (error) {
-      console.error('[getBestEditionForWork] Error finding best edition:', {
-        workId: args.openLibraryId,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        errorName: error instanceof Error ? error.name : 'Unknown',
-      });
-      throw new Error(
-        `Failed to find best edition for work: ${args.openLibraryId}`
-      );
-    }
-  },
-});
-
 export const getWork = action({
   args: {
     openLibraryId: v.string(),
@@ -302,29 +197,3 @@ export const getWork = action({
   },
 });
 
-export const getWorkEditions = action({
-  args: {
-    openLibraryId: v.string(),
-    limit: v.optional(v.number()),
-  },
-  handler: async (ctx, args): Promise<EditionsResponse> => {
-    console.log('[getWorkEditions] Fetching editions for work:', args.openLibraryId);
-
-    try {
-      const editionsResponse = await getWorkEditionsAPI(extractOLID(args.openLibraryId, 'work'), args.limit || 50);
-
-      console.log('[getWorkEditions] Successfully fetched editions:', {
-        workId: args.openLibraryId,
-        count: editionsResponse.entries.length,
-      });
-
-      return editionsResponse;
-    } catch (error) {
-      console.error('[getWorkEditions] Error:', {
-        workId: args.openLibraryId,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
-      throw new Error(`Failed to fetch editions for work: ${args.openLibraryId}`);
-    }
-  },
-});

@@ -3,8 +3,8 @@ import { usePreviousSearches } from '@/hooks/usePreviousSearches';
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { Image, Pressable, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -13,31 +13,15 @@ function extractOLID(key: string): string {
   return match ? match[1] : key;
 }
 
-function getBookCoverURL(
-  coverId: number | undefined,
-  olid: string,
-  isbn?: string[],
-  editionKey?: string
-): string | undefined {
-  if (coverId) {
-    return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
-  }
-  if (isbn && isbn.length > 0) {
-    return `https://covers.openlibrary.org/b/isbn/${isbn[0]}-M.jpg`;
-  }
-  if (olid) {
-    return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg`;
-  }
-  if (editionKey) {
-    const editionOlid = extractOLID(editionKey);
-    return `https://covers.openlibrary.org/b/olid/${editionOlid}-M.jpg`;
-  }
-  console.log('No cover source available');
+function getEditionOlid(book: OpenLibraryBook): string | undefined {
+  const editionKey = book.editions?.docs?.[0]?.key;
+  if (editionKey) return extractOLID(editionKey);
+  if (book.cover_edition_key) return extractOLID(book.cover_edition_key);
   return undefined;
 }
 
-function getTopEdition(book: OpenLibraryBook) {
-  return book.editions?.docs?.[0];
+function getCoverUrl(olid: string): string {
+  return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg`;
 }
 
 export default function SearchScreen() {
@@ -50,14 +34,22 @@ export default function SearchScreen() {
 
   const { isLoading, searchBooks: executeSearch } = useSearchBooks();
   const { searches, saveSearch, deleteSearch } = usePreviousSearches();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const executeSearchAndSave = async (searchQuery: string) => {
-    const results = await executeSearch(searchQuery);
+  const executeSearchAndSave = async (searchQuery: string, options?: { skipCache?: boolean }) => {
+    const results = await executeSearch(searchQuery, options);
     setSearchResults(results);
     if (results && results.docs && results.docs.length > 0) {
       saveSearch(searchQuery);
     }
   };
+
+  const handleRefresh = useCallback(async () => {
+    if (query.length < 2) return;
+    setIsRefreshing(true);
+    await executeSearchAndSave(query, { skipCache: true });
+    setIsRefreshing(false);
+  }, [query, executeSearch]);
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -83,19 +75,10 @@ export default function SearchScreen() {
   }, []);
 
   const handleBookPress = (book: OpenLibraryBook) => {
-    const topEdition = getTopEdition(book);
-    const editionOlid = topEdition?.key ? extractOLID(topEdition.key) : extractOLID(book.key);
+    const editionOlid = getEditionOlid(book) || extractOLID(book.key);
     const authorName = book.author_name?.[0] || 'Unknown Author';
-    const workOlid = extractOLID(book.key);
-    const coverUrl = getBookCoverURL(book.cover_i, workOlid, book.isbn, book.cover_edition_key);
-    console.log('🔍 [SearchScreen] handleBookPress called');
-    console.log('🔍 [SearchScreen] book.key:', book.key);
-    console.log('🔍 [SearchScreen] topEdition:', topEdition);
-    console.log('🔍 [SearchScreen] extracted edition olid:', editionOlid);
-    console.log('🔍 [SearchScreen] authorName from search:', authorName);
-    console.log('🔍 [SearchScreen] coverUrl from search:', coverUrl);
-    console.log('🔍 [SearchScreen] Navigating to: /add-book/', editionOlid);
-    router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl || '')}&title=${encodeURIComponent(book.title)}`);
+    const coverUrl = getCoverUrl(editionOlid);
+    router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl)}&title=${encodeURIComponent(book.title)}`);
   };
 
   return (
@@ -113,7 +96,18 @@ export default function SearchScreen() {
         />
       </SafeAreaView>
 
-      <ScrollView className="flex-1 px-4 pt-4">
+      <ScrollView
+        className="flex-1 px-4 pt-4"
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            enabled={query.length >= 2}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
+      >
         {query.length < 2 ? (
           searches.length > 0 ? (
             <View>
@@ -170,8 +164,8 @@ export default function SearchScreen() {
         ) : (
           <View className="gap-3">
             {searchResults.docs?.map((book: OpenLibraryBook) => {
-              const workOlid = extractOLID(book.key);
-              const coverUrl = getBookCoverURL(book.cover_i, workOlid, book.isbn, book.cover_edition_key);
+              const editionOlid = getEditionOlid(book);
+              const coverUrl = editionOlid ? getCoverUrl(editionOlid) : undefined;
               return (
                 <Pressable
                   key={book.key}

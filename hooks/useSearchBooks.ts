@@ -8,7 +8,7 @@ export const useSearchBooks = () => {
   const searchBooks = useAction(api.openLibrarySearch.searchBooks);
 
   const executeSearch = useCallback(
-    async (query: string) => {
+    async (query: string, options?: { skipCache?: boolean }) => {
       if (!query || query.length < 2) {
         return { docs: [], num_found: 0, start: 0, num_found_exact: false };
       }
@@ -17,7 +17,7 @@ export const useSearchBooks = () => {
       setError(null);
 
       try {
-        const data = await searchBooks({ query });
+        const data = await searchBooks({ query, skipCache: options?.skipCache });
         return data;
       } catch (err) {
         setError(err as Error);

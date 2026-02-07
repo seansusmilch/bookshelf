@@ -1,0 +1,1713 @@
+{
+    "numFound": 720,
+    "start": 0,
+    "numFoundExact": true,
+    "num_found": 720,
+    "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+    "q": "the martian",
+    "offset": null,
+    "docs": [
+        {
+            "author_name": [
+                "Ray Bradbury"
+            ],
+            "key": "/works/OL103134W",
+            "title": "The Martian Chronicles",
+            "editions": {
+                "numFound": 138,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL57076114M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Andy Weir"
+            ],
+            "key": "/works/OL17091839W",
+            "title": "The Martian",
+            "editions": {
+                "numFound": 44,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL32815550M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "H. G. Wells"
+            ],
+            "key": "/works/OL52114W",
+            "title": "The War of the Worlds",
+            "editions": {
+                "numFound": 401,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL33225306M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Isaac Asimov"
+            ],
+            "key": "/works/OL46157W",
+            "title": "The Martian Way and Other Stories (Deep / Martian Way / Sucker Bait / Youth)",
+            "editions": {
+                "numFound": 25,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL4268936M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "George du Maurier"
+            ],
+            "key": "/works/OL1940391W",
+            "title": "The Martian",
+            "editions": {
+                "numFound": 25,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL24142644M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Edgar Rice Burroughs"
+            ],
+            "key": "/works/OL1418137W",
+            "title": "The warlord of Mars #3",
+            "editions": {
+                "numFound": 54,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8365106M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "John Gray",
+                "John Gray"
+            ],
+            "key": "/works/OL263458W",
+            "title": "Men are From Mars, Women are From Venus",
+            "editions": {
+                "numFound": 9,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11183660M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Robert A. Heinlein"
+            ],
+            "key": "/works/OL59688W",
+            "title": "Stranger in a Strange Land",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL28779636M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Ian Watson"
+            ],
+            "key": "/works/OL3055285W",
+            "title": "The Martian Inca",
+            "editions": {
+                "numFound": 6,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL4610626M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Peter Locke"
+            ],
+            "key": "/works/OL24764956W",
+            "title": "Mikkee the Martian",
+            "editions": {
+                "numFound": 32,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL35147978M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Tim Sullivan"
+            ],
+            "key": "/works/OL7019148W",
+            "title": "The Martian viking",
+            "editions": {
+                "numFound": 5,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL22937772M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Jeff Rainey \"Pops\""
+            ],
+            "key": "/works/OL24609032W",
+            "title": "Marshie The Martian",
+            "editions": {
+                "numFound": 3,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL52058816M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Ergo the Martian"
+            ],
+            "key": "/works/OL33699391W",
+            "title": "A More Perfect Union - Book One",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL45663393M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "The martian Art"
+            ],
+            "key": "/works/OL31062406W",
+            "title": "Real Madrid 2022",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL42659027M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "the martian art"
+            ],
+            "key": "/works/OL30935150W",
+            "title": "Messi King of Ball",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL42500045M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "the martian art"
+            ],
+            "key": "/works/OL35834672W",
+            "title": "Black Lives Mater (f)",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL48365889M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Brainy Books",
+                "The Martian"
+            ],
+            "key": "/works/OL41056549W",
+            "title": "Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL55780970M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Frederik Pohl"
+            ],
+            "key": "/works/OL60897W",
+            "title": "The Day the Martians Came",
+            "editions": {
+                "numFound": 7,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL31985151M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Edgar Rice Burroughs",
+                "Craig Trahan",
+                "Eric King",
+                "J. Allen St. John"
+            ],
+            "key": "/works/OL1418128W",
+            "title": "Thuvia, Maid of Mars",
+            "editions": {
+                "numFound": 9,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8682744M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Gregory Benford",
+                "Dominique Haas"
+            ],
+            "key": "/works/OL108280W",
+            "title": "The Martian race",
+            "editions": {
+                "numFound": 7,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL49446M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Marina von Neumann Whitman"
+            ],
+            "key": "/works/OL16521612W",
+            "title": "The Martian's daughter",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL25214827M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Edgar Rice Burroughs",
+                "E. R. Burroughs"
+            ],
+            "key": "/works/OL1418244W",
+            "title": "The Chessmen of Mars",
+            "editions": {
+                "numFound": 68,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8364699M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Theodore Judson"
+            ],
+            "key": "/works/OL5760384W",
+            "title": "The martian general's daughter",
+            "editions": {
+                "numFound": 4,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL12371925M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Marina Whitman"
+            ],
+            "key": "/works/OL20674377W",
+            "title": "The Martian's Daughter",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL27955831M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Avc Corporation DBA Minds Eye"
+            ],
+            "key": "/works/OL9571024W",
+            "title": "The Martian Chronicles",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11222808M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Mark J. Carlotto"
+            ],
+            "key": "/works/OL3353465W",
+            "title": "The Martian enigmas",
+            "editions": {
+                "numFound": 3,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8595491M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Varios"
+            ],
+            "key": "/works/OL29308412W",
+            "title": "The Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL40288985M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "SuperRead Books"
+            ],
+            "key": "/works/OL34632603W",
+            "title": "The Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL46956730M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "george bu maurier"
+            ],
+            "key": "/works/OL43272343W",
+            "title": "the martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL58938588M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "György Várnai"
+            ],
+            "key": "/works/OL6614476W",
+            "title": "Peter and the Martians",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL5764086M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Valerie Laud"
+            ],
+            "key": "/works/OL5744971W",
+            "title": "Marty The Martian Learns ABC (Marty the Martian)",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11805189M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Howling Wolf."
+            ],
+            "key": "/works/OL926991W",
+            "title": "The Martian visitors",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL122700M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "David Gerrold",
+                "Scott Brick"
+            ],
+            "key": "/works/OL24590368W",
+            "title": "The Martian Child",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL32613841M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Adisa Ajamu II"
+            ],
+            "key": "/works/OL24221179W",
+            "title": "The Martian Diaries",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL32016981M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "István Hargittai"
+            ],
+            "key": "/works/OL2471222W",
+            "title": "The Martians",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL3413297M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "R. Norman Grisewood"
+            ],
+            "key": "/works/OL7708142W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 5,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11752146M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Ray Amanat"
+            ],
+            "key": "/works/OL20555473W",
+            "title": "Mushy the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL27799857M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Fontenay, Charles L."
+            ],
+            "key": "/works/OL735710W",
+            "title": "Kipton & the Martian Maidens",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL88731M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Kim Stanley Robinson",
+                "Dominique Haas"
+            ],
+            "key": "/works/OL81669W",
+            "title": "The Martians",
+            "editions": {
+                "numFound": 12,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL32003M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "R. Norman Grisewood"
+            ],
+            "key": "/works/OL40696807W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 4,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL56131684M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Kevin J. Anderson"
+            ],
+            "key": "/works/OL20864512W",
+            "title": "The Martian War",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL28251764M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Allison Clare Theveny",
+                "WeLoveNovels"
+            ],
+            "key": "/works/OL27684937W",
+            "title": "The Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL37753151M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Robert Norman Grisewood"
+            ],
+            "key": "/works/OL30808579W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 3,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL48393298M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "R. Norman (Robert Norman) Grisewood"
+            ],
+            "key": "/works/OL36056845W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 3,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL48700876M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Mary Robinette Kowal"
+            ],
+            "key": "/works/OL43103901W",
+            "title": "The Martian Contingency",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL58710230M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "George J. Haas"
+            ],
+            "key": "/works/OL13841378W",
+            "title": "The Martian codex",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL23631638M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Lou Harry"
+            ],
+            "key": "/works/OL3744532W",
+            "title": "Santa Claus Conquers the Martians",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL3421726M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Mike Harding"
+            ],
+            "key": "/works/OL3155123W",
+            "title": "When the Martians land in Huddersfield",
+            "editions": {
+                "numFound": 3,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11660447M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Rose McFarland"
+            ],
+            "key": "/works/OL35742228W",
+            "title": "Maury the Martian",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL48226960M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "R. Grisewood"
+            ],
+            "key": "/works/OL26974583W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL36566615M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Paige Braddock"
+            ],
+            "key": "/works/OL17455865W",
+            "title": "The Martian Confederacy",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL26040619M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "R. Norman Grisewood"
+            ],
+            "key": "/works/OL9001083W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8898100M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "R. Norman Grisewood"
+            ],
+            "key": "/works/OL9807546W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11985159M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "George J. Haas"
+            ],
+            "key": "/works/OL18691990W",
+            "title": "The Martian codex",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL24013207M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Viking Lander Imaging Team.",
+                "Viking Lander Imaging Team"
+            ],
+            "key": "/works/OL6536339W",
+            "title": "The Martian landscape",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL4376180M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Richard R. Harris"
+            ],
+            "key": "/works/OL9832325W",
+            "title": "The Martian Solution",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL12097572M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Guy Lane"
+            ],
+            "key": "/works/OL24613174W",
+            "title": "The Martian Cat",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL32652764M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "John A Read"
+            ],
+            "key": "/works/OL24580975W",
+            "title": "The Martian Conspiracy",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL32598932M"
+                    }
+                ]
+            }
+        },
+        {
+            "key": "/works/OL37537925W",
+            "title": "The Martian Way",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL50563858M"
+                    }
+                ]
+            }
+        },
+        {
+            "key": "/works/OL37492451W",
+            "title": "The Martian Way",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL50514296M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Terry Jerome Green"
+            ],
+            "key": "/works/OL27633499W",
+            "title": "Macon the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL37678717M"
+                    }
+                ]
+            }
+        },
+        {
+            "key": "/works/OL34636401W",
+            "title": "The Martian Chronicles",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL46961491M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Viking Image Lander Team"
+            ],
+            "key": "/works/OL31461182W",
+            "title": "THE MARTIAN LANSCAPE",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL43120118M"
+                    }
+                ]
+            }
+        },
+        {
+            "key": "/works/OL36003773W",
+            "title": "The Martian Chronicles",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL48599554M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "MIchelle Wright"
+            ],
+            "key": "/works/OL25927438W",
+            "title": "Mickey the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL34994821M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Scott Morton"
+            ],
+            "key": "/works/OL41057724W",
+            "title": "Martin the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL55782505M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Jeff Rainey"
+            ],
+            "key": "/works/OL38274099W",
+            "title": "Marshie the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL52027301M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Robert Grisewood"
+            ],
+            "key": "/works/OL41689267W",
+            "title": "Zarlah the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL56607918M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Alan K Baker"
+            ],
+            "key": "/works/OL20704777W",
+            "title": "The Martian Falcon",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL27996406M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Jessica Yang"
+            ],
+            "key": "/works/OL20564960W",
+            "title": "The Martian Wisdom",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL27810303M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Isaac Asimov"
+            ],
+            "key": "/works/OL43272314W",
+            "title": "The Martian Way",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL58938556M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "ray bradbury"
+            ],
+            "key": "/works/OL43091242W",
+            "title": "the martian chronicles",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL58694766M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Timothy R Sullivan"
+            ],
+            "key": "/works/OL15173132W",
+            "title": "The Martian Viking",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL24304847M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "David Grinnell"
+            ],
+            "key": "/works/OL15562271W",
+            "title": "The Martian Missile",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL24515015M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Drew Goddard"
+            ],
+            "key": "/works/OL17630953W",
+            "title": "The Martian [videorecording]",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL26236401M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Alan Baker"
+            ],
+            "key": "/works/OL17386963W",
+            "title": "The Martian Ambassador",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL25966922M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Rock Hudson, Gayle Hunnicutt, Bernie Casey, Christopher Connelly, Nicholas Hammond, Darren McGavin, Roddy McDowall, Bernadette Peters, Joyce Van Patte"
+            ],
+            "key": "/works/OL44188119W",
+            "title": "The Martian Chronicles",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL60414964M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Ray Bradbury"
+            ],
+            "key": "/works/OL44150596W",
+            "title": "The Martian Chronicles",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL60373333M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Dana George Dunsieth"
+            ],
+            "key": "/works/OL44147550W",
+            "title": "I the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL60369910M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Keith Woodcott"
+            ],
+            "key": "/works/OL33431603W",
+            "title": "The Martian sphinx",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL45343062M"
+                    }
+                ]
+            }
+        },
+        {
+            "key": "/works/OL7816474M",
+            "title": "THE MARTIAN CHRONICLES",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL7816474M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Sunnyside Studios Sunnyside Studios SL"
+            ],
+            "key": "/works/OL30006237W",
+            "title": "Groovy the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL41249856M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Cheryl B. Zach"
+            ],
+            "key": "/works/OL16477976W",
+            "title": "Here comes the Martian mushroom",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8381194M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Mason, Tom",
+                "Tom Mason",
+                "Dan Danko"
+            ],
+            "key": "/works/OL15146248W",
+            "title": "Meet the Martians",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL24213787M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Robert Silverberg",
+                "Robert A. Heinlein",
+                "Arthur C. Clarke",
+                "Isaac Asimov",
+                "Ray Bradbury"
+            ],
+            "key": "/works/OL1960472W",
+            "title": "The Science Fiction Hall of Fame -- Volume One",
+            "editions": {
+                "numFound": 31,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8690533M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Alan K Baker"
+            ],
+            "key": "/works/OL19634559W",
+            "title": "The Martian Ambassador",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL28129481M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Edgar Rice Burroughs"
+            ],
+            "key": "/works/OL1417984W",
+            "title": "The Martian Tales Trilogy",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL8014163M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "John Barnes"
+            ],
+            "key": "/works/OL16038433W",
+            "title": "In the hall of the Martian king",
+            "editions": {
+                "numFound": 5,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL3391218M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Trivion Books"
+            ],
+            "key": "/works/OL40310224W",
+            "title": "Trivia : the Martian",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL54833107M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Tove Jansson"
+            ],
+            "key": "/works/OL20874779W",
+            "title": "Moomin and the Martians",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL28268390M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Dennis Calero"
+            ],
+            "key": "/works/OL16134262W",
+            "title": "Ray Bradbury's The martian chronicles",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL25018190M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Akin Nefesogullari"
+            ],
+            "key": "/works/OL28010115W",
+            "title": "Elon the Martian",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL56123046M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Peter Locke"
+            ],
+            "key": "/works/OL38319152W",
+            "title": "Mikkee the Martian 7",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL52101325M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Frank Belknap Long"
+            ],
+            "key": "/works/OL26832302W",
+            "title": "Man the Martians Made",
+            "editions": {
+                "numFound": 3,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL36412211M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Alan Gallop"
+            ],
+            "key": "/works/OL17550084W",
+            "title": "The Martians Are Coming",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL26140268M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Kevin J. Anderson"
+            ],
+            "key": "/works/OL28393204W",
+            "title": "Mr. Wells & the Martians",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL38886039M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Kim Stanley Robinson"
+            ],
+            "key": "/works/OL15188851W",
+            "title": "Blue Mars & The Martians",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL24321013M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Dale Bains"
+            ],
+            "key": "/works/OL9692078W",
+            "title": "Amongst the Martian Ruins",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11622097M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Rowena Sommerville"
+            ],
+            "key": "/works/OL7915671W",
+            "title": "The Martians have taken my brother",
+            "editions": {
+                "numFound": 2,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL17394562M"
+                    }
+                ]
+            }
+        },
+        {
+            "author_name": [
+                "Brent LeVasseur"
+            ],
+            "key": "/works/OL9775016W",
+            "title": "Aoleon The Martian Girl",
+            "editions": {
+                "numFound": 1,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL11839367M"
+                    }
+                ]
+            }
+        }
+    ]
+}
