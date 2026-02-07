@@ -18,14 +18,16 @@ export const searchBooks = action({
     skipCache: v.optional(v.boolean()),
   },
   handler: async (ctx, args): Promise<SearchResponse> => {
-    if (!args.query || args.query.trim().length < 2) {
+    const normalizedQuery = args.query.toLowerCase().trim();
+
+    if (!normalizedQuery || normalizedQuery.length < 2) {
       console.warn('[searchBooks] Query too short or empty:', args.query);
       return { docs: [], num_found: 0, start: 0, num_found_exact: false };
     }
 
     if (!args.skipCache) {
       const cachedResults = await ctx.runQuery('cache:getCachedSearchResults' as any, {
-        query: args.query,
+        query: normalizedQuery,
       });
 
       if (cachedResults) {
@@ -35,23 +37,23 @@ export const searchBooks = action({
     }
 
     const searchQuery: SearchQuery = {
-      q: args.query,
+      q: normalizedQuery,
       lang: 'eng',
       limit: 20,
     };
 
-    console.log('[searchBooks] Searching for query:', args.query);
+    console.log('[searchBooks] Searching for query:', normalizedQuery);
 
     try {
       const response = await searchBooksAPI(searchQuery);
 
       await ctx.runMutation('cache:cacheSearchResults' as any, {
-        query: args.query,
+        query: normalizedQuery,
         results: response,
       });
 
       console.log('[searchBooks] Search successful:', {
-        query: args.query,
+        query: normalizedQuery,
         resultsCount: response.docs.length,
         totalFound: response.num_found,
       });
@@ -60,7 +62,7 @@ export const searchBooks = action({
     } catch (error) {
       if (error instanceof Error) {
         console.error('[searchBooks] Error searching books:', {
-          query: args.query,
+          query: normalizedQuery,
           errorMessage: error.message,
           errorName: error.name,
           errorStack: error.stack,
@@ -71,7 +73,7 @@ export const searchBooks = action({
           const endpoint = (error as any).endpoint;
 
           console.warn('[searchBooks] OpenLibrary API error:', {
-            query: args.query,
+            query: normalizedQuery,
             statusCode,
             endpoint,
             is422: statusCode === 422,

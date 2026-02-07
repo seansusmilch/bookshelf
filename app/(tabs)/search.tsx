@@ -2,9 +2,9 @@ import { useAppTheme } from '@/components/material3-provider';
 import { usePreviousSearches } from '@/hooks/usePreviousSearches';
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Image, Pressable, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -27,6 +27,8 @@ function getCoverUrl(olid: string): string {
 export default function SearchScreen() {
   const { colors } = useAppTheme();
   const router = useRouter();
+  const navigation = useNavigation();
+  const searchbarRef = useRef<TextInput>(null);
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<OpenLibraryResponse | null>(null);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
@@ -74,6 +76,18 @@ export default function SearchScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', () => {
+      // Blur first so that focus() always triggers the keyboard,
+      // even if the input already had logical focus.
+      searchbarRef.current?.blur();
+      setTimeout(() => {
+        searchbarRef.current?.focus();
+      }, 50);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const handleBookPress = (book: OpenLibraryBook) => {
     const editionOlid = getEditionOlid(book) || extractOLID(book.key);
     const authorName = book.author_name?.[0] || 'Unknown Author';
@@ -82,18 +96,22 @@ export default function SearchScreen() {
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <SafeAreaView className="bg-white py-4 border-b border-gray-200" edges={['top']}>
-        <Searchbar
-          placeholder="Search for books..."
-          onChangeText={handleSearch}
-          value={query}
-          mode="bar"
-          elevation={2}
-          loading={isLoading}
-          icon={() => <MaterialIcons name="search" size={24} color={colors.onSurfaceVariant} />}
-          style={{ marginHorizontal: 20 }}
-        />
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      <SafeAreaView style={{ backgroundColor: colors.surface }} edges={['top']}>
+        <View className="py-4">
+          <Searchbar
+            ref={searchbarRef}
+            placeholder="Search for books..."
+            onChangeText={handleSearch}
+            value={query}
+            mode="bar"
+            elevation={2}
+            loading={isLoading}
+            icon={() => <MaterialIcons name="search" size={24} color={colors.onSurfaceVariant} />}
+            style={{ marginHorizontal: 20, backgroundColor: colors.surfaceContainerHighest }}
+            placeholderTextColor={colors.onSurfaceVariant}
+          />
+        </View>
       </SafeAreaView>
 
       <ScrollView
@@ -111,7 +129,9 @@ export default function SearchScreen() {
         {query.length < 2 ? (
           searches.length > 0 ? (
             <View>
-              <Text className="text-sm font-semibold text-gray-600 mb-3">Previous searches</Text>
+              <Text className="text-sm font-semibold mb-3" style={{ color: colors.onSurfaceVariant }}>
+                Previous searches
+              </Text>
               <View className="gap-2">
                 {searches.map((search, index) => (
                   <TouchableOpacity
@@ -120,11 +140,12 @@ export default function SearchScreen() {
                       setQuery(search);
                       executeSearchAndSave(search);
                     }}
-                    className="bg-white rounded-xl shadow-sm p-3 flex-row items-center justify-between"
+                    className="rounded-xl shadow-sm p-3 flex-row items-center justify-between"
+                    style={{ backgroundColor: colors.surface }}
                   >
                     <View className="flex-1 flex-row items-center gap-3">
                       <MaterialIcons name="search" size={20} color={colors.onSurfaceVariant} />
-                      <Text className="text-base text-gray-900 flex-1" numberOfLines={1}>
+                      <Text className="text-base flex-1" numberOfLines={1} style={{ color: colors.onSurface }}>
                         {search}
                       </Text>
                     </View>
@@ -142,8 +163,10 @@ export default function SearchScreen() {
           ) : (
             <View className="items-center justify-center py-12">
               <MaterialIcons name="search" size={64} color={colors.onSurfaceVariant} />
-              <Text className="text-xl font-semibold text-gray-900 mt-4 mb-2">Search for books</Text>
-              <Text className="text-center text-gray-600 px-8">
+              <Text className="text-xl font-semibold mt-4 mb-2" style={{ color: colors.onSurface }}>
+                Search for books
+              </Text>
+              <Text className="text-center px-8" style={{ color: colors.onSurfaceVariant }}>
                 Enter a title, author, or keyword to find books from Open Library.
               </Text>
             </View>
@@ -151,13 +174,15 @@ export default function SearchScreen() {
         ) : isLoading ? (
           <View className="items-center justify-center py-12">
             <MaterialIcons name="hourglass-empty" size={48} color={colors.primary} />
-            <Text className="text-gray-600 mt-4">Searching...</Text>
+            <Text style={{ color: colors.onSurfaceVariant, marginTop: 16 }}>Searching...</Text>
           </View>
         ) : !searchResults || searchResults.docs?.length === 0 ? (
           <View className="items-center justify-center py-12">
             <MaterialIcons name="menu-book" size={64} color={colors.onSurfaceVariant} />
-            <Text className="text-xl font-semibold text-gray-900 mt-4 mb-2">No results found</Text>
-            <Text className="text-center text-gray-600 px-8">
+            <Text className="text-xl font-semibold mt-4 mb-2" style={{ color: colors.onSurface }}>
+              No results found
+            </Text>
+            <Text className="text-center px-8" style={{ color: colors.onSurfaceVariant }}>
               Try a different search term or check your spelling.
             </Text>
           </View>
@@ -170,10 +195,11 @@ export default function SearchScreen() {
                 <Pressable
                   key={book.key}
                   onPress={() => handleBookPress(book)}
-                  className="bg-white rounded-xl shadow-sm p-3"
+                  className="rounded-xl shadow-sm p-3"
+                  style={{ backgroundColor: colors.surface }}
                 >
                   <View className="flex-row gap-3">
-                    <View className="w-20 h-28 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                    <View className="w-32 h-44 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                       {coverUrl && !failedImages.has(coverUrl) ? (
                         <Image
                           source={{ uri: coverUrl }}
@@ -185,25 +211,20 @@ export default function SearchScreen() {
                           }}
                         />
                       ) : (
-                        <View className="w-full h-full items-center justify-center bg-gray-100">
-                          <Text className="text-gray-400 text-xs">No cover</Text>
+                        <View className="w-full h-full items-center justify-center" style={{ backgroundColor: colors.surfaceContainerHighest }}>
+                          <Text style={{ color: colors.onSurfaceVariant, fontSize: 12 }}>No cover</Text>
                         </View>
                       )}
                     </View>
 
                     <View className="flex-1 justify-between py-1">
                       <View>
-                        <Text className="text-base font-semibold text-gray-900" numberOfLines={2}>
+                        <Text className="text-lg font-semibold" numberOfLines={2} style={{ color: colors.onSurface }}>
                           {book.title}
                         </Text>
-                        <Text className="text-sm text-gray-500 mt-1" numberOfLines={1}>
+                        <Text className="text-base mt-1" numberOfLines={1} style={{ color: colors.onSurfaceVariant }}>
                           {book.author_name?.join(', ') || 'Unknown Author'}
                         </Text>
-                        {book.edition_count && (
-                          <Text className="text-xs text-gray-400 mt-1">
-                            {book.edition_count} {book.edition_count ===1 ? 'edition' : 'editions'}
-                          </Text>
-                        )}
                       </View>
                     </View>
                   </View>

@@ -1,6 +1,7 @@
 import { BookCard } from '@/components/ui/BookCard';
 import { FilterTabs } from '@/components/ui/FilterTabs';
 import { BookCardSkeleton } from '@/components/ui/Skeleton';
+import { useAppTheme } from '@/components/material3-provider';
 import { useBooks } from '@/hooks/useBooks';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -11,6 +12,7 @@ export default function MyBooksScreen() {
   const router = useRouter();
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [refreshing, setRefreshing] = useState(false);
+  const { colors } = useAppTheme();
 
   const books = useBooks(selectedStatus === 'all' ? undefined : selectedStatus);
 
@@ -34,9 +36,11 @@ export default function MyBooksScreen() {
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <SafeAreaView className="bg-white border-b border-gray-200" edges={['top']}>
-        <FilterTabs selectedStatus={selectedStatus} onStatusChange={setSelectedStatus} />
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      <SafeAreaView edges={['top']}>
+        <View style={{ backgroundColor: colors.surface }}>
+          <FilterTabs selectedStatus={selectedStatus} onStatusChange={setSelectedStatus} />
+        </View>
       </SafeAreaView>
 
       {books === undefined ? (
@@ -51,8 +55,10 @@ export default function MyBooksScreen() {
       ) : books.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-4xl mb-4">📚</Text>
-          <Text className="text-xl font-semibold text-gray-900 mb-2">No books yet</Text>
-          <Text className="text-center text-gray-600 mb-6">
+          <Text className="text-xl font-semibold mb-2" style={{ color: colors.onSurface }}>
+            No books yet
+          </Text>
+          <Text className="text-center" style={{ color: colors.onSurfaceVariant }}>
             Search for books in the Search tab to start building your library.
           </Text>
         </View>
@@ -62,7 +68,9 @@ export default function MyBooksScreen() {
           className="flex-1"
           contentContainerClassName="px-4 pt-4 pb-4"
         >
-          <Text className="text-xl font-bold mb-4">Books ({books.length})</Text>
+          <Text className="text-xl font-bold mb-4" style={{ color: colors.onSurface }}>
+            Books ({books.length})
+          </Text>
           {books.map((book: any, index: number) => {
             console.log(`📚 [ShelfScreen] Rendering book ${index}:`, book);
             console.log(`📚 [ShelfScreen] Book ${index} _id:`, book._id);

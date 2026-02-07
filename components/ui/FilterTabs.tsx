@@ -1,5 +1,6 @@
 import { ScrollView, View, Text, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
+import { useAppTheme } from '@/components/material3-provider';
 
 type FilterTabsProps = {
   selectedStatus: string;
@@ -15,6 +16,7 @@ const STATUS_OPTIONS = [
 
 export const FilterTabs = ({ selectedStatus, onStatusChange }: FilterTabsProps) => {
   const [activeStatus, setActiveStatus] = useState(selectedStatus);
+  const { colors } = useAppTheme();
 
   useEffect(() => {
     setActiveStatus(selectedStatus);
@@ -34,13 +36,19 @@ export const FilterTabs = ({ selectedStatus, onStatusChange }: FilterTabsProps) 
               key={option.value}
               onPress={() => handleStatusChange(option.value)}
               className={`px-4 py-2 rounded-full ${
-                activeStatus === option.value ? 'bg-blue-500' : 'bg-gray-100'
+                activeStatus === option.value ? '' : ''
               }`}
+              style={{
+                backgroundColor: activeStatus === option.value ? colors.primary : colors.surfaceContainerHighest,
+              }}
             >
               <Text
                 className={`text-sm font-medium ${
-                  activeStatus === option.value ? 'text-white' : 'text-gray-700'
+                  activeStatus === option.value ? '' : ''
                 }`}
+                style={{
+                  color: activeStatus === option.value ? colors.onPrimary : colors.onSurfaceVariant,
+                }}
               >
                 {option.label}
               </Text>

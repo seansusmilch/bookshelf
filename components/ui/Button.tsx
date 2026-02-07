@@ -12,6 +12,7 @@ type ButtonProps = {
   icon?: React.ReactNode;
   onPress?: () => void;
   className?: string;
+  danger?: boolean;
 };
 
 export const Button = forwardRef<any, ButtonProps>(
@@ -25,6 +26,7 @@ export const Button = forwardRef<any, ButtonProps>(
       icon,
       onPress,
       className = '',
+      danger = false,
     },
     ref,
   ) => {
@@ -44,23 +46,35 @@ export const Button = forwardRef<any, ButtonProps>(
 
     const variantStyles = {
       filled: {
-        bg: disabled ? colors.surfaceVariant : colors.primary,
-        text: disabled ? colors.onSurfaceVariant : colors.onPrimary,
+        bg: danger
+          ? (disabled ? colors.surfaceVariant : colors.error)
+          : (disabled ? colors.surfaceVariant : colors.primary),
+        text: danger
+          ? (disabled ? colors.onSurfaceVariant : colors.onError)
+          : (disabled ? colors.onSurfaceVariant : colors.onPrimary),
         border: 'border-transparent',
       },
       outlined: {
         bg: 'transparent',
-        text: disabled ? colors.onSurfaceVariant : colors.primary,
+        text: danger
+          ? (disabled ? colors.onSurfaceVariant : colors.error)
+          : (disabled ? colors.onSurfaceVariant : colors.primary),
         border: `border-2 ${disabled ? 'border-transparent' : 'border-current'}`,
       },
       text: {
         bg: 'transparent',
-        text: disabled ? colors.onSurfaceVariant : colors.primary,
+        text: danger
+          ? (disabled ? colors.onSurfaceVariant : colors.error)
+          : (disabled ? colors.onSurfaceVariant : colors.primary),
         border: 'border-transparent',
       },
       elevated: {
-        bg: disabled ? colors.surfaceVariant : colors.primary,
-        text: disabled ? colors.onSurfaceVariant : colors.onPrimary,
+        bg: danger
+          ? (disabled ? colors.surfaceVariant : colors.error)
+          : (disabled ? colors.surfaceVariant : colors.primary),
+        text: danger
+          ? (disabled ? colors.onSurfaceVariant : colors.onError)
+          : (disabled ? colors.onSurfaceVariant : colors.onPrimary),
         border: 'border-transparent',
       },
       tonal: {

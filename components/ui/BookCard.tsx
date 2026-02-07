@@ -1,6 +1,7 @@
 import { Pressable, View, Text, Image } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Id } from 'convex/_generated/dataModel';
+import { useAppTheme } from '@/components/material3-provider';
 
 type BookProps = {
   _id: Id<'books'>;
@@ -20,6 +21,7 @@ type BookCardProps = {
 };
 
 export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
+  const { colors } = useAppTheme();
   const progressPercent = book.totalPages > 0 ? (book.currentPage / book.totalPages) * 100 : 0;
 
   console.log('📚 [BookCard] Rendering book:', book.title);
@@ -27,9 +29,9 @@ export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
   console.log('📚 [BookCard] book._id type:', typeof book._id);
 
   return (
-    <Pressable onPress={onPress} className="mb-3 bg-white rounded-xl shadow-sm min-h-[120px]">
+    <Pressable onPress={onPress} className="mb-3 rounded-xl shadow-sm min-h-[120px]" style={{ backgroundColor: colors.surface }}>
       <View className="flex-row p-3 gap-3">
-        <View className="w-20 h-28 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+        <View className="w-20 h-28 rounded-lg overflow-hidden flex-shrink-0" style={{ backgroundColor: colors.surfaceContainerHighest }}>
           {book.coverUrl ? (
             <Image
               source={{ uri: book.coverUrl }}
@@ -37,18 +39,18 @@ export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
               resizeMode="cover"
             />
           ) : (
-            <View className="w-full h-full items-center justify-center bg-gray-100">
-              <Text className="text-gray-400 text-xs">No cover</Text>
+            <View className="w-full h-full items-center justify-center">
+              <Text style={{ color: colors.onSurfaceVariant, fontSize: 12 }}>No cover</Text>
             </View>
           )}
         </View>
 
         <View className="flex-1 justify-between py-1">
           <View>
-            <Text className="text-base font-semibold text-gray-900" numberOfLines={2}>
+            <Text className="text-base font-semibold" numberOfLines={2} style={{ color: colors.onSurface }}>
               {book.title}
             </Text>
-            <Text className="text-sm text-gray-500 mt-1" numberOfLines={1}>
+            <Text className="text-sm mt-1" numberOfLines={1} style={{ color: colors.onSurfaceVariant }}>
               {book.author}
             </Text>
           </View>
@@ -56,35 +58,25 @@ export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
           <View>
             {book.status === 'reading' && (
               <View className="mt-2">
-                <View className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <View className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: colors.surfaceContainerHighest }}>
                   <View
-                    className="h-full bg-blue-500 rounded-full"
-                    style={{ width: `${progressPercent}%` }}
+                    className="h-full rounded-full"
+                    style={{ width: `${progressPercent}%`, backgroundColor: colors.primary }}
                   />
                 </View>
-                <Text className="text-xs text-gray-500 mt-1">
+                <Text className="text-xs mt-1" style={{ color: colors.onSurfaceVariant }}>
                   {book.currentPage} / {book.totalPages} pages
                 </Text>
               </View>
             )}
 
-            <View className="flex-row items-center justify-between mt-2">
+            <View className="flex-row items-center mt-2">
               {book.rating && (
                 <View className="flex-row items-center gap-1">
-                  <FontAwesome name="star" size={12} color="#f59e0b" />
-                  <Text className="text-xs text-gray-600">{book.rating.rating}</Text>
+                  <FontAwesome name="star" size={12} color={colors.tertiary} />
+                  <Text className="text-xs" style={{ color: colors.onSurfaceVariant }}>{book.rating.rating}</Text>
                 </View>
               )}
-
-              <Pressable
-                onPress={(e) => {
-                  e.stopPropagation();
-                  onMenuPress?.();
-                }}
-                className="p-1 -mr-1"
-              >
-                <FontAwesome name="ellipsis-v" size={16} color="#6b7280" />
-              </Pressable>
             </View>
           </View>
         </View>

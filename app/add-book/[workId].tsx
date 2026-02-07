@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Animated, ScrollView } from 'react-native';
+import { View, Text, Animated, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useAddBook } from '@/hooks/useAddBook';
@@ -9,7 +9,6 @@ import { BookMetaInfo } from '@/components/book/BookMetaInfo';
 import { StatusSelector } from '@/components/book/StatusSelector';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Section } from '@/components/ui/Section';
 import { PageLoading, PageError } from '@/components/ui/StateComponents';
 import { useAppTheme } from '@/components/material3-provider';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
@@ -96,6 +95,8 @@ export default function AddBookScreen() {
     );
   }
 
+  const hasMetaInfo = bookDetails.pageCount || bookDetails.publishDate || bookDetails.publishers?.[0]?.name;
+
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
@@ -113,40 +114,58 @@ export default function AddBookScreen() {
           coverUrl={initialCoverUrl}
         />
 
-        <View className="px-4 -mt-4 pb-24">
-          <Section className="mb-6">
-            <BookDescription description={bookDetails.description} />
-          </Section>
+        <View className="px-4 pt-5 pb-24 gap-5">
+          {/* Description */}
+          {bookDetails.description && (
+            <Card variant="elevated">
+              <CardContent className="p-4">
+                <BookDescription description={bookDetails.description} />
+              </CardContent>
+            </Card>
+          )}
 
-          <Section title="Book Details" className="mb-6">
-            <BookMetaInfo
-              pageCount={bookDetails.pageCount}
-              publishDate={bookDetails.publishDate}
-              publisher={bookDetails.publishers?.[0]?.name}
-            />
-          </Section>
+          {/* Details */}
+          {hasMetaInfo && (
+            <View className="gap-2">
+              <Text
+                className="text-xs font-medium uppercase px-1"
+                style={{ color: colors.onSurfaceVariant, letterSpacing: 1 }}
+              >
+                Details
+              </Text>
+              <BookMetaInfo
+                pageCount={bookDetails.pageCount}
+                publishDate={bookDetails.publishDate}
+                publisher={bookDetails.publishers?.[0]?.name}
+              />
+            </View>
+          )}
 
-          <Section title="Reading Status" className="mb-6">
+          {/* Reading Status */}
+          <View className="gap-2">
+            <Text
+              className="text-xs font-medium uppercase px-1"
+              style={{ color: colors.onSurfaceVariant, letterSpacing: 1 }}
+            >
+              Reading Status
+            </Text>
             <StatusSelector
               selectedStatus={selectedStatus}
               onStatusChange={setSelectedStatus}
             />
-          </Section>
+          </View>
 
-          <Card variant="elevated">
-            <CardContent className="p-4">
-              <Button
-                onPress={handleAddBook}
-                loading={isAdding}
-                disabled={isAdding}
-                variant="filled"
-                size="large"
-                className="w-full"
-              >
-                Add to Your Library
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Add Button */}
+          <Button
+            onPress={handleAddBook}
+            loading={isAdding}
+            disabled={isAdding}
+            variant="filled"
+            size="large"
+            className="w-full"
+          >
+            Add to Your Library
+          </Button>
         </View>
       </ScrollView>
     </View>

@@ -10,7 +10,7 @@ import { BookDescription } from '@/components/book/BookDescription';
 import { BookMetaInfo } from '@/components/book/BookMetaInfo';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Section, Spacer } from '@/components/ui/Section';
+import { Spacer } from '@/components/ui/Section';
 import { ProgressSlider, ProgressCard } from '@/components/ui/ProgressSlider';
 import { RatingChips, RatingDisplay } from '@/components/ui/RatingPicker';
 import { Checkbox } from '@/components/ui/Chips';
@@ -110,12 +110,24 @@ export default function BookDetailScreen() {
           coverUrl={book.coverUrl}
         />
 
-        <View className="px-4 -mt-4 pb-32">
-          <Section className="mb-6">
-            <BookDescription description={book.description} />
-          </Section>
+        <View className="px-4 pt-5 pb-32 gap-5">
+          {/* Description */}
+          {book.description && (
+            <Card variant="elevated">
+              <CardContent className="p-4">
+                <BookDescription description={book.description} />
+              </CardContent>
+            </Card>
+          )}
 
-          <Section title="Reading Progress" className="mb-6">
+          {/* Reading Progress */}
+          <View className="gap-2">
+            <Text
+              className="text-xs font-medium uppercase px-1"
+              style={{ color: colors.onSurfaceVariant, letterSpacing: 1 }}
+            >
+              Reading Progress
+            </Text>
             <Card variant="elevated">
               <CardContent className="p-4">
                 <ProgressCard
@@ -169,9 +181,16 @@ export default function BookDetailScreen() {
                 </View>
               </CardContent>
             </Card>
-          </Section>
+          </View>
 
-          <Section title="Rating" className="mb-6">
+          {/* Rating */}
+          <View className="gap-2">
+            <Text
+              className="text-xs font-medium uppercase px-1"
+              style={{ color: colors.onSurfaceVariant, letterSpacing: 1 }}
+            >
+              Rating
+            </Text>
             <Card variant="elevated">
               <CardContent className="p-4">
                 {book.rating && !showRatingPicker && (
@@ -202,46 +221,58 @@ export default function BookDetailScreen() {
                 </Button>
               </CardContent>
             </Card>
-          </Section>
+          </View>
 
-          {lists && lists.length > 0 && (
-            <Section title="Add to Lists" className="mb-6">
-              <Card
-                variant="outlined"
-                onPress={() => setShowListSelector(true)}
-              >
-                <CardContent className="p-4">
-                  <View className="flex-row items-center justify-between">
-                    <Text className="text-sm" style={{ color: colors.onSurface }}>
-                      {selectedListIds.length > 0
-                        ? `${selectedListIds.length} list${selectedListIds.length > 1 ? 's' : ''} selected`
-                        : 'Select lists'}
-                    </Text>
-                  </View>
-                </CardContent>
-              </Card>
-            </Section>
+          {/* Grid: Details + Lists */}
+          {(book.totalPages > 0 || (lists && lists.length > 0)) && (
+            <View className="flex-row gap-4">
+              {book.totalPages > 0 && (
+                <View className="flex-1 gap-2">
+                  <Text
+                    className="text-xs font-medium uppercase px-1"
+                    style={{ color: colors.onSurfaceVariant, letterSpacing: 1 }}
+                  >
+                    Details
+                  </Text>
+                  <BookMetaInfo pageCount={book.totalPages} />
+                </View>
+              )}
+
+              {lists && lists.length > 0 && (
+                <View className="flex-1 gap-2">
+                  <Text
+                    className="text-xs font-medium uppercase px-1"
+                    style={{ color: colors.onSurfaceVariant, letterSpacing: 1 }}
+                  >
+                    Lists
+                  </Text>
+                  <Card variant="outlined" onPress={() => setShowListSelector(true)}>
+                    <CardContent className="p-4">
+                      <Text className="text-sm" style={{ color: colors.onSurface }}>
+                        {selectedListIds.length > 0
+                          ? `${selectedListIds.length} list${selectedListIds.length > 1 ? 's' : ''} selected`
+                          : 'Tap to select lists'}
+                      </Text>
+                    </CardContent>
+                  </Card>
+                </View>
+              )}
+            </View>
           )}
 
-          <Section title="Book Details" className="mb-6">
-            <BookMetaInfo
-              pageCount={book.totalPages}
-            />
-          </Section>
-
-          <Section title="Manage Book" className="mb-6">
-            <Card variant="outlined">
-              <CardContent className="p-4">
-                <Button
-                  onPress={() => setShowRemoveDialog(true)}
-                  variant="text"
-                  className="w-full"
-                >
-                  Remove from Library
-                </Button>
-              </CardContent>
-            </Card>
-          </Section>
+          {/* Remove */}
+          <Card variant="outlined">
+            <CardContent className="p-3">
+              <Button
+                onPress={() => setShowRemoveDialog(true)}
+                variant="outlined"
+                className="w-full"
+                danger
+              >
+                Remove from Library
+              </Button>
+            </CardContent>
+          </Card>
         </View>
       </ScrollView>
 
@@ -287,6 +318,7 @@ export default function BookDetailScreen() {
               variant="filled"
               className="flex-1"
               loading={removeBook.isPending}
+              danger
             >
               Remove
             </Button>
