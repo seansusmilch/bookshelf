@@ -15,12 +15,8 @@ scroll area without re-rendering content.
 **Incorrect (padding causes layout recalculation):**
 
 ```tsx
-function Feed({ bottomOffset }: { bottomOffset: number }) {
-  return (
-    <ScrollView contentContainerStyle={{ paddingBottom: bottomOffset }}>
-      {children}
-    </ScrollView>
-  )
+function Feed({bottomOffset}: {bottomOffset: number}) {
+    return <ScrollView contentContainerStyle={{paddingBottom: bottomOffset}}>{children}</ScrollView>
 }
 // Changing bottomOffset triggers full layout recalculation
 ```
@@ -28,15 +24,14 @@ function Feed({ bottomOffset }: { bottomOffset: number }) {
 **Correct (contentInset for dynamic spacing):**
 
 ```tsx
-function Feed({ bottomOffset }: { bottomOffset: number }) {
-  return (
-    <ScrollView
-      contentInset={{ bottom: bottomOffset }}
-      scrollIndicatorInsets={{ bottom: bottomOffset }}
-    >
-      {children}
-    </ScrollView>
-  )
+function Feed({bottomOffset}: {bottomOffset: number}) {
+    return (
+        <ScrollView
+            contentInset={{bottom: bottomOffset}}
+            scrollIndicatorInsets={{bottom: bottomOffset}}>
+            {children}
+        </ScrollView>
+    )
 }
 // Changing bottomOffset only adjusts scroll bounds
 ```

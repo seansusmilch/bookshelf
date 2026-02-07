@@ -36,22 +36,22 @@ This project is set up with Tailwind CSS v4 and NativeWind v5 for utility-first 
 Import React Native components directly. className is supported via Babel plugin:
 
 ```tsx
-import { View, Text, ScrollView } from "react-native";
+import {View, Text, ScrollView} from 'react-native'
 
 export default function MyScreen() {
-  return (
-    <ScrollView className="flex-1 bg-white">
-      <View className="p-4 gap-4">
-        <Text className="text-xl font-bold text-gray-900">Hello Tailwind!</Text>
-      </View>
-    </ScrollView>
-  );
+    return (
+        <ScrollView className="flex-1 bg-white">
+            <View className="gap-4 p-4">
+                <Text className="text-xl font-bold text-gray-900">Hello Tailwind!</Text>
+            </View>
+        </ScrollView>
+    )
 }
 ```
 
 **Note:** The CSS-wrapped components are located in `components/tw/`.
 
-```
+````
 
 ### Available Components
 
@@ -81,7 +81,7 @@ Use platform media queries in global.css for platform-specific styling:
     --font-sans: normal;
   }
 }
-```
+````
 
 ## Get a fresh project
 

@@ -1,10 +1,10 @@
 ignoredBuiltDependencies:
-  - browser-tabs-lock
-  - bufferutil
-  - core-js
-  - utf-8-validate
+    - browser-tabs-lock
+    - bufferutil
+    - core-js
+    - utf-8-validate
 
 onlyBuiltDependencies:
-  - '@clerk/shared'
-  - esbuild
-  - unrs-resolver
+    - '@clerk/shared'
+    - esbuild
+    - unrs-resolver

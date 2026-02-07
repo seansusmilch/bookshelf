@@ -77,16 +77,16 @@ Use these skills when relevant
 
 - Order: React Native → Third-party → Local
 - Use path aliases: `@/*`, `~/lib/*`, or `~/*` for root imports
-  - `@/*` - Root-level imports (e.g., `@/components`, `@/hooks`)
-  - `~/lib/*` - Library utilities (e.g., `~/lib/query-client`)
+    - `@/*` - Root-level imports (e.g., `@/components`, `@/hooks`)
+    - `~/lib/*` - Library utilities (e.g., `~/lib/query-client`)
 - No default exports for components (use named exports)
 - Keep imports organized and deduplicated
 
 ```typescript
-import { View, Text } from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { ScreenContent } from '@/components/ScreenContent';
-import { QueryProvider } from '~/lib/query-client';
+import {View, Text} from 'react-native'
+import FontAwesome from '@expo/vector-icons/FontAwesome'
+import {ScreenContent} from '@/components/ScreenContent'
+import {QueryProvider} from '~/lib/query-client'
 ```
 
 ### Components
@@ -131,6 +131,7 @@ const styles = {
 ```
 
 **NativeWind v4 Configuration:**
+
 - Babel config in `babel.config.js` includes `nativewind/babel` plugin for className transformation
 - Tailwind config in `tailwind.config.js` configures content paths (no preset needed)
 - No Metro wrapper needed (default config is fine)
@@ -171,7 +172,7 @@ const styles = {
 
 ### Material Design 3
 
-- Use `Material3Provider` for M3 theme in app/_layout.tsx
+- Use `Material3Provider` for M3 theme in app/\_layout.tsx
 - Access theme with `useAppTheme()` hook from react-native-paper
 - Use `useMaterial3ThemeContext()` for dynamic theme updates
 - Custom components should use M3 color scheme for consistency
@@ -203,16 +204,16 @@ function MyComponent() {
 
 ```typescript
 // hooks/useBooks.ts
-import { useQuery } from '@tanstack/react-query';
-import { api } from 'convex/_generated/api';
+import {useQuery} from '@tanstack/react-query'
+import {api} from 'convex/_generated/api'
 
 export const useBooks = () => {
-  return useQuery({
-    queryKey: ['books'],
-    queryFn: () => convex.query(api.books.list),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-};
+    return useQuery({
+        queryKey: ['books'],
+        queryFn: () => convex.query(api.books.list),
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    })
+}
 ```
 
 ### File Organization
@@ -255,6 +256,7 @@ export const useBooks = () => {
 ## Configuration Notes
 
 ### Styling Setup
+
 - NativeWind v4.2.1 uses babel plugin for className transformation
 - babel.config.js must include `nativewind/babel` plugin
 - tailwind.config.js configures content paths (no preset needed with Tailwind CSS v3)
@@ -265,16 +267,18 @@ export const useBooks = () => {
 - Restart dev server with `-c` flag after config changes: `npx expo start -c`
 
 ### Troubleshooting
+
 - If styles don't apply on Android/iOS: clear Metro cache with `-c` flag
 - Ensure babel.config.js has `nativewind/babel` plugin
 - Verify tailwind.config.js has correct content paths
 - Check nativewind-env.d.ts has `/// <reference types="nativewind/types" />`
-- Do NOT import global.css in app/_layout.tsx (causes PostCSS async errors)
+- Do NOT import global.css in app/\_layout.tsx (causes PostCSS async errors)
 - Make sure `react-native-css` and `@tailwindcss/postcss` are NOT installed (v4 doesn't use them)
 - Ensure Tailwind CSS v3.3.3 is installed (v3.4+ has PostCSS 8 compatibility issues)
 - Verify components are imported from `@/tw` (className won't work with direct react-native imports)
 
 ### Development Notes
+
 - No test framework currently - add tests when appropriate
 - No CI/CD configured yet
 - Environment files: .env.local (not committed)

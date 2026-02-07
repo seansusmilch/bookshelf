@@ -23,26 +23,25 @@ Configure the Stack.Screen with transparent backgrounds and sheet presentation:
 
 ```tsx
 // app/_layout.tsx
-import { Stack } from "expo-router";
+import {Stack} from 'expo-router'
 
 export default function Layout() {
-  return (
-    <Stack>
-      <Stack.Screen name="index" />
-      <Stack.Screen
-        name="about"
-        options={{
-          presentation: "formSheet",
-          sheetAllowedDetents: [0.25],
-          headerTransparent: true,
-          contentStyle: { backgroundColor: "transparent" },
-          sheetGrabberVisible: true,
-        }}
-      >
-        <Stack.Header style={{ backgroundColor: "transparent" }}></Stack.Header>
-      </Stack.Screen>
-    </Stack>
-  );
+    return (
+        <Stack>
+            <Stack.Screen name="index" />
+            <Stack.Screen
+                name="about"
+                options={{
+                    presentation: 'formSheet',
+                    sheetAllowedDetents: [0.25],
+                    headerTransparent: true,
+                    contentStyle: {backgroundColor: 'transparent'},
+                    sheetGrabberVisible: true,
+                }}>
+                <Stack.Header style={{backgroundColor: 'transparent'}}></Stack.Header>
+            </Stack.Screen>
+        </Stack>
+    )
 }
 ```
 
@@ -54,36 +53,36 @@ Use `flex: 1` to allow the content to fill available space, enabling footer posi
 
 ```tsx
 // app/about.tsx
-import { View, Text, StyleSheet } from "react-native";
+import {View, Text, StyleSheet} from 'react-native'
 
 export default function AboutSheet() {
-  return (
-    <View style={styles.container}>
-      {/* Main content */}
-      <View style={styles.content}>
-        <Text>Sheet Content</Text>
-      </View>
+    return (
+        <View style={styles.container}>
+            {/* Main content */}
+            <View style={styles.content}>
+                <Text>Sheet Content</Text>
+            </View>
 
-      {/* Footer - stays at bottom */}
-      <View style={styles.footer}>
-        <Text>Footer Content</Text>
-      </View>
-    </View>
-  );
+            {/* Footer - stays at bottom */}
+            <View style={styles.footer}>
+                <Text>Footer Content</Text>
+            </View>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  footer: {
-    padding: 16,
-  },
-});
+    container: {
+        flex: 1,
+    },
+    content: {
+        flex: 1,
+        padding: 16,
+    },
+    footer: {
+        padding: 16,
+    },
+})
 ```
 
 ## Key Options
@@ -108,108 +107,105 @@ const styles = StyleSheet.create({
 
 ```tsx
 // _layout.tsx
-import { Stack } from "expo-router";
+import {Stack} from 'expo-router'
 
 export default function Layout() {
-  return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: "Home" }} />
-      <Stack.Screen
-        name="confirm"
-        options={{
-          contentStyle: { backgroundColor: "transparent" },
-          presentation: "formSheet",
-          title: "",
-          sheetGrabberVisible: true,
-          sheetAllowedDetents: [0.25],
-          headerTransparent: true,
-        }}
-      >
-        <Stack.Header style={{ backgroundColor: "transparent" }}>
-          <Stack.Header.Right />
-        </Stack.Header>
-      </Stack.Screen>
-    </Stack>
-  );
+    return (
+        <Stack>
+            <Stack.Screen name="index" options={{title: 'Home'}} />
+            <Stack.Screen
+                name="confirm"
+                options={{
+                    contentStyle: {backgroundColor: 'transparent'},
+                    presentation: 'formSheet',
+                    title: '',
+                    sheetGrabberVisible: true,
+                    sheetAllowedDetents: [0.25],
+                    headerTransparent: true,
+                }}>
+                <Stack.Header style={{backgroundColor: 'transparent'}}>
+                    <Stack.Header.Right />
+                </Stack.Header>
+            </Stack.Screen>
+        </Stack>
+    )
 }
 ```
 
 ```tsx
 // app/confirm.tsx
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { router } from "expo-router";
+import {View, Text, Pressable, StyleSheet} from 'react-native'
+import {router} from 'expo-router'
 
 export default function ConfirmSheet() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Confirm Action</Text>
-        <Text style={styles.description}>
-          Are you sure you want to proceed?
-        </Text>
-      </View>
+    return (
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <Text style={styles.title}>Confirm Action</Text>
+                <Text style={styles.description}>Are you sure you want to proceed?</Text>
+            </View>
 
-      <View style={styles.footer}>
-        <Pressable style={styles.cancelButton} onPress={() => router.back()}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </Pressable>
-        <Pressable style={styles.confirmButton} onPress={() => router.back()}>
-          <Text style={styles.confirmText}>Confirm</Text>
-        </Pressable>
-      </View>
-    </View>
-  );
+            <View style={styles.footer}>
+                <Pressable style={styles.cancelButton} onPress={() => router.back()}>
+                    <Text style={styles.cancelText}>Cancel</Text>
+                </Pressable>
+                <Pressable style={styles.confirmButton} onPress={() => router.back()}>
+                    <Text style={styles.confirmText}>Confirm</Text>
+                </Pressable>
+            </View>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-  },
-  footer: {
-    flexDirection: "row",
-    padding: 16,
-    gap: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 10,
-    backgroundColor: "#f0f0f0",
-    alignItems: "center",
-  },
-  cancelText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  confirmButton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 10,
-    backgroundColor: "#007AFF",
-    alignItems: "center",
-  },
-  confirmText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "white",
-  },
-});
+    container: {
+        flex: 1,
+    },
+    content: {
+        flex: 1,
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 8,
+    },
+    description: {
+        fontSize: 14,
+        color: '#666',
+        textAlign: 'center',
+    },
+    footer: {
+        flexDirection: 'row',
+        padding: 16,
+        gap: 12,
+    },
+    cancelButton: {
+        flex: 1,
+        padding: 14,
+        borderRadius: 10,
+        backgroundColor: '#f0f0f0',
+        alignItems: 'center',
+    },
+    cancelText: {
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    confirmButton: {
+        flex: 1,
+        padding: 14,
+        borderRadius: 10,
+        backgroundColor: '#007AFF',
+        alignItems: 'center',
+    },
+    confirmText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: 'white',
+    },
+})
 ```
 
 ## Troubleshooting
@@ -219,7 +215,7 @@ const styles = StyleSheet.create({
 Make sure the root View uses `flex: 1`:
 
 ```tsx
-<View style={{ flex: 1 }}>{/* content */}</View>
+<View style={{flex: 1}}>{/* content */}</View>
 ```
 
 ### Sheet background showing through

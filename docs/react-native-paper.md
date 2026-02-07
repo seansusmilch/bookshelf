@@ -48,8 +48,8 @@ Create a combined provider that wraps `PaperProvider` with M3 theme.
 
 - Use `useMaterial3Theme` from `@pchmn/expo-material3-theme` to generate dynamic colors
 - Configure fallback source colors based on existing app colors:
-  - Light mode fallback: `#0a7ea4` (current light tint)
-  - Dark mode fallback: `#ffffff` (current dark tint)
+    - Light mode fallback: `#0a7ea4` (current light tint)
+    - Dark mode fallback: `#ffffff` (current dark tint)
 - Handle light/dark mode switching with `useColorScheme`
 - Export custom `useAppTheme` hook for accessing theme throughout the app
 - Export `useMaterial3ThemeContext` for dynamic theme updates
@@ -74,10 +74,10 @@ Create a combined provider that wraps `PaperProvider` with M3 theme.
 
 ```typescript
 interface M3TabBarProps {
-  state: NavigationState;
-  descriptors: any[];
-  navigation: NavigationProp;
-  insets: EdgeInsets;
+    state: NavigationState
+    descriptors: any[]
+    navigation: NavigationProp
+    insets: EdgeInsets
 }
 ```
 
@@ -86,20 +86,20 @@ interface M3TabBarProps {
 - Use `BottomNavigation.Bar` from react-native-paper
 - Map navigation state from Expo Router to BottomNavigation state
 - Configure props:
-  - `labeled={true}` (always show labels)
-  - `shifting={false}` (M3 default)
-  - `animationEasing`: Use default M3 easing
-  - `keyboardHidesNavigationBar`: True on Android
-  - `safeAreaInsets`: Pass from props
+    - `labeled={true}` (always show labels)
+    - `shifting={false}` (M3 default)
+    - `animationEasing`: Use default M3 easing
+    - `keyboardHidesNavigationBar`: True on Android
+    - `safeAreaInsets`: Pass from props
 
 **Tab configuration:**
 
 - Route keys: 'shelf', 'search', 'stats'
 - Titles: 'Shelf', 'Search', 'Stats'
 - Icons (using IconSymbol mapping):
-  - Shelf: `menu-book` (from MaterialIcons)
-  - Search: `search` (from MaterialIcons)
-  - Stats: `bar-chart` (from MaterialIcons)
+    - Shelf: `menu-book` (from MaterialIcons)
+    - Search: `search` (from MaterialIcons)
+    - Stats: `bar-chart` (from MaterialIcons)
 
 **Navigation handling:**
 
@@ -128,14 +128,14 @@ interface M3TabBarProps {
 - Import `Material3ThemeProvider` and `useAppTheme`
 - Wrap entire provider tree with `Material3ThemeProvider`
 - Keep all existing providers intact:
-  - GestureHandlerRootView
-  - SafeAreaProvider
-  - QueryProvider
-  - ClerkProvider
-  - ConvexProviderWithClerk
-  - ThemeProvider (React Navigation)
-  - ErrorBoundary
-  - ToastProvider
+    - GestureHandlerRootView
+    - SafeAreaProvider
+    - QueryProvider
+    - ClerkProvider
+    - ConvexProviderWithClerk
+    - ThemeProvider (React Navigation)
+    - ErrorBoundary
+    - ToastProvider
 
 **Updated structure:**
 
@@ -220,18 +220,18 @@ interface M3TabBarProps {
 
 ### 6.1 Applied specifications
 
-| Specification | Implementation |
-|---------------|----------------|
-| **Height** | 80dp (M3 default with labels, built into BottomNavigation.Bar) |
-| **Active indicator** | 64×32dp pill shape (built into M3 theme) |
-| **Icon containers** | 32×32dp centered (M3 default) |
-| **Icon size** | 24dp (configured in IconSymbol) |
-| **Label** | 14px with 20px line height (labelMedium variant, M3 default) |
-| **Elevation** | 0 (M3 default) with surface variant background |
-| **Spacing** | 12dp top, 16dp bottom (safe area aware, M3 default) |
-| **Animation** | Default M3 transitions (150ms with easing) |
-| **Haptics** | Disabled (no haptics) |
-| **Ripple** | Enabled on Android (TouchableRipple) |
+| Specification        | Implementation                                                 |
+| -------------------- | -------------------------------------------------------------- |
+| **Height**           | 80dp (M3 default with labels, built into BottomNavigation.Bar) |
+| **Active indicator** | 64×32dp pill shape (built into M3 theme)                       |
+| **Icon containers**  | 32×32dp centered (M3 default)                                  |
+| **Icon size**        | 24dp (configured in IconSymbol)                                |
+| **Label**            | 14px with 20px line height (labelMedium variant, M3 default)   |
+| **Elevation**        | 0 (M3 default) with surface variant background                 |
+| **Spacing**          | 12dp top, 16dp bottom (safe area aware, M3 default)            |
+| **Animation**        | Default M3 transitions (150ms with easing)                     |
+| **Haptics**          | Disabled (no haptics)                                          |
+| **Ripple**           | Enabled on Android (TouchableRipple)                           |
 
 ### 6.2 Generated M3 color scheme
 
@@ -336,16 +336,16 @@ bookshelf/
 ### Potential Issues
 
 1. **Native module compatibility** - `@pchmn/expo-material3-theme` requires native code
-   - **Mitigation**: Works with Expo SDK 54, development build required for Android
+    - **Mitigation**: Works with Expo SDK 54, development build required for Android
 
 2. **Theme conflicts** - React Navigation theme vs Paper theme
-   - **Mitigation**: Keep both providers, use Paper theme for Paper components, React Navigation theme for navigation
+    - **Mitigation**: Keep both providers, use Paper theme for Paper components, React Navigation theme for navigation
 
 3. **Authentication flow** - Complex provider tree
-   - **Mitigation**: Wrap all existing providers with Material3ThemeProvider, don't change nesting order
+    - **Mitigation**: Wrap all existing providers with Material3ThemeProvider, don't change nesting order
 
 4. **Color migration** - Existing components using old Colors object
-   - **Mitigation**: Keep `constants/theme.ts` for backward compatibility, gradually migrate components to use `useAppTheme()`
+    - **Mitigation**: Keep `constants/theme.ts` for backward compatibility, gradually migrate components to use `useAppTheme()`
 
 ---
 
@@ -395,35 +395,35 @@ bookshelf/
 
 ```typescript
 // constants/theme.ts
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const tintColorLight = '#0a7ea4'
+const tintColorDark = '#fff'
 
 export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
-};
+    light: {
+        text: '#11181C',
+        background: '#fff',
+        tint: tintColorLight,
+        icon: '#687076',
+        tabIconDefault: '#687076',
+        tabIconSelected: tintColorLight,
+    },
+    dark: {
+        text: '#ECEDEE',
+        background: '#151718',
+        tint: tintColorDark,
+        icon: '#9BA1A6',
+        tabIconDefault: '#9BA1A6',
+        tabIconSelected: tintColorDark,
+    },
+}
 ```
 
 ### Icon mappings (from components/ui/icon-symbol.tsx)
 
 ```typescript
 const MAPPING = {
-  'book.fill': 'menu-book',
-  'magnifyingglass': 'search',
-  'chart.bar.fill': 'bar-chart',
-} as IconMapping;
+    'book.fill': 'menu-book',
+    magnifyingglass: 'search',
+    'chart.bar.fill': 'bar-chart',
+} as IconMapping
 ```

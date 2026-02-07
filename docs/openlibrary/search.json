@@ -8,9 +8,7 @@
     "offset": null,
     "docs": [
         {
-            "author_name": [
-                "Andy Weir"
-            ],
+            "author_name": ["Andy Weir"],
             "first_publish_year": 2011,
             "isbn": [
                 "9781410469571",
@@ -146,9 +144,7 @@
             "title": "The Martian"
         },
         {
-            "author_name": [
-                "Isaac Asimov"
-            ],
+            "author_name": ["Isaac Asimov"],
             "first_publish_year": 1955,
             "isbn": [
                 "2290332836",

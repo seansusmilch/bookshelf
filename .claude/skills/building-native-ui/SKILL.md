@@ -97,43 +97,43 @@ See `./references/route-structure.md` for detailed route conventions.
 **CRITICAL:** On Android, avoid wrapping `ScrollView` in `SafeAreaView` when the SafeAreaView wraps the entire screen. This causes layout issues where ScrollView content fails to render properly.
 
 **Problem Pattern (broken on Android):**
+
 ```tsx
 <SafeAreaView className="flex-1" edges={['top']}>
-  <View className="bg-white p-4">
-    <TextInput />
-  </View>
-  <ScrollView className="flex-1">
-    {/* content not visible */}
-  </ScrollView>
+    <View className="bg-white p-4">
+        <TextInput />
+    </View>
+    <ScrollView className="flex-1">{/* content not visible */}</ScrollView>
 </SafeAreaView>
 ```
 
 **Working Pattern:**
+
 ```tsx
 <View className="flex-1">
-  <SafeAreaView className="bg-white p-4" edges={['top']}>
-    <TextInput />
-  </SafeAreaView>
-  <ScrollView className="flex-1">
-    {/* content renders correctly */}
-  </ScrollView>
+    <SafeAreaView className="bg-white p-4" edges={['top']}>
+        <TextInput />
+    </SafeAreaView>
+    <ScrollView className="flex-1">{/* content renders correctly */}</ScrollView>
 </View>
 ```
 
 **Why this works:**
+
 - SafeAreaView only handles the fixed-height component (search bar, header, etc.)
 - ScrollView is a direct child of a regular View, giving it unambiguous layout context
 - Avoids Android's layout system failing to calculate available space when SafeAreaView wraps both fixed and scrollable components
 
 **Alternative using contentInsetAdjustmentBehavior (preferred):**
+
 ```tsx
 <View className="flex-1">
-  <View className="bg-white p-4">
-    <TextInput />
-  </View>
-  <ScrollView className="flex-1" contentInsetAdjustmentBehavior="automatic">
-    {/* content renders correctly with automatic insets */}
-  </ScrollView>
+    <View className="bg-white p-4">
+        <TextInput />
+    </View>
+    <ScrollView className="flex-1" contentInsetAdjustmentBehavior="automatic">
+        {/* content renders correctly with automatic insets */}
+    </ScrollView>
 </View>
 ```
 
@@ -174,7 +174,7 @@ Follow Apple Human Interface Guidelines.
 Use CSS `boxShadow` style prop. NEVER use legacy React Native shadow or elevation styles.
 
 ```tsx
-<View style={{ boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)" }} />
+<View style={{boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'}} />
 ```
 
 'inset' shadows are supported.
@@ -209,7 +209,7 @@ Whenever possible, include a `<Link.Preview>` to follow iOS conventions. Add con
 Set the page title in Stack.Screen options:
 
 ```tsx
-<Stack.Screen options={{ title: "Home" }} />
+<Stack.Screen options={{title: 'Home'}} />
 ```
 
 ## Context Menus
@@ -217,37 +217,22 @@ Set the page title in Stack.Screen options:
 Add long press context menus to Link components:
 
 ```tsx
-import { Link } from "expo-router";
-
-<Link href="/settings" asChild>
-  <Link.Trigger>
-    <Pressable>
-      <Card />
-    </Pressable>
-  </Link.Trigger>
-  <Link.Menu>
-    <Link.MenuAction
-      title="Share"
-      icon="square.and.arrow.up"
-      onPress={handleSharePress}
-    />
-    <Link.MenuAction
-      title="Block"
-      icon="nosign"
-      destructive
-      onPress={handleBlockPress}
-    />
-    <Link.Menu title="More" icon="ellipsis">
-      <Link.MenuAction title="Copy" icon="doc.on.doc" onPress={() => {}} />
-      <Link.MenuAction
-        title="Delete"
-        icon="trash"
-        destructive
-        onPress={() => {}}
-      />
+import {Link} from 'expo-router'
+;<Link href="/settings" asChild>
+    <Link.Trigger>
+        <Pressable>
+            <Card />
+        </Pressable>
+    </Link.Trigger>
+    <Link.Menu>
+        <Link.MenuAction title="Share" icon="square.and.arrow.up" onPress={handleSharePress} />
+        <Link.MenuAction title="Block" icon="nosign" destructive onPress={handleBlockPress} />
+        <Link.Menu title="More" icon="ellipsis">
+            <Link.MenuAction title="Copy" icon="doc.on.doc" onPress={() => {}} />
+            <Link.MenuAction title="Delete" icon="trash" destructive onPress={() => {}} />
+        </Link.Menu>
     </Link.Menu>
-  </Link.Menu>
-</Link>;
+</Link>
 ```
 
 ## Link Previews
@@ -256,12 +241,12 @@ Use link previews frequently to enhance navigation:
 
 ```tsx
 <Link href="/settings">
-  <Link.Trigger>
-    <Pressable>
-      <Card />
-    </Pressable>
-  </Link.Trigger>
-  <Link.Preview />
+    <Link.Trigger>
+        <Pressable>
+            <Card />
+        </Pressable>
+    </Link.Trigger>
+    <Link.Preview />
 </Link>
 ```
 
@@ -272,7 +257,7 @@ Link preview can be used with context menus.
 Present a screen as a modal:
 
 ```tsx
-<Stack.Screen name="modal" options={{ presentation: "modal" }} />
+<Stack.Screen name="modal" options={{presentation: 'modal'}} />
 ```
 
 Prefer this to building a custom modal component.
@@ -283,13 +268,13 @@ Present a screen as a dynamic form sheet:
 
 ```tsx
 <Stack.Screen
-  name="sheet"
-  options={{
-    presentation: "formSheet",
-    sheetGrabberVisible: true,
-    sheetAllowedDetents: [0.5, 1.0],
-    contentStyle: { backgroundColor: "transparent" },
-  }}
+    name="sheet"
+    options={{
+        presentation: 'formSheet',
+        sheetGrabberVisible: true,
+        sheetAllowedDetents: [0.5, 1.0],
+        contentStyle: {backgroundColor: 'transparent'},
+    }}
 />
 ```
 
@@ -310,21 +295,21 @@ app/
 
 ```tsx
 // app/_layout.tsx
-import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
-import { Theme } from "../components/theme";
+import {NativeTabs, Icon, Label} from 'expo-router/unstable-native-tabs'
+import {Theme} from '../components/theme'
 
 export default function Layout() {
-  return (
-    <Theme>
-      <NativeTabs>
-        <NativeTabs.Trigger name="(index)">
-          <Icon sf="list.dash" />
-          <Label>Items</Label>
-        </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="(search)" role="search" />
-      </NativeTabs>
-    </Theme>
-  );
+    return (
+        <Theme>
+            <NativeTabs>
+                <NativeTabs.Trigger name="(index)">
+                    <Icon sf="list.dash" />
+                    <Label>Items</Label>
+                </NativeTabs.Trigger>
+                <NativeTabs.Trigger name="(search)" role="search" />
+            </NativeTabs>
+        </Theme>
+    )
 }
 ```
 
@@ -332,29 +317,28 @@ Create a shared group route so both tabs can push common screens:
 
 ```tsx
 // app/(index,search)/_layout.tsx
-import { Stack } from "expo-router/stack";
-import { PlatformColor } from "react-native";
+import {Stack} from 'expo-router/stack'
+import {PlatformColor} from 'react-native'
 
-export default function Layout({ segment }) {
-  const screen = segment.match(/\((.*)\)/)?.[1]!;
-  const titles: Record<string, string> = { index: "Items", search: "Search" };
+export default function Layout({segment}) {
+    const screen = segment.match(/\((.*)\)/)?.[1]!
+    const titles: Record<string, string> = {index: 'Items', search: 'Search'}
 
-  return (
-    <Stack
-      screenOptions={{
-        headerTransparent: true,
-        headerShadowVisible: false,
-        headerLargeTitleShadowVisible: false,
-        headerLargeStyle: { backgroundColor: "transparent" },
-        headerTitleStyle: { color: PlatformColor("label") },
-        headerLargeTitle: true,
-        headerBlurEffect: "none",
-        headerBackButtonDisplayMode: "minimal",
-      }}
-    >
-      <Stack.Screen name={screen} options={{ title: titles[screen] }} />
-      <Stack.Screen name="i/[id]" options={{ headerLargeTitle: false }} />
-    </Stack>
-  );
+    return (
+        <Stack
+            screenOptions={{
+                headerTransparent: true,
+                headerShadowVisible: false,
+                headerLargeTitleShadowVisible: false,
+                headerLargeStyle: {backgroundColor: 'transparent'},
+                headerTitleStyle: {color: PlatformColor('label')},
+                headerLargeTitle: true,
+                headerBlurEffect: 'none',
+                headerBackButtonDisplayMode: 'minimal',
+            }}>
+            <Stack.Screen name={screen} options={{title: titles[screen]}} />
+            <Stack.Screen name="i/[id]" options={{headerLargeTitle: false}} />
+        </Stack>
+    )
 }
 ```

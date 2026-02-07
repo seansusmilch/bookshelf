@@ -14,14 +14,10 @@ npx expo install react-native-keyboard-controller
 
 ```tsx
 // app/_layout.tsx
-import { KeyboardProvider } from 'react-native-keyboard-controller'
+import {KeyboardProvider} from 'react-native-keyboard-controller'
 
 export default function RootLayout() {
-  return (
-    <KeyboardProvider>
-      {/* your app content */}
-    </KeyboardProvider>
-  )
+    return <KeyboardProvider>{/* your app content */}</KeyboardProvider>
 }
 ```
 
@@ -30,14 +26,14 @@ export default function RootLayout() {
 ```tsx
 // app/_layout.tsx
 export default function RootLayout() {
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        {/* All components here lose keyboard handling */}
-        <Stack />
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
-  )
+    return (
+        <GestureHandlerRootView style={{flex: 1}}>
+            <SafeAreaProvider>
+                {/* All components here lose keyboard handling */}
+                <Stack />
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
+    )
 }
 ```
 
@@ -45,21 +41,21 @@ export default function RootLayout() {
 
 ```tsx
 // app/_layout.tsx
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { KeyboardProvider } from 'react-native-keyboard-controller'
-import { Stack } from 'expo-router'
+import {GestureHandlerRootView} from 'react-native-gesture-handler'
+import {SafeAreaProvider} from 'react-native-safe-area-context'
+import {KeyboardProvider} from 'react-native-keyboard-controller'
+import {Stack} from 'expo-router'
 
 export default function RootLayout() {
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <KeyboardProvider>
-          <Stack />
-        </KeyboardProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
-  )
+    return (
+        <GestureHandlerRootView style={{flex: 1}}>
+            <SafeAreaProvider>
+                <KeyboardProvider>
+                    <Stack />
+                </KeyboardProvider>
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
+    )
 }
 ```
 

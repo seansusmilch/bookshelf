@@ -14,18 +14,18 @@ values directly from `item` instead.
 **Incorrect (inline object breaks memoization):**
 
 ```tsx
-function UserList({ users }: { users: User[] }) {
-  return (
-    <LegendList
-      data={users}
-      renderItem={({ item }) => (
-        <UserRow
-          // Bad: new object on every render
-          user={{ id: item.id, name: item.name, avatar: item.avatar }}
+function UserList({users}: {users: User[]}) {
+    return (
+        <LegendList
+            data={users}
+            renderItem={({item}) => (
+                <UserRow
+                    // Bad: new object on every render
+                    user={{id: item.id, name: item.name, avatar: item.avatar}}
+                />
+            )}
         />
-      )}
-    />
-  )
+    )
 }
 ```
 
@@ -44,16 +44,16 @@ renderItem={({ item }) => (
 **Correct (pass item directly or primitives):**
 
 ```tsx
-function UserList({ users }: { users: User[] }) {
-  return (
-    <LegendList
-      data={users}
-      renderItem={({ item }) => (
-        // Good: pass the item directly
-        <UserRow user={item} />
-      )}
-    />
-  )
+function UserList({users}: {users: User[]}) {
+    return (
+        <LegendList
+            data={users}
+            renderItem={({item}) => (
+                // Good: pass the item directly
+                <UserRow user={item} />
+            )}
+        />
+    )
 }
 ```
 

@@ -7,30 +7,25 @@ Always prefer NativeTabs from 'expo-router/unstable-native-tabs' for the best iO
 ## Basic Usage
 
 ```tsx
-import {
-  NativeTabs,
-  Icon,
-  Label,
-  Badge,
-} from "expo-router/unstable-native-tabs";
+import {NativeTabs, Icon, Label, Badge} from 'expo-router/unstable-native-tabs'
 
 export default function TabLayout() {
-  return (
-    <NativeTabs minimizeBehavior="onScrollDown">
-      <NativeTabs.Trigger name="index">
-        <Label>Home</Label>
-        <Icon sf="house.fill" />
-        <Badge>9+</Badge>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings">
-        <Icon sf="gear" />
-        <Label>Settings</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="(search)" role="search">
-        <Label>Search</Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
-  );
+    return (
+        <NativeTabs minimizeBehavior="onScrollDown">
+            <NativeTabs.Trigger name="index">
+                <Label>Home</Label>
+                <Icon sf="house.fill" />
+                <Badge>9+</Badge>
+            </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="settings">
+                <Icon sf="gear" />
+                <Label>Settings</Label>
+            </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="(search)" role="search">
+                <Label>Search</Label>
+            </NativeTabs.Trigger>
+        </NativeTabs>
+    )
 }
 ```
 
@@ -103,7 +98,7 @@ Add a dedicated search tab that integrates with the tab bar search field:
 
 ```tsx
 <NativeTabs.Trigger name="(search)" role="search">
-  <Label>Search</Label>
+    <Label>Search</Label>
 </NativeTabs.Trigger>
 ```
 
@@ -150,8 +145,8 @@ Hide tabs conditionally:
 
 ```tsx
 <NativeTabs.Trigger name="admin" hidden={!isAdmin}>
-  <Label>Admin</Label>
-  <Icon sf="shield.fill" />
+    <Label>Admin</Label>
+    <Icon sf="shield.fill" />
 </NativeTabs.Trigger>
 ```
 
@@ -170,13 +165,12 @@ Hide tabs conditionally:
 If you must use @expo/vector-icons instead of SF Symbols:
 
 ```tsx
-import { VectorIcon } from "expo-router/unstable-native-tabs";
-import Ionicons from "@expo/vector-icons/Ionicons";
-
-<NativeTabs.Trigger name="home">
-  <VectorIcon vector={Ionicons} name="home" />
-  <Label>Home</Label>
-</NativeTabs.Trigger>;
+import {VectorIcon} from 'expo-router/unstable-native-tabs'
+import Ionicons from '@expo/vector-icons/Ionicons'
+;<NativeTabs.Trigger name="home">
+    <VectorIcon vector={Ionicons} name="home" />
+    <Label>Home</Label>
+</NativeTabs.Trigger>
 ```
 
 **Prefer SF Symbols over vector icons for native feel on Apple platforms.**
@@ -187,32 +181,29 @@ Native tabs don't render headers. Nest Stacks inside each tab for navigation hea
 
 ```tsx
 // app/(tabs)/_layout.tsx
-import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
+import {NativeTabs, Icon, Label} from 'expo-router/unstable-native-tabs'
 
 export default function TabLayout() {
-  return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="(home)">
-        <Label>Home</Label>
-        <Icon sf="house.fill" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
-  );
+    return (
+        <NativeTabs>
+            <NativeTabs.Trigger name="(home)">
+                <Label>Home</Label>
+                <Icon sf="house.fill" />
+            </NativeTabs.Trigger>
+        </NativeTabs>
+    )
 }
 
 // app/(tabs)/(home)/_layout.tsx
-import Stack from "expo-router/stack";
+import Stack from 'expo-router/stack'
 
 export default function HomeStack() {
-  return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{ title: "Home", headerLargeTitle: true }}
-      />
-      <Stack.Screen name="details" options={{ title: "Details" }} />
-    </Stack>
-  );
+    return (
+        <Stack>
+            <Stack.Screen name="index" options={{title: 'Home', headerLargeTitle: true}} />
+            <Stack.Screen name="details" options={{title: 'Details'}} />
+        </Stack>
+    )
 }
 ```
 
@@ -221,50 +212,48 @@ export default function HomeStack() {
 ### Before (JS Tabs)
 
 ```tsx
-import { Tabs } from "expo-router";
+import {Tabs} from 'expo-router'
 
 export default function TabLayout() {
-  return (
-    <Tabs>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol name="house.fill" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => <IconSymbol name="gear" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+    return (
+        <Tabs>
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: 'Home',
+                    tabBarIcon: ({color}) => <IconSymbol name="house.fill" color={color} />,
+                }}
+            />
+            <Tabs.Screen
+                name="settings"
+                options={{
+                    title: 'Settings',
+                    tabBarIcon: ({color}) => <IconSymbol name="gear" color={color} />,
+                }}
+            />
+        </Tabs>
+    )
 }
 ```
 
 ### After (Native Tabs)
 
 ```tsx
-import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
+import {NativeTabs, Icon, Label} from 'expo-router/unstable-native-tabs'
 
 export default function TabLayout() {
-  return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="index">
-        <Label>Home</Label>
-        <Icon sf="house.fill" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings">
-        <Label>Settings</Label>
-        <Icon sf="gear" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
-  );
+    return (
+        <NativeTabs>
+            <NativeTabs.Trigger name="index">
+                <Label>Home</Label>
+                <Icon sf="house.fill" />
+            </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="settings">
+                <Label>Settings</Label>
+                <Icon sf="gear" />
+            </NativeTabs.Trigger>
+        </NativeTabs>
+    )
 }
 ```
 
@@ -282,62 +271,57 @@ export default function TabLayout() {
 
 1. **Change imports**
 
-   ```tsx
-   // Remove
-   import { Tabs } from "expo-router";
+    ```tsx
+    // Remove
+    import {Tabs} from 'expo-router'
 
-   // Add
-   import {
-     NativeTabs,
-     Icon,
-     Label,
-     Badge,
-   } from "expo-router/unstable-native-tabs";
-   ```
+    // Add
+    import {NativeTabs, Icon, Label, Badge} from 'expo-router/unstable-native-tabs'
+    ```
 
 2. **Replace Tabs with NativeTabs**
 
-   ```tsx
-   // Before
-   <Tabs screenOptions={{ ... }}>
+    ```tsx
+    // Before
+    <Tabs screenOptions={{ ... }}>
 
-   // After
-   <NativeTabs>
-   ```
+    // After
+    <NativeTabs>
+    ```
 
 3. **Convert each Screen to Trigger**
 
-   ```tsx
-   // Before
-   <Tabs.Screen
-     name="home"
-     options={{
-       title: 'Home',
-       tabBarIcon: ({ color }) => <Icon name="house" color={color} />,
-       tabBarBadge: 3,
-     }}
-   />
+    ```tsx
+    // Before
+    <Tabs.Screen
+      name="home"
+      options={{
+        title: 'Home',
+        tabBarIcon: ({ color }) => <Icon name="house" color={color} />,
+        tabBarBadge: 3,
+      }}
+    />
 
-   // After
-   <NativeTabs.Trigger name="home">
-     <Label>Home</Label>
-     <Icon sf="house.fill" />
-     <Badge>3</Badge>
-   </NativeTabs.Trigger>
-   ```
+    // After
+    <NativeTabs.Trigger name="home">
+      <Label>Home</Label>
+      <Icon sf="house.fill" />
+      <Badge>3</Badge>
+    </NativeTabs.Trigger>
+    ```
 
 4. **Move headers to nested Stack** - Native tabs don't render headers
-   ```
-   app/
-     (tabs)/
-       _layout.tsx      <- NativeTabs
-       (home)/
-         _layout.tsx    <- Stack with headers
-         index.tsx
-       (settings)/
-         _layout.tsx    <- Stack with headers
-         index.tsx
-   ```
+    ```
+    app/
+      (tabs)/
+        _layout.tsx      <- NativeTabs
+        (home)/
+          _layout.tsx    <- Stack with headers
+          index.tsx
+        (settings)/
+          _layout.tsx    <- Stack with headers
+          index.tsx
+    ```
 
 ## Limitations
 
@@ -352,11 +336,11 @@ Configure in app.json:
 
 ```json
 {
-  "expo": {
-    "android": {
-      "softwareKeyboardLayoutMode": "resize"
+    "expo": {
+        "android": {
+            "softwareKeyboardLayoutMode": "resize"
+        }
     }
-  }
 }
 ```
 

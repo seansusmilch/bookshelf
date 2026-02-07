@@ -14,13 +14,13 @@ text outside a `<Text>` component, causing a hard crash in production.
 **Incorrect (crashes if count is 0 or name is ""):**
 
 ```tsx
-function Profile({ name, count }: { name: string; count: number }) {
-  return (
-    <View>
-      {name && <Text>{name}</Text>}
-      {count && <Text>{count} items</Text>}
-    </View>
-  )
+function Profile({name, count}: {name: string; count: number}) {
+    return (
+        <View>
+            {name && <Text>{name}</Text>}
+            {count && <Text>{count} items</Text>}
+        </View>
+    )
 }
 // If name="" or count=0, renders the falsy value → crash
 ```
@@ -28,41 +28,41 @@ function Profile({ name, count }: { name: string; count: number }) {
 **Correct (ternary with null):**
 
 ```tsx
-function Profile({ name, count }: { name: string; count: number }) {
-  return (
-    <View>
-      {name ? <Text>{name}</Text> : null}
-      {count ? <Text>{count} items</Text> : null}
-    </View>
-  )
+function Profile({name, count}: {name: string; count: number}) {
+    return (
+        <View>
+            {name ? <Text>{name}</Text> : null}
+            {count ? <Text>{count} items</Text> : null}
+        </View>
+    )
 }
 ```
 
 **Correct (explicit boolean coercion):**
 
 ```tsx
-function Profile({ name, count }: { name: string; count: number }) {
-  return (
-    <View>
-      {!!name && <Text>{name}</Text>}
-      {!!count && <Text>{count} items</Text>}
-    </View>
-  )
+function Profile({name, count}: {name: string; count: number}) {
+    return (
+        <View>
+            {!!name && <Text>{name}</Text>}
+            {!!count && <Text>{count} items</Text>}
+        </View>
+    )
 }
 ```
 
 **Best (early return):**
 
 ```tsx
-function Profile({ name, count }: { name: string; count: number }) {
-  if (!name) return null
+function Profile({name, count}: {name: string; count: number}) {
+    if (!name) return null
 
-  return (
-    <View>
-      <Text>{name}</Text>
-      {count > 0 ? <Text>{count} items</Text> : null}
-    </View>
-  )
+    return (
+        <View>
+            <Text>{name}</Text>
+            {count > 0 ? <Text>{count} items</Text> : null}
+        </View>
+    )
 }
 ```
 

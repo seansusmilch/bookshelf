@@ -5,6 +5,7 @@
 Use `KeyboardAwareScrollView` from `react-native-keyboard-controller` instead of `ScrollView` with `KeyboardAvoidingView`. The built-in React Native `KeyboardAvoidingView` is unreliable, especially with Expo Router and modal presentations. `KeyboardAwareScrollView` automatically scrolls to keep the focused input visible.
 
 **Requires:**
+
 - `react-native-keyboard-controller` package installed
 - `KeyboardProvider` at app root (see `keyboard-provider` rule)
 
@@ -17,37 +18,33 @@ npx expo install react-native-keyboard-controller
 **Incorrect: unreliable KeyboardAvoidingView**
 
 ```tsx
-import { ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native'
+import {ScrollView, KeyboardAvoidingView, Platform, TextInput} from 'react-native'
 
 function AddBookScreen() {
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
-    >
-      <ScrollView>
-        <TextInput placeholder="Page count" />
-      </ScrollView>
-    </KeyboardAvoidingView>
-  )
+    return (
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
+            <ScrollView>
+                <TextInput placeholder="Page count" />
+            </ScrollView>
+        </KeyboardAvoidingView>
+    )
 }
 ```
 
 **Correct: KeyboardAwareScrollView**
 
 ```tsx
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
-import { TextInput } from 'react-native'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller'
+import {TextInput} from 'react-native'
 
 function AddBookScreen() {
-  return (
-    <KeyboardAwareScrollView
-      bottomOffset={60}
-      keyboardShouldPersistTaps="handled"
-    >
-      <TextInput placeholder="Page count" />
-    </KeyboardAwareScrollView>
-  )
+    return (
+        <KeyboardAwareScrollView bottomOffset={60} keyboardShouldPersistTaps="handled">
+            <TextInput placeholder="Page count" />
+        </KeyboardAwareScrollView>
+    )
 }
 ```
 

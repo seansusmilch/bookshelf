@@ -12,37 +12,37 @@ Use the fewest state variables possible. If a value can be computed from existin
 **Incorrect (redundant state):**
 
 ```tsx
-function Cart({ items }: { items: Item[] }) {
-  const [total, setTotal] = useState(0)
-  const [itemCount, setItemCount] = useState(0)
+function Cart({items}: {items: Item[]}) {
+    const [total, setTotal] = useState(0)
+    const [itemCount, setItemCount] = useState(0)
 
-  useEffect(() => {
-    setTotal(items.reduce((sum, item) => sum + item.price, 0))
-    setItemCount(items.length)
-  }, [items])
+    useEffect(() => {
+        setTotal(items.reduce((sum, item) => sum + item.price, 0))
+        setItemCount(items.length)
+    }, [items])
 
-  return (
-    <View>
-      <Text>{itemCount} items</Text>
-      <Text>Total: ${total}</Text>
-    </View>
-  )
+    return (
+        <View>
+            <Text>{itemCount} items</Text>
+            <Text>Total: ${total}</Text>
+        </View>
+    )
 }
 ```
 
 **Correct (derived values):**
 
 ```tsx
-function Cart({ items }: { items: Item[] }) {
-  const total = items.reduce((sum, item) => sum + item.price, 0)
-  const itemCount = items.length
+function Cart({items}: {items: Item[]}) {
+    const total = items.reduce((sum, item) => sum + item.price, 0)
+    const itemCount = items.length
 
-  return (
-    <View>
-      <Text>{itemCount} items</Text>
-      <Text>Total: ${total}</Text>
-    </View>
-  )
+    return (
+        <View>
+            <Text>{itemCount} items</Text>
+            <Text>Total: ${total}</Text>
+        </View>
+    )
 }
 ```
 

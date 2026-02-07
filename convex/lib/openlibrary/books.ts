@@ -1,56 +1,53 @@
-'use node';
+'use node'
 
-import { fetchOpenLibrary, isValidOLID } from './client';
-import { Book, Work, Author } from './types';
+import {fetchOpenLibrary, isValidOLID} from './client'
+import {Book, Work, Author} from './types'
 
 export async function getBook(olid: string): Promise<Book> {
-  if (!isValidOLID(olid)) {
-    throw new Error(`Invalid book OLID: ${olid}`);
-  }
+    if (!isValidOLID(olid)) {
+        throw new Error(`Invalid book OLID: ${olid}`)
+    }
 
-  return fetchOpenLibrary<Book>(`/books/${olid}.json`);
+    return fetchOpenLibrary<Book>(`/books/${olid}.json`)
 }
 
 export async function getWork(olid: string): Promise<Work> {
-  if (!isValidOLID(olid)) {
-    throw new Error(`Invalid work OLID: ${olid}`);
-  }
+    if (!isValidOLID(olid)) {
+        throw new Error(`Invalid work OLID: ${olid}`)
+    }
 
-  return fetchOpenLibrary<Work>(`/works/${olid}.json`);
+    return fetchOpenLibrary<Work>(`/works/${olid}.json`)
 }
 
 export async function getAuthor(olid: string): Promise<Author> {
-  if (!isValidOLID(olid)) {
-    throw new Error(`Invalid author OLID: ${olid}`);
-  }
+    if (!isValidOLID(olid)) {
+        throw new Error(`Invalid author OLID: ${olid}`)
+    }
 
-  return fetchOpenLibrary<Author>(`/authors/${olid}.json`);
+    return fetchOpenLibrary<Author>(`/authors/${olid}.json`)
 }
 
-export async function getAuthorWorks(
-  olid: string,
-  limit: number = 20
-): Promise<{ entries: Work[] }> {
-  if (!isValidOLID(olid)) {
-    throw new Error(`Invalid author OLID: ${olid}`);
-  }
+export async function getAuthorWorks(olid: string, limit: number = 20): Promise<{entries: Work[]}> {
+    if (!isValidOLID(olid)) {
+        throw new Error(`Invalid author OLID: ${olid}`)
+    }
 
-  const params = new URLSearchParams({ limit: limit.toString() });
-  return fetchOpenLibrary(`/authors/${olid}/works.json?${params.toString()}`);
+    const params = new URLSearchParams({limit: limit.toString()})
+    return fetchOpenLibrary(`/authors/${olid}/works.json?${params.toString()}`)
 }
 
-export async function getWorkRatings(olid: string): Promise<{ summary: string; count: number }> {
-  if (!isValidOLID(olid)) {
-    throw new Error(`Invalid work OLID: ${olid}`);
-  }
+export async function getWorkRatings(olid: string): Promise<{summary: string; count: number}> {
+    if (!isValidOLID(olid)) {
+        throw new Error(`Invalid work OLID: ${olid}`)
+    }
 
-  return fetchOpenLibrary(`/works/${olid}/ratings.json`);
+    return fetchOpenLibrary(`/works/${olid}/ratings.json`)
 }
 
-export async function getWorkBookshelves(olid: string): Promise<{ count: number; works: any[] }> {
-  if (!isValidOLID(olid)) {
-    throw new Error(`Invalid work OLID: ${olid}`);
-  }
+export async function getWorkBookshelves(olid: string): Promise<{count: number; works: any[]}> {
+    if (!isValidOLID(olid)) {
+        throw new Error(`Invalid work OLID: ${olid}`)
+    }
 
-  return fetchOpenLibrary(`/works/${olid}/bookshelves.json`);
+    return fetchOpenLibrary(`/works/${olid}/bookshelves.json`)
 }

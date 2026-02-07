@@ -361,10 +361,10 @@ Always wrap async auth operations in try-catch:
 
 ```typescript
 try {
-  await signUp.create({ emailAddress, password });
+    await signUp.create({emailAddress, password})
 } catch (err) {
-  // Handle error (show message to user)
-  console.error(JSON.stringify(err, null, 2));
+    // Handle error (show message to user)
+    console.error(JSON.stringify(err, null, 2))
 }
 ```
 
@@ -385,7 +385,7 @@ if (!isLoaded) {
 Always use `tokenCache` to store tokens securely:
 
 ```typescript
-import { tokenCache } from '@clerk/clerk-expo/token-cache';
+import {tokenCache} from '@clerk/clerk-expo/token-cache'
 ```
 
 ### Route Groups
@@ -401,31 +401,31 @@ Organize routes with Expo Router groups:
 ### Access Clerk Instance
 
 ```typescript
-const clerk = useClerk();
+const clerk = useClerk()
 
 // Open user profile modal
-clerk.openUserProfile();
+clerk.openUserProfile()
 
 // Sign out
-await clerk.signOut();
+await clerk.signOut()
 ```
 
 ### Session Management
 
 ```typescript
-const { isLoaded, isSignedIn, sessionId, userId } = useAuth();
+const {isLoaded, isSignedIn, sessionId, userId} = useAuth()
 ```
 
 ### User Profile Updates
 
 ```typescript
-const { user } = useUser();
+const {user} = useUser()
 
 // Update user metadata
 await user.update({
-  firstName: 'John',
-  lastName: 'Doe',
-});
+    firstName: 'John',
+    lastName: 'Doe',
+})
 ```
 
 ## Authentication Methods
@@ -441,22 +441,22 @@ Build custom OAuth flows using Clerk's connections:
 ```typescript
 // Create OAuth sign-in
 await signIn.create({
-  strategy: 'oauth_google',
-  redirectUrl: Linking.createURL('/(home)'),
-});
+    strategy: 'oauth_google',
+    redirectUrl: Linking.createURL('/(home)'),
+})
 
 // Handle OAuth redirect
 useEffect(() => {
-  const handleOAuthFlow = async () => {
-    const { createdSessionId } = await signIn.firstFactorVerification.attempt();
+    const handleOAuthFlow = async () => {
+        const {createdSessionId} = await signIn.firstFactorVerification.attempt()
 
-    if (createdSessionId) {
-      setActive({ session: createdSessionId });
+        if (createdSessionId) {
+            setActive({session: createdSessionId})
+        }
     }
-  };
 
-  handleOAuthFlow();
-}, []);
+    handleOAuthFlow()
+}, [])
 ```
 
 ### Passwordless
@@ -465,10 +465,10 @@ Implement email or phone code verification:
 
 ```typescript
 // Send verification code
-await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+await signUp.prepareEmailAddressVerification({strategy: 'email_code'})
 
 // Verify code
-const attempt = await signUp.attemptEmailAddressVerification({ code });
+const attempt = await signUp.attemptEmailAddressVerification({code})
 ```
 
 ## Additional Features
