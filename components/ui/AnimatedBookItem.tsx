@@ -16,6 +16,7 @@ interface AnimatedBookItemProps {
   onPress: (book: OpenLibraryBook) => void;
   failedImages: Set<string>;
   onImageError: (coverUrl: string) => void;
+  isInShelf?: boolean;
 }
 
 export const AnimatedBookItem = ({
@@ -24,6 +25,7 @@ export const AnimatedBookItem = ({
   onPress,
   failedImages,
   onImageError,
+  isInShelf,
 }: AnimatedBookItemProps) => {
   const { colors } = useAppTheme();
 
@@ -122,6 +124,19 @@ export const AnimatedBookItem = ({
                 </Text>
               ) : null}
             </View>
+            {isInShelf && (
+              <View
+                className="flex-row items-center gap-1 mt-2"
+              >
+                <MaterialIcons name="check-circle" size={16} color={colors.primary} />
+                <Text
+                  className="text-sm font-medium"
+                  style={{ color: colors.primary }}
+                >
+                  Already in your shelf
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </Pressable>

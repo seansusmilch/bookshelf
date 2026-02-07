@@ -14,7 +14,7 @@ January 2026
 
 ## Abstract
 
-Comprehensive performance optimization guide for React Native applications, designed for AI agents and LLMs. Contains 35+ rules across 13 categories, prioritized by impact from critical (core rendering, list performance) to incremental (fonts, imports). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for React Native applications, designed for AI agents and LLMs. Contains 37+ rules across 14 categories, prioritized by impact from critical (core rendering, list performance) to incremental (fonts, imports). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 
@@ -40,36 +40,39 @@ Comprehensive performance optimization guide for React Native applications, desi
    - 4.1 [Never Track Scroll Position in useState](#41-never-track-scroll-position-in-usestate)
 5. [Navigation](#5-navigation) — **HIGH**
    - 5.1 [Use Native Navigators for Navigation](#51-use-native-navigators-for-navigation)
-6. [React State](#6-react-state) — **MEDIUM**
-   - 6.1 [Minimize State Variables and Derive Values](#61-minimize-state-variables-and-derive-values)
-   - 6.2 [Use fallback state instead of initialState](#62-use-fallback-state-instead-of-initialstate)
-   - 6.3 [useState Dispatch updaters for State That Depends on Current Value](#63-usestate-dispatch-updaters-for-state-that-depends-on-current-value)
-7. [State Architecture](#7-state-architecture) — **MEDIUM**
-   - 7.1 [State Must Represent Ground Truth](#71-state-must-represent-ground-truth)
-8. [React Compiler](#8-react-compiler) — **MEDIUM**
-   - 8.1 [Destructure Functions Early in Render (React Compiler)](#81-destructure-functions-early-in-render-react-compiler)
-   - 8.2 [Use .get() and .set() for Reanimated Shared Values (not .value)](#82-use-get-and-set-for-reanimated-shared-values-not-value)
-9. [User Interface](#9-user-interface) — **MEDIUM**
-   - 9.1 [Measuring View Dimensions](#91-measuring-view-dimensions)
-   - 9.2 [Modern React Native Styling Patterns](#92-modern-react-native-styling-patterns)
-   - 9.3 [Use contentInset for Dynamic ScrollView Spacing](#93-use-contentinset-for-dynamic-scrollview-spacing)
-   - 9.4 [Use contentInsetAdjustmentBehavior for Safe Areas](#94-use-contentinsetadjustmentbehavior-for-safe-areas)
-   - 9.5 [Use expo-image for Optimized Images](#95-use-expo-image-for-optimized-images)
-   - 9.6 [Use Galeria for Image Galleries and Lightbox](#96-use-galeria-for-image-galleries-and-lightbox)
-   - 9.7 [Use Native Menus for Dropdowns and Context Menus](#97-use-native-menus-for-dropdowns-and-context-menus)
-   - 9.8 [Use Native Modals Over JS-Based Bottom Sheets](#98-use-native-modals-over-js-based-bottom-sheets)
-   - 9.9 [Use Pressable Instead of Touchable Components](#99-use-pressable-instead-of-touchable-components)
-10. [Design System](#10-design-system) — **MEDIUM**
-   - 10.1 [Use Compound Components Over Polymorphic Children](#101-use-compound-components-over-polymorphic-children)
-11. [Monorepo](#11-monorepo) — **LOW**
-   - 11.1 [Install Native Dependencies in App Directory](#111-install-native-dependencies-in-app-directory)
-   - 11.2 [Use Single Dependency Versions Across Monorepo](#112-use-single-dependency-versions-across-monorepo)
-12. [Third-Party Dependencies](#12-third-party-dependencies) — **LOW**
-   - 12.1 [Import from Design System Folder](#121-import-from-design-system-folder)
-13. [JavaScript](#13-javascript) — **LOW**
-   - 13.1 [Hoist Intl Formatter Creation](#131-hoist-intl-formatter-creation)
-14. [Fonts](#14-fonts) — **LOW**
-   - 14.1 [Load fonts natively at build time](#141-load-fonts-natively-at-build-time)
+6. [Keyboard Handling](#6-keyboard-handling) — **HIGH**
+   - 6.1 [Use KeyboardAwareScrollView for Input Handling](#61-use-keyboardawarescrollview-for-input-handling)
+   - 6.2 [Add KeyboardProvider to Root Layout](#62-add-keyboardprovider-to-root-layout)
+7. [React State](#7-react-state) — **MEDIUM**
+   - 7.1 [Minimize State Variables and Derive Values](#71-minimize-state-variables-and-derive-values)
+   - 7.2 [Use fallback state instead of initialState](#72-use-fallback-state-instead-of-initialstate)
+   - 7.3 [useState Dispatch updaters for State That Depends on Current Value](#73-usestate-dispatch-updaters-for-state-that-depends-on-current-value)
+8. [State Architecture](#8-state-architecture) — **MEDIUM**
+   - 8.1 [State Must Represent Ground Truth](#81-state-must-represent-ground-truth)
+9. [React Compiler](#9-react-compiler) — **MEDIUM**
+   - 9.1 [Destructure Functions Early in Render (React Compiler)](#91-destructure-functions-early-in-render-react-compiler)
+   - 9.2 [Use .get() and .set() for Reanimated Shared Values (not .value)](#92-use-get-and-set-for-reanimated-shared-values-not-value)
+10. [User Interface](#10-user-interface) — **MEDIUM**
+   - 10.1 [Measuring View Dimensions](#101-measuring-view-dimensions)
+   - 10.2 [Modern React Native Styling Patterns](#102-modern-react-native-styling-patterns)
+   - 10.3 [Use contentInset for Dynamic ScrollView Spacing](#103-use-contentinset-for-dynamic-scrollview-spacing)
+   - 10.4 [Use contentInsetAdjustmentBehavior for Safe Areas](#104-use-contentinsetadjustmentbehavior-for-safe-areas)
+   - 10.5 [Use expo-image for Optimized Images](#105-use-expo-image-for-optimized-images)
+   - 10.6 [Use Galeria for Image Galleries and Lightbox](#106-use-galeria-for-image-galleries-and-lightbox)
+   - 10.7 [Use Native Menus for Dropdowns and Context Menus](#107-use-native-menus-for-dropdowns-and-context-menus)
+   - 10.8 [Use Native Modals Over JS-Based Bottom Sheets](#108-use-native-modals-over-js-based-bottom-sheets)
+   - 10.9 [Use Pressable Instead of Touchable Components](#109-use-pressable-instead-of-touchable-components)
+11. [Design System](#11-design-system) — **MEDIUM**
+   - 11.1 [Use Compound Components Over Polymorphic Children](#111-use-compound-components-over-polymorphic-children)
+12. [Monorepo](#12-monorepo) — **LOW**
+   - 12.1 [Install Native Dependencies in App Directory](#121-install-native-dependencies-in-app-directory)
+   - 12.2 [Use Single Dependency Versions Across Monorepo](#122-use-single-dependency-versions-across-monorepo)
+13. [Third-Party Dependencies](#13-third-party-dependencies) — **LOW**
+   - 13.1 [Import from Design System Folder](#131-import-from-design-system-folder)
+14. [JavaScript](#14-javascript) — **LOW**
+   - 14.1 [Hoist Intl Formatter Creation](#141-hoist-intl-formatter-creation)
+15. [Fonts](#15-fonts) — **LOW**
+   - 15.1 [Load fonts natively at build time](#151-load-fonts-natively-at-build-time)
 
 ---
 
@@ -1357,14 +1360,137 @@ safe area handling automatically.
 
 ---
 
-## 6. React State
+## 6. Keyboard Handling
+
+**Impact: HIGH**
+
+Ensuring text inputs remain visible when the keyboard appears.
+
+### 6.1 Use KeyboardAwareScrollView for Input Handling
+
+**Impact: HIGH (ensures inputs remain visible, prevents keyboard covering content)**
+
+Use `KeyboardAwareScrollView` from `react-native-keyboard-controller` instead of `ScrollView` with `KeyboardAvoidingView`. The built-in React Native `KeyboardAvoidingView` is unreliable, especially with Expo Router and modal presentations. `KeyboardAwareScrollView` automatically scrolls to keep the focused input visible.
+
+**Installation:**
+
+```bash
+npx expo install react-native-keyboard-controller
+```
+
+**Incorrect: unreliable KeyboardAvoidingView**
+
+```tsx
+import { ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native'
+
+function AddBookScreen() {
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+    >
+      <ScrollView>
+        <TextInput placeholder="Page count" />
+      </ScrollView>
+    </KeyboardAvoidingView>
+  )
+}
+```
+
+**Correct: KeyboardAwareScrollView**
+
+```tsx
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
+import { TextInput } from 'react-native'
+
+function AddBookScreen() {
+  return (
+    <KeyboardAwareScrollView
+      bottomOffset={60}
+      keyboardShouldPersistTaps="handled"
+    >
+      <TextInput placeholder="Page count" />
+    </KeyboardAwareScrollView>
+  )
+}
+```
+
+**Key props:**
+
+- `bottomOffset` — Extra space below the keyboard (default: 0)
+- `keyboardShouldPersistTaps` — `'handled'` to dismiss keyboard when tapping outside inputs
+
+### 6.2 Add KeyboardProvider to Root Layout
+
+**Impact: HIGH (required for keyboard handling to work)**
+
+Wrap your app with `KeyboardProvider` from `react-native-keyboard-controller` in the root layout. This enables the `KeyboardAwareScrollView` and other keyboard handling features throughout the app.
+
+**Setup:**
+
+```tsx
+// app/_layout.tsx
+import { KeyboardProvider } from 'react-native-keyboard-controller'
+
+export default function RootLayout() {
+  return (
+    <KeyboardProvider>
+      {/* your app content */}
+    </KeyboardProvider>
+  )
+}
+```
+
+**Incorrect: missing provider**
+
+```tsx
+// app/_layout.tsx
+export default function RootLayout() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        {/* All components here lose keyboard handling */}
+        <Stack />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  )
+}
+```
+
+**Correct: with KeyboardProvider**
+
+```tsx
+// app/_layout.tsx
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { KeyboardProvider } from 'react-native-keyboard-controller'
+import { Stack } from 'expo-router'
+
+export default function RootLayout() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <KeyboardProvider>
+          <Stack />
+        </KeyboardProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  )
+}
+```
+
+**Reference:** [react-native-keyboard-controller](https://kirillzyusko.github.io/react-native-keyboard-controller)
+
+---
+
+## 7. React State
 
 **Impact: MEDIUM**
 
 Patterns for managing React state to avoid stale closures and
 unnecessary re-renders.
 
-### 6.1 Minimize State Variables and Derive Values
+### 7.1 Minimize State Variables and Derive Values
 
 **Impact: MEDIUM (fewer re-renders, less state drift)**
 
@@ -1425,7 +1551,7 @@ State should be the minimal source of truth. Everything else is derived.
 
 Reference: [https://react.dev/learn/choosing-the-state-structure](https://react.dev/learn/choosing-the-state-structure)
 
-### 6.2 Use fallback state instead of initialState
+### 7.2 Use fallback state instead of initialState
 
 **Impact: MEDIUM (reactive fallbacks without syncing)**
 
@@ -1480,7 +1606,7 @@ function ProfileForm({ data }: { data: User }) {
 }
 ```
 
-### 6.3 useState Dispatch updaters for State That Depends on Current Value
+### 7.3 useState Dispatch updaters for State That Depends on Current Value
 
 **Impact: MEDIUM (avoids stale closures, prevents unnecessary re-renders)**
 
@@ -1574,13 +1700,13 @@ const onTap = () => {
 
 ---
 
-## 7. State Architecture
+## 8. State Architecture
 
 **Impact: MEDIUM**
 
 Ground truth principles for state variables and derived values.
 
-### 7.1 State Must Represent Ground Truth
+### 8.1 State Must Represent Ground Truth
 
 **Impact: HIGH (cleaner logic, easier debugging, single source of truth)**
 
@@ -1668,14 +1794,14 @@ State is the minimal truth. Everything else is derived.
 
 ---
 
-## 8. React Compiler
+## 9. React Compiler
 
 **Impact: MEDIUM**
 
 Compatibility patterns for React Compiler with React Native and
 Reanimated.
 
-### 8.1 Destructure Functions Early in Render (React Compiler)
+### 9.1 Destructure Functions Early in Render (React Compiler)
 
 **Impact: HIGH (stable references, fewer re-renders)**
 
@@ -1723,7 +1849,7 @@ function SaveButton({ onSave }) {
 }
 ```
 
-### 8.2 Use .get() and .set() for Reanimated Shared Values (not .value)
+### 9.2 Use .get() and .set() for Reanimated Shared Values (not .value)
 
 **Impact: LOW (required for React Compiler compatibility)**
 
@@ -1773,14 +1899,14 @@ for more.
 
 ---
 
-## 9. User Interface
+## 10. User Interface
 
 **Impact: MEDIUM**
 
 Native UI patterns for images, menus, modals, styling, and
 platform-consistent interfaces.
 
-### 9.1 Measuring View Dimensions
+### 10.1 Measuring View Dimensions
 
 **Impact: MEDIUM (synchronous measurement, avoid unnecessary re-renders)**
 
@@ -1857,7 +1983,7 @@ function MeasuredBox({ children }: { children: React.ReactNode }) {
 
 Use functional setState to compare—don't read state directly in the callback.
 
-### 9.2 Modern React Native Styling Patterns
+### 10.2 Modern React Native Styling Patterns
 
 **Impact: MEDIUM (consistent design, smoother borders, cleaner layouts)**
 
@@ -1933,7 +2059,7 @@ Limiting font sizes creates visual consistency. Use `fontWeight` (bold/semibold)
 
 and grayscale colors for hierarchy instead.
 
-### 9.3 Use contentInset for Dynamic ScrollView Spacing
+### 10.3 Use contentInset for Dynamic ScrollView Spacing
 
 **Impact: LOW (smoother updates, no layout recalculation)**
 
@@ -1978,7 +2104,7 @@ Use `scrollIndicatorInsets` alongside `contentInset` to keep the scroll
 
 indicator aligned. For static spacing that never changes, padding is fine.
 
-### 9.4 Use contentInsetAdjustmentBehavior for Safe Areas
+### 10.4 Use contentInsetAdjustmentBehavior for Safe Areas
 
 **Impact: MEDIUM (native safe area handling, no layout shifts)**
 
@@ -2039,7 +2165,7 @@ function MyScreen() {
 
 The native approach handles dynamic safe areas (keyboard, toolbars) and allows content to scroll behind the status bar naturally.
 
-### 9.5 Use expo-image for Optimized Images
+### 10.5 Use expo-image for Optimized Images
 
 **Impact: HIGH (memory efficiency, caching, blurhash placeholders, progressive loading)**
 
@@ -2106,7 +2232,7 @@ For cross-platform (web + native), use `SolitoImage` from `solito/image` which u
 
 Reference: [https://docs.expo.dev/versions/latest/sdk/image/](https://docs.expo.dev/versions/latest/sdk/image/)
 
-### 9.6 Use Galeria for Image Galleries and Lightbox
+### 10.6 Use Galeria for Image Galleries and Lightbox
 
 **Impact: MEDIUM**
 
@@ -2208,7 +2334,7 @@ component.
 
 Reference: [https://github.com/nandorojo/galeria](https://github.com/nandorojo/galeria)
 
-### 9.7 Use Native Menus for Dropdowns and Context Menus
+### 10.7 Use Native Menus for Dropdowns and Context Menus
 
 **Impact: HIGH (native accessibility, platform-consistent UX)**
 
@@ -2380,7 +2506,7 @@ function MenuWithSubmenu() {
 
 Reference: [https://zeego.dev/components/dropdown-menu](https://zeego.dev/components/dropdown-menu)
 
-### 9.8 Use Native Modals Over JS-Based Bottom Sheets
+### 10.8 Use Native Modals Over JS-Based Bottom Sheets
 
 **Impact: HIGH (native performance, gestures, accessibility)**
 
@@ -2457,7 +2583,7 @@ Native modals provide swipe-to-dismiss, proper keyboard avoidance, and
 
 accessibility out of the box.
 
-### 9.9 Use Pressable Instead of Touchable Components
+### 10.9 Use Pressable Instead of Touchable Components
 
 **Impact: LOW (modern API, more flexible)**
 
@@ -2521,14 +2647,14 @@ with Reanimated shared values instead of Pressable's style callback. See the
 
 ---
 
-## 10. Design System
+## 11. Design System
 
 **Impact: MEDIUM**
 
 Architecture patterns for building maintainable component
 libraries.
 
-### 10.1 Use Compound Components Over Polymorphic Children
+### 11.1 Use Compound Components Over Polymorphic Children
 
 **Impact: MEDIUM (flexible composition, clearer API)**
 
@@ -2596,14 +2722,14 @@ function ButtonIcon({ children }: { children: React.ReactNode }) {
 
 ---
 
-## 11. Monorepo
+## 12. Monorepo
 
 **Impact: LOW**
 
 Dependency management and native module configuration in
 monorepos.
 
-### 11.1 Install Native Dependencies in App Directory
+### 12.1 Install Native Dependencies in App Directory
 
 **Impact: CRITICAL (required for autolinking to work)**
 
@@ -2640,7 +2766,7 @@ Even if the shared package uses the native dependency, the app must also list it
 
 for autolinking to detect and link the native code.
 
-### 11.2 Use Single Dependency Versions Across Monorepo
+### 12.2 Use Single Dependency Versions Across Monorepo
 
 **Impact: MEDIUM (avoids duplicate bundles, version conflicts)**
 
@@ -2705,14 +2831,14 @@ the root. When adding dependencies, specify exact versions without `^` or `~`.
 
 ---
 
-## 12. Third-Party Dependencies
+## 13. Third-Party Dependencies
 
 **Impact: LOW**
 
 Wrapping and re-exporting third-party dependencies for
 maintainability.
 
-### 12.1 Import from Design System Folder
+### 13.1 Import from Design System Folder
 
 **Impact: LOW (enables global changes and easy refactoring)**
 
@@ -2757,13 +2883,13 @@ Start by simply re-exporting. Customize later without changing app code.
 
 ---
 
-## 13. JavaScript
+## 14. JavaScript
 
 **Impact: LOW**
 
 Micro-optimizations like hoisting expensive object creation.
 
-### 13.1 Hoist Intl Formatter Creation
+### 14.1 Hoist Intl Formatter Creation
 
 **Impact: LOW-MEDIUM (avoids expensive object recreation)**
 
@@ -2825,13 +2951,13 @@ objects—each instantiation parses locale data and builds internal lookup table
 
 ---
 
-## 14. Fonts
+## 15. Fonts
 
 **Impact: LOW**
 
 Native font loading for improved performance.
 
-### 14.1 Load fonts natively at build time
+### 15.1 Load fonts natively at build time
 
 **Impact: LOW (fonts available at launch, no async loading)**
 

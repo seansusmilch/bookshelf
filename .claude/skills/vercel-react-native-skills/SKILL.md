@@ -24,6 +24,7 @@ Reference these guidelines when:
 - Building React Native or Expo apps
 - Optimizing list and scroll performance
 - Implementing animations with Reanimated
+- Handling keyboard input and scroll interactions
 - Working with images and media
 - Configuring native modules or fonts
 - Structuring monorepo projects with native dependencies
@@ -35,11 +36,12 @@ Reference these guidelines when:
 | 1        | List Performance | CRITICAL | `list-performance-`  |
 | 2        | Animation        | HIGH     | `animation-`         |
 | 3        | Navigation       | HIGH     | `navigation-`        |
-| 4        | UI Patterns      | HIGH     | `ui-`                |
-| 5        | State Management | MEDIUM   | `react-state-`       |
-| 6        | Rendering        | MEDIUM   | `rendering-`         |
-| 7        | Monorepo         | MEDIUM   | `monorepo-`          |
-| 8        | Configuration    | LOW      | `fonts-`, `imports-` |
+| 4        | Keyboard         | HIGH     | `keyboard-`          |
+| 5        | UI Patterns      | HIGH     | `ui-`                |
+| 6        | State Management | MEDIUM   | `react-state-`       |
+| 7        | Rendering        | MEDIUM   | `rendering-`         |
+| 8        | Monorepo         | MEDIUM   | `monorepo-`          |
+| 9        | Configuration    | LOW      | `fonts-`, `imports-` |
 
 ## Quick Reference
 
@@ -63,6 +65,11 @@ Reference these guidelines when:
 ### 3. Navigation (HIGH)
 
 - `navigation-native-navigators` - Use native stack and native tabs over JS navigators
+
+### 4. Keyboard (HIGH)
+
+- `keyboard-aware-scrollview` - Use KeyboardAwareScrollView from react-native-keyboard-controller
+- `keyboard-provider` - Add KeyboardProvider to app root layout
 
 ### 4. UI Patterns (HIGH)
 

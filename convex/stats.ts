@@ -18,26 +18,26 @@ export const getReadingStats = query({
     const startOfYear = new Date(currentYear, 0, 1).getTime();
     const endOfYear = new Date(currentYear + 1, 0, 1).getTime();
 
-    const completedBooks = await ctx.db
+    const allBooks = await ctx.db
       .query('books')
       .withIndex('by_user', (q) => q.eq('userId', userId))
       .collect();
 
-    const booksCompletedInYear = completedBooks.filter(
+    const booksCompletedInYear = allBooks.filter(
       (book) =>
         book.status === 'completed' && book.updatedAt >= startOfYear && book.updatedAt < endOfYear
     );
 
-    const sessions = await ctx.db
-      .query('readingSessions')
-      .withIndex('by_user_date', (q) => q.eq('userId', userId))
-      .collect();
-
-    const sessionsInYear = sessions.filter(
-      (session) => session.startedAt >= startOfYear && session.startedAt < endOfYear
+    const booksInProgressInYear = allBooks.filter(
+      (book) =>
+        book.status === 'reading' && book.createdAt >= startOfYear && book.createdAt < endOfYear
     );
 
-    const totalPagesRead = sessionsInYear.reduce((sum, session) => sum + session.pagesRead, 0);
+    const totalPagesFromCompleted = booksCompletedInYear.reduce((sum, book) => sum + book.totalPages, 0);
+
+    const totalPagesFromInProgress = booksInProgressInYear.reduce((sum, book) => sum + book.currentPage, 0);
+
+    const totalPagesRead = totalPagesFromCompleted + totalPagesFromInProgress;
 
     const goal = await ctx.db
       .query('yearlyGoals')

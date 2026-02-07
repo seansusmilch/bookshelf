@@ -83,6 +83,103 @@ export const getBookById = query({
   },
 });
 
+export const getBookByOpenLibraryId = query({
+  args: {
+    openLibraryId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      return null;
+    }
+
+    const userId = identity.subject;
+
+    const book = await ctx.db
+      .query('books')
+      .withIndex('by_olid', (q) => q.eq('openLibraryId', args.openLibraryId))
+      .first();
+
+    if (!book || book.userId !== userId) {
+      return null;
+    }
+
+    return book;
+  },
+});
+
+export const getBookIdByOpenLibraryId = query({
+  args: {
+    openLibraryId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      return null;
+    }
+
+    const userId = identity.subject;
+
+    const book = await ctx.db
+      .query('books')
+      .withIndex('by_olid', (q) => q.eq('openLibraryId', args.openLibraryId))
+      .first();
+
+    if (!book || book.userId !== userId) {
+      return null;
+    }
+
+    return book._id;
+  },
+});
+
+export const getUserBookOpenLibraryIds = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      return [];
+    }
+
+    const userId = identity.subject;
+
+    const books = await ctx.db
+      .query('books')
+      .withIndex('by_user', (q) => q.eq('userId', userId))
+      .collect();
+
+    return books
+      .filter((book) => book.openLibraryId)
+      .map((book) => book.openLibraryId as string);
+  },
+});
+
+export const getUserBooksWithIds = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      return [];
+    }
+
+    const userId = identity.subject;
+
+    const books = await ctx.db
+      .query('books')
+      .withIndex('by_user', (q) => q.eq('userId', userId))
+      .collect();
+
+    return books.map((book) => ({
+      _id: book._id,
+      openLibraryId: book.openLibraryId,
+    }));
+  },
+});
+
 export const addBook = mutation({
   args: {
     title: v.string(),

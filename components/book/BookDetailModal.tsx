@@ -119,7 +119,11 @@ export const BookDetailModal = ({ visible, bookId, onClose }: BookDetailModalPro
         </Pressable>
       </View>
 
-      <ScrollView className="flex-1 px-4 py-4">
+      <ScrollView
+        className="flex-1 px-4 py-4"
+        keyboardShouldPersistTaps="handled"
+        contentInsetAdjustmentBehavior="automatic"
+      >
         <Text className="text-2xl font-bold text-gray-900 mb-1">{book.title}</Text>
         <Text className="text-base text-gray-600 mb-4">{book.author}</Text>
 

@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useAuth } from '@clerk/clerk-expo';
@@ -128,53 +128,67 @@ import { StatsCardSkeleton } from '@/components/ui/Skeleton';
           </View>
         </SafeAreaView>
 
-        {showGoalModal && (
-          <Modal
-            visible
-            transparent
-            animationType="slide"
-            onRequestClose={handleCancelGoal}
+        <Modal
+          visible={showGoalModal}
+          transparent
+          animationType="fade"
+          onRequestClose={handleCancelGoal}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
           >
-            <View className="flex-1 bg-black/50 items-center justify-center px-4">
-              <View className="rounded-2xl w-full max-w-sm p-6" style={{ backgroundColor: colors.surface }}>
-                <Text className="text-xl font-bold mb-2" style={{ color: colors.onSurface }}>Set Yearly Goal</Text>
-                <Text className="text-sm mb-4" style={{ color: colors.onSurfaceVariant }}>
-                  How many books do you want to read this year?
-                </Text>
+            <Pressable onPress={handleCancelGoal} className="flex-1 bg-black/60 items-center justify-center px-6">
+              <Pressable onPress={() => {}} className="w-full max-w-md">
+                <View className="rounded-3xl p-6" style={{ backgroundColor: colors.surface }}>
+                  <Text className="text-2xl font-bold mb-1" style={{ color: colors.onSurface }}>
+                    Set Reading Goal
+                  </Text>
+                  <Text className="text-base mb-6" style={{ color: colors.onSurfaceVariant }}>
+                    How many books would you like to read this year?
+                  </Text>
 
-                <TextInput
-                  value={newGoal}
-                  onChangeText={setNewGoal}
-                  placeholder="Enter number of books"
-                  keyboardType="number-pad"
-                  className="px-4 py-3 rounded-xl text-lg text-center font-semibold"
-                  style={{
-                    backgroundColor: colors.surfaceContainerHighest,
-                    color: colors.onSurface,
-                  }}
-                  placeholderTextColor={colors.onSurfaceVariant}
-                />
+                  <TextInput
+                    value={newGoal}
+                    onChangeText={setNewGoal}
+                    placeholder="12"
+                    keyboardType="number-pad"
+                    className="px-5 py-4 rounded-2xl text-2xl text-center font-bold mb-6"
+                    style={{
+                      backgroundColor: colors.surfaceContainerHighest,
+                      color: colors.onSurface,
+                      borderCurve: 'continuous',
+                    }}
+                    placeholderTextColor={colors.onSurfaceVariant}
+                    autoFocus
+                    selectTextOnFocus
+                  />
 
-                <View className="flex-row gap-3 mt-4">
-                  <Pressable
-                    onPress={handleCancelGoal}
-                    className="flex-1 py-3 rounded-xl"
-                    style={{ backgroundColor: colors.surfaceContainerHighest }}
-                  >
-                    <Text className="text-center font-semibold" style={{ color: colors.onSurface }}>Cancel</Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={handleSaveGoal}
-                    className="flex-1 py-3 rounded-xl"
-                    style={{ backgroundColor: colors.primary }}
-                  >
-                    <Text className="text-white text-center font-semibold">Save</Text>
-                  </Pressable>
+                  <View className="flex-row gap-3">
+                    <Pressable
+                      onPress={handleCancelGoal}
+                      className="flex-1 py-4 rounded-2xl"
+                      style={{ backgroundColor: colors.surfaceContainerHighest }}
+                      android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
+                    >
+                      <Text className="text-center font-bold text-base" style={{ color: colors.onSurface }}>
+                        Cancel
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={handleSaveGoal}
+                      className="flex-1 py-4 rounded-2xl"
+                      style={{ backgroundColor: colors.primary }}
+                      android_ripple={{ color: 'rgba(255,255,255,0.2)' }}
+                    >
+                      <Text className="text-white text-center font-bold text-base">Save Goal</Text>
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
-            </View>
-          </Modal>
-        )}
+              </Pressable>
+            </Pressable>
+          </KeyboardAvoidingView>
+        </Modal>
       </>
     );
   }

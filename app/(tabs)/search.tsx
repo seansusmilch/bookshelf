@@ -3,10 +3,11 @@ import { AnimatedBookItem } from '@/components/ui/AnimatedBookItem';
 import { EmptySearchState, NoResultsState } from '@/components/ui/SearchLoadingState';
 import { SearchSkeletonList } from '@/components/ui/SkeletonLoader';
 import { usePreviousSearches } from '@/hooks/usePreviousSearches';
+import { useUserBooksWithIds } from '@/hooks/useBooks';
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
 import { CoverSize, getCoverUrl, getEditionOlid } from '~/lib/openlibrary';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useNavigation , useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
@@ -24,6 +25,7 @@ export default function SearchScreen() {
 
   const { isLoading, searchBooks: executeSearch } = useSearchBooks();
   const { searches, saveSearch, deleteSearch } = usePreviousSearches();
+  const userBooksWithIds = useUserBooksWithIds();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const executeSearchAndSave = async (searchQuery: string, options?: { skipCache?: boolean }) => {
@@ -73,12 +75,21 @@ export default function SearchScreen() {
     return unsubscribe;
   }, [navigation]);
 
-  const handleBookPress = (book: OpenLibraryBook) => {
+  const handleBookPress = useCallback((book: OpenLibraryBook) => {
     const editionOlid = getEditionOlid(book);
+
+    if (editionOlid && userBooksWithIds) {
+      const existingBook = userBooksWithIds.find(b => b.openLibraryId === editionOlid);
+      if (existingBook) {
+        router.push({ pathname: '/book/[id]', params: { id: existingBook._id } });
+        return;
+      }
+    }
+
     const authorName = book.author_name?.[0] || 'Unknown Author';
     const coverUrl = editionOlid ? getCoverUrl(editionOlid, CoverSize.Medium) : undefined;
     router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl || '')}&title=${encodeURIComponent(book.title)}`);
-  };
+  }, [userBooksWithIds, router]);
 
   const handleImageError = (coverUrl: string) => {
     setFailedImages(prev => new Set(prev).add(coverUrl));
@@ -158,16 +169,21 @@ export default function SearchScreen() {
           <NoResultsState />
         ) : (
           <View className="gap-3">
-            {searchResults.docs?.map((book: OpenLibraryBook, index: number) => (
-              <AnimatedBookItem
-                key={book.key}
-                book={book}
-                index={index}
-                onPress={handleBookPress}
-                failedImages={failedImages}
-                onImageError={handleImageError}
-              />
-            ))}
+            {searchResults.docs?.map((book: OpenLibraryBook, index: number) => {
+              const editionOlid = getEditionOlid(book);
+              const isInShelf = editionOlid ? userBooksWithIds?.some(b => b.openLibraryId === editionOlid) ?? false : false;
+              return (
+                <AnimatedBookItem
+                  key={book.key}
+                  book={book}
+                  index={index}
+                  onPress={handleBookPress}
+                  failedImages={failedImages}
+                  onImageError={handleImageError}
+                  isInShelf={isInShelf}
+                />
+              );
+            })}
           </View>
         )}
       </ScrollView>

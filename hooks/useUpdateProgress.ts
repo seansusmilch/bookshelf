@@ -17,7 +17,6 @@ export const useUpdateProgress = () => {
   return useMutation({
     mutationFn: (args: UpdateProgressArgs) => convex.mutation(api.books.updateProgress, args),
     onSuccess: () => {
-      toast.showSuccess('Progress updated');
       queryClient.invalidateQueries({ queryKey: ['books'] });
     },
     onError: (error: Error) => {
