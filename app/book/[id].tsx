@@ -1,16 +1,10 @@
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
-import { useState, useLayoutEffect, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, Animated, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useCompleteBook } from '@/hooks/useCompleteBook';
-import { useUncompleteBook } from '@/hooks/useUncompleteBook';
-import { useRateBook } from '@/hooks/useRateBook';
-import { useUpdateProgress } from '@/hooks/useUpdateProgress';
-import { useRemoveBook } from '@/hooks/useRemoveBook';
-import { Id } from 'convex/_generated/dataModel';
 import { BookHeader } from '@/components/book/BookHeader';
 import { BookDescription } from '@/components/book/BookDescription';
 import { BookMetaInfo } from '@/components/book/BookMetaInfo';
@@ -22,53 +16,24 @@ import { RatingChips, RatingDisplay } from '@/components/ui/RatingPicker';
 import { Checkbox } from '@/components/ui/Chips';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { useAppTheme } from '@/components/material3-provider';
-import { PageLoading } from '@/components/ui/StateComponents';
-
-type BookDetail = {
-  _id: Id<'books'>;
-  title: string;
-  author: string;
-  description?: string;
-  coverUrl?: string;
-  currentPage: number;
-  totalPages: number;
-  status: string;
-  rating?: { rating: number };
-};
+import { BookDetailLoading } from '@/components/book/BookDetailLoading';
+import { BookDetail } from '@/types/book';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useBookDetailUI } from '@/hooks/useBookDetailUI';
+import { useBookHandlers } from '@/hooks/useBookHandlers';
 
 export default function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const { colors } = useAppTheme();
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  console.log('🔍 [BookDetailScreen] Component rendered');
-  console.log('🔍 [BookDetailScreen] id from params:', id);
-  console.log('🔍 [BookDetailScreen] id type:', typeof id);
-  console.log('🔍 [BookDetailScreen] id value (JSON):', JSON.stringify(id));
 
   const bookDetail = useQuery(
     api.books.getBookById,
     id ? { bookId: id as any } : 'skip'
   );
 
-  console.log('🔍 [BookDetailScreen] bookDetail result:', bookDetail);
-  console.log('🔍 [BookDetailScreen] bookDetail type:', typeof bookDetail);
-  console.log('🔍 [BookDetailScreen] bookDetail is undefined?:', bookDetail === undefined);
-
   const lists = useQuery(api.lists.getUserLists, {});
-  const updateProgress = useUpdateProgress();
-  const rateBook = useRateBook();
-  const completeBook = useCompleteBook();
-  const uncompleteBook = useUncompleteBook();
-  const removeBook = useRemoveBook();
-
-  const [selectedListIds, setSelectedListIds] = useState<string[]>([]);
-  const [showProgressSlider, setShowProgressSlider] = useState(false);
-  const [showRatingPicker, setShowRatingPicker] = useState(false);
-  const [showListSelector, setShowListSelector] = useState(false);
-  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const book = bookDetail as BookDetail | null | undefined;
@@ -79,127 +44,51 @@ export default function BookDetailScreen() {
     });
   }, [colorScheme, navigation]);
 
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
-
-  const titleOpacity = scrollY.interpolate({
-    inputRange: [50, 150],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerStyle: {
-        elevation: scrollY.interpolate({
-          inputRange: [0, 100],
-          outputRange: [0, 4],
-          extrapolate: 'clamp',
-        }) as any,
-      },
-      headerTitle: () => (
-        <Animated.Text
-          style={{
-            color: colors.onSurface,
-            opacity: titleOpacity,
-            fontSize: 17,
-            fontWeight: '600',
-          }}
-          numberOfLines={1}
-        >
-          {book?.title || ''}
-        </Animated.Text>
-      ),
-      headerTransparent: true,
-      headerBackground: () => (
-        <Animated.View
-          style={{
-            flex: 1,
-            backgroundColor: colors.background,
-            opacity: headerOpacity,
-          }}
-        />
-      ),
-    });
-  }, [navigation, colors, scrollY, book?.title, headerOpacity, titleOpacity]);
-
   useEffect(() => {
-    console.log('🔍 [BookDetailScreen] useEffect triggered');
-    console.log('🔍 [BookDetailScreen] id param:', id);
-    console.log('🔍 [BookDetailScreen] id type:', typeof id);
-    console.log('🔍 [BookDetailScreen] id value:', JSON.stringify(id));
-    console.log('🔍 [BookDetailScreen] bookDetail:', bookDetail);
-    console.log('🔍 [BookDetailScreen] bookDetail type:', typeof bookDetail);
-    console.log('🔍 [BookDetailScreen] bookDetail is undefined?:', bookDetail === undefined);
-
     if (id === undefined || id === null || id === '') {
-      console.log('🔍 [BookDetailScreen] ID is invalid, setting isLoading false');
       setIsLoading(false);
     } else if (bookDetail !== undefined) {
-      console.log('🔍 [BookDetailScreen] bookDetail is resolved, setting isLoading false');
       setIsLoading(false);
-    } else {
-      console.log('🔍 [BookDetailScreen] Still waiting for bookDetail...');
     }
   }, [id, bookDetail]);
 
-  const handleProgressUpdate = (newPage: number) => {
-    if (!book) return;
-    updateProgress.mutate({ bookId: book._id, currentPage: newPage });
-  };
+  const { scrollY } = useScrollAnimation({
+    title: book?.title || '',
+    colors,
+    navigation,
+  });
 
-  const handleRatingUpdate = (rating: number) => {
-    if (!book) return;
-    rateBook.mutate({ bookId: book._id, rating });
+  const {
+    selectedListIds,
+    showProgressSlider,
+    setShowProgressSlider,
+    showRatingPicker,
+    setShowRatingPicker,
+    showListSelector,
+    setShowListSelector,
+    showRemoveDialog,
+    setShowRemoveDialog,
+    toggleList,
+  } = useBookDetailUI();
+
+  const {
+    handleProgressUpdate,
+    handleRatingUpdate,
+    handleComplete,
+    handleUncomplete,
+    handleRemove,
+    removeBook,
+  } = useBookHandlers(book);
+
+  const handleRatingUpdateWithClose = (rating: number) => {
+    handleRatingUpdate(rating);
     setShowRatingPicker(false);
   };
 
-  const handleComplete = () => {
-    if (!book) return;
-    completeBook.mutate(book._id);
-  };
+  const loadingState = <BookDetailLoading isLoading={isLoading} book={book} colors={colors} id={id || ''} />;
 
-  const handleUncomplete = () => {
-    if (!book) return;
-    uncompleteBook.mutate(book._id);
-  };
-
-  const handleRemove = () => {
-    if (!book) return;
-    removeBook.mutate(book._id);
-  };
-
-  const toggleList = (listId: string) => {
-    if (selectedListIds.includes(listId)) {
-      setSelectedListIds(selectedListIds.filter((id) => id !== listId));
-    } else {
-      setSelectedListIds([...selectedListIds, listId]);
-    }
-  };
-
-  if (isLoading) {
-    console.log('🔍 [BookDetailScreen] Rendering loading state');
-    return <PageLoading message="Loading book details..." />;
-  }
-
-  if (!book) {
-    console.log('🔍 [BookDetailScreen] Rendering not found state');
-    return (
-      <View className="flex-1 items-center justify-center px-8" style={{ backgroundColor: colors.background }}>
-        <Text className="text-center" style={{ color: colors.onSurface }}>
-          Book not found
-        </Text>
-        <Text className="text-center text-sm mt-2" style={{ color: colors.onSurfaceVariant }}>
-          This book may have been deleted or you don&apos;t have access to it.
-        </Text>
-        <Text className="text-center text-xs mt-4" style={{ color: colors.onSurfaceVariant }}>
-          Debug: id = {id}
-        </Text>
-      </View>
-    );
+  if (isLoading || !book) {
+    return loadingState;
   }
 
   const isCompleted = book.status === 'completed';
@@ -298,7 +187,7 @@ export default function BookDetailScreen() {
                     </Text>
                     <RatingChips
                       value={book.rating?.rating}
-                      onChange={handleRatingUpdate}
+                      onChange={handleRatingUpdateWithClose}
                     />
                   </View>
                 )}
