@@ -8,6 +8,7 @@ import Animated, {
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { OpenLibraryBook } from '@/hooks/useSearchBooks';
 import { useAppTheme } from '@/components/material3-provider';
+import { CoverSize, getCoverUrl, getEditionOlid } from '~/lib/openlibrary';
 
 interface AnimatedBookItemProps {
   book: OpenLibraryBook;
@@ -26,22 +27,8 @@ export const AnimatedBookItem = ({
 }: AnimatedBookItemProps) => {
   const { colors } = useAppTheme();
 
-  const getEditionOlid = (book: OpenLibraryBook): string | undefined => {
-    const editionKey = book.editions?.docs?.[0]?.key;
-    if (editionKey) {
-      const match = editionKey.match(/\/(?:books|works|authors)\/([A-Za-z0-9]+)/);
-      return match ? match[1] : editionKey;
-    }
-    if (book.cover_edition_key) return book.cover_edition_key;
-    return undefined;
-  };
-
-  const getCoverUrl = (olid: string): string => {
-    return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg`;
-  };
-
   const editionOlid = getEditionOlid(book);
-  const coverUrl = editionOlid ? getCoverUrl(editionOlid) : undefined;
+  const coverUrl = editionOlid ? getCoverUrl(editionOlid, CoverSize.Medium) : undefined;
 
   const containerStyle = useAnimatedStyle(() => {
     return {

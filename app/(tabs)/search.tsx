@@ -4,28 +4,13 @@ import { EmptySearchState, NoResultsState } from '@/components/ui/SearchLoadingS
 import { SearchSkeletonList } from '@/components/ui/SkeletonLoader';
 import { usePreviousSearches } from '@/hooks/usePreviousSearches';
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
+import { CoverSize, getCoverUrl, getEditionOlid } from '~/lib/openlibrary';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation , useRouter } from 'expo-router';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-function extractOLID(key: string): string {
-  const match = key.match(/\/(?:books|works|authors)\/([A-Za-z0-9]+)/);
-  return match ? match[1] : key;
-}
-
-function getEditionOlid(book: OpenLibraryBook): string | undefined {
-  const editionKey = book.editions?.docs?.[0]?.key;
-  if (editionKey) return extractOLID(editionKey);
-  if (book.cover_edition_key) return extractOLID(book.cover_edition_key);
-  return undefined;
-}
-
-function getCoverUrl(olid: string): string {
-  return `https://covers.openlibrary.org/b/olid/${olid}-M.jpg`;
-}
 
 export default function SearchScreen() {
   const { colors } = useAppTheme();
@@ -89,10 +74,10 @@ export default function SearchScreen() {
   }, [navigation]);
 
   const handleBookPress = (book: OpenLibraryBook) => {
-    const editionOlid = getEditionOlid(book) || extractOLID(book.key);
+    const editionOlid = getEditionOlid(book);
     const authorName = book.author_name?.[0] || 'Unknown Author';
-    const coverUrl = getCoverUrl(editionOlid);
-    router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl)}&title=${encodeURIComponent(book.title)}`);
+    const coverUrl = editionOlid ? getCoverUrl(editionOlid, CoverSize.Medium) : undefined;
+    router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl || '')}&title=${encodeURIComponent(book.title)}`);
   };
 
   const handleImageError = (coverUrl: string) => {

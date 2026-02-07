@@ -1,7 +1,7 @@
-import { Pressable, View, Text, Image } from 'react-native';
+import { useAppTheme } from '@/components/material3-provider';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Id } from 'convex/_generated/dataModel';
-import { useAppTheme } from '@/components/material3-provider';
+import { Image, Pressable, Text, View } from 'react-native';
 
 type BookProps = {
   _id: Id<'books'>;
@@ -17,10 +17,9 @@ type BookProps = {
 type BookCardProps = {
   book: BookProps;
   onPress?: () => void;
-  onMenuPress?: () => void;
 };
 
-export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
+export const BookCard = ({ book, onPress }: BookCardProps) => {
   const { colors } = useAppTheme();
   const progressPercent = book.totalPages > 0 ? (book.currentPage / book.totalPages) * 100 : 0;
 
@@ -31,7 +30,7 @@ export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
   return (
     <Pressable onPress={onPress} className="mb-3 rounded-xl shadow-sm min-h-[120px]" style={{ backgroundColor: colors.surface }}>
       <View className="flex-row p-3 gap-3">
-        <View className="w-20 h-28 rounded-lg overflow-hidden flex-shrink-0" style={{ backgroundColor: colors.surfaceContainerHighest }}>
+        <View className="w-32 h-44 rounded-lg overflow-hidden flex-shrink-0" style={{ backgroundColor: colors.surfaceContainerHighest }}>
           {book.coverUrl ? (
             <Image
               source={{ uri: book.coverUrl }}
@@ -47,10 +46,10 @@ export const BookCard = ({ book, onPress, onMenuPress }: BookCardProps) => {
 
         <View className="flex-1 justify-between py-1">
           <View>
-            <Text className="text-base font-semibold" numberOfLines={2} style={{ color: colors.onSurface }}>
+            <Text className="text-lg font-semibold" numberOfLines={2} style={{ color: colors.onSurface }}>
               {book.title}
             </Text>
-            <Text className="text-sm mt-1" numberOfLines={1} style={{ color: colors.onSurfaceVariant }}>
+            <Text className="text-base mt-1" numberOfLines={1} style={{ color: colors.onSurfaceVariant }}>
               {book.author}
             </Text>
           </View>

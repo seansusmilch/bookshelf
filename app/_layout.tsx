@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { ErrorBoundary } from '@/components/error/ErrorBoundary';
 import { Material3Provider } from '@/components/material3-provider';
@@ -43,8 +44,9 @@ export default function RootLayout() {
               <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                 <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                   <ErrorBoundary>
-                    <ToastProvider>
-                      <Stack>
+                    <KeyboardProvider>
+                      <ToastProvider>
+                        <Stack>
                         <Stack.Screen name="index" options={{ headerShown: false }} />
                         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -67,7 +69,8 @@ export default function RootLayout() {
                       </Stack>
                       <StatusBar style="auto" />
                     </ToastProvider>
-                  </ErrorBoundary>
+                  </KeyboardProvider>
+                </ErrorBoundary>
                 </ThemeProvider>
               </ConvexProviderWithClerk>
             </ClerkProvider>

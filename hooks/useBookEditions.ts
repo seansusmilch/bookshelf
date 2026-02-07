@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useAction } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { fetchOpenLibrary, extractOLID } from 'convex/lib/openlibrary/client';
+import { CoverSize, getCoverUrl } from '~/lib/openlibrary';
 
 type BookDetails = {
   key: string;
@@ -103,9 +104,7 @@ export const useBookEditions = ({
       }
 
       const editionOlid = edition.key.split('/').pop();
-      const coverUrl = editionOlid
-        ? `https://covers.openlibrary.org/b/olid/${editionOlid}-M.jpg`
-        : undefined;
+      const coverUrl = editionOlid ? getCoverUrl(editionOlid, CoverSize.Medium) : undefined;
 
       const finalAuthor = (typeof author === 'string' && author.trim())
         ? author.trim()

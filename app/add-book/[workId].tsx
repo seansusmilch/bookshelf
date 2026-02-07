@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, Animated, ScrollView } from 'react-native';
+import { View, Text, Animated, TextInput } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useAddBook } from '@/hooks/useAddBook';
 import { BookHeader } from '@/components/book/BookHeader';
 import { BookDescription } from '@/components/book/BookDescription';
@@ -46,6 +47,9 @@ export default function AddBookScreen() {
 
   const [selectedStatus, setSelectedStatus] = useState('want_to_read');
   const [isAdding, setIsAdding] = useState(false);
+  const [manualPageCount, setManualPageCount] = useState(
+    bookDetails?.pageCount ? String(bookDetails.pageCount) : ''
+  );
 
   const handleAddBook = async () => {
     if (!bookDetails) {
@@ -62,6 +66,8 @@ export default function AddBookScreen() {
       return;
     }
 
+    const pageCount = manualPageCount.trim() ? parseInt(manualPageCount.trim(), 10) : (bookDetails.pageCount || 0);
+
     try {
       setIsAdding(true);
       await addBook.mutate({
@@ -71,7 +77,7 @@ export default function AddBookScreen() {
         coverUrl: initialCoverUrl || bookDetails.coverUrl,
         isbn10: bookDetails.isbn10?.[0],
         isbn13: bookDetails.isbn13?.[0],
-        totalPages: bookDetails.pageCount || 0,
+        totalPages: pageCount,
         status: selectedStatus,
         openLibraryId: bookDetails.key.split('/').pop(),
       });
@@ -99,7 +105,7 @@ export default function AddBookScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <ScrollView
+      <KeyboardAwareScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
@@ -107,6 +113,8 @@ export default function AddBookScreen() {
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: false }
         )}
+        bottomOffset={60}
+        keyboardShouldPersistTaps="handled"
       >
         <BookHeader
           title={workTitle || bookDetails.title}
@@ -141,6 +149,29 @@ export default function AddBookScreen() {
             </View>
           )}
 
+          {/* Page Count */}
+          <View className="gap-2">
+            <Text
+              className="text-xs font-medium uppercase px-1"
+              style={{ color: colors.onSurfaceVariant, letterSpacing: 1 }}
+            >
+              Page Count
+            </Text>
+            <Card variant="outlined">
+              <CardContent className="p-3">
+                <TextInput
+                  value={manualPageCount}
+                  onChangeText={setManualPageCount}
+                  placeholder="Enter page count"
+                  placeholderTextColor={colors.onSurfaceVariant}
+                  keyboardType="number-pad"
+                  className="text-base"
+                  style={{ color: colors.onSurface }}
+                />
+              </CardContent>
+            </Card>
+          </View>
+
           {/* Reading Status */}
           <View className="gap-2">
             <Text
@@ -167,7 +198,7 @@ export default function AddBookScreen() {
             Add to Your Library
           </Button>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </View>
   );
 }
