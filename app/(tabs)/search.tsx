@@ -1,10 +1,13 @@
 import { useAppTheme } from '@/components/material3-provider';
+import { AnimatedBookItem } from '@/components/ui/AnimatedBookItem';
+import { EmptySearchState, NoResultsState } from '@/components/ui/SearchLoadingState';
+import { SearchSkeletonList } from '@/components/ui/SkeletonLoader';
 import { usePreviousSearches } from '@/hooks/usePreviousSearches';
 import { OpenLibraryBook, OpenLibraryResponse, useSearchBooks } from '@/hooks/useSearchBooks';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useNavigation, useRouter } from 'expo-router';
+import { useNavigation , useRouter } from 'expo-router';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Image, Pressable, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -62,7 +65,6 @@ export default function SearchScreen() {
 
     debounceTimeoutRef.current = setTimeout(async () => {
       if (text.length >= 2) {
-        console.log('Executing search for:', text);
         await executeSearchAndSave(text);
       }
     }, 250);
@@ -77,9 +79,7 @@ export default function SearchScreen() {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('tabPress', () => {
-      // Blur first so that focus() always triggers the keyboard,
-      // even if the input already had logical focus.
+    const unsubscribe = navigation.addListener('focus', () => {
       searchbarRef.current?.blur();
       setTimeout(() => {
         searchbarRef.current?.focus();
@@ -93,6 +93,10 @@ export default function SearchScreen() {
     const authorName = book.author_name?.[0] || 'Unknown Author';
     const coverUrl = getCoverUrl(editionOlid);
     router.push(`/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl)}&title=${encodeURIComponent(book.title)}`);
+  };
+
+  const handleImageError = (coverUrl: string) => {
+    setFailedImages(prev => new Set(prev).add(coverUrl));
   };
 
   return (
@@ -144,7 +148,7 @@ export default function SearchScreen() {
                     style={{ backgroundColor: colors.surface }}
                   >
                     <View className="flex-1 flex-row items-center gap-3">
-                      <MaterialIcons name="search" size={20} color={colors.onSurfaceVariant} />
+                      <MaterialIcons name="history" size={20} color={colors.onSurfaceVariant} />
                       <Text className="text-base flex-1" numberOfLines={1} style={{ color: colors.onSurface }}>
                         {search}
                       </Text>
@@ -161,76 +165,24 @@ export default function SearchScreen() {
               </View>
             </View>
           ) : (
-            <View className="items-center justify-center py-12">
-              <MaterialIcons name="search" size={64} color={colors.onSurfaceVariant} />
-              <Text className="text-xl font-semibold mt-4 mb-2" style={{ color: colors.onSurface }}>
-                Search for books
-              </Text>
-              <Text className="text-center px-8" style={{ color: colors.onSurfaceVariant }}>
-                Enter a title, author, or keyword to find books from Open Library.
-              </Text>
-            </View>
+            <EmptySearchState />
           )
         ) : isLoading ? (
-          <View className="items-center justify-center py-12">
-            <MaterialIcons name="hourglass-empty" size={48} color={colors.primary} />
-            <Text style={{ color: colors.onSurfaceVariant, marginTop: 16 }}>Searching...</Text>
-          </View>
+          <SearchSkeletonList count={5} />
         ) : !searchResults || searchResults.docs?.length === 0 ? (
-          <View className="items-center justify-center py-12">
-            <MaterialIcons name="menu-book" size={64} color={colors.onSurfaceVariant} />
-            <Text className="text-xl font-semibold mt-4 mb-2" style={{ color: colors.onSurface }}>
-              No results found
-            </Text>
-            <Text className="text-center px-8" style={{ color: colors.onSurfaceVariant }}>
-              Try a different search term or check your spelling.
-            </Text>
-          </View>
+          <NoResultsState />
         ) : (
           <View className="gap-3">
-            {searchResults.docs?.map((book: OpenLibraryBook) => {
-              const editionOlid = getEditionOlid(book);
-              const coverUrl = editionOlid ? getCoverUrl(editionOlid) : undefined;
-              return (
-                <Pressable
-                  key={book.key}
-                  onPress={() => handleBookPress(book)}
-                  className="rounded-xl shadow-sm p-3"
-                  style={{ backgroundColor: colors.surface }}
-                >
-                  <View className="flex-row gap-3">
-                    <View className="w-32 h-44 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                      {coverUrl && !failedImages.has(coverUrl) ? (
-                        <Image
-                          source={{ uri: coverUrl }}
-                          className="w-full h-full"
-                          resizeMode="cover"
-                          onError={() => {
-                            console.log('Image load error:', coverUrl);
-                            setFailedImages(prev => new Set(prev).add(coverUrl));
-                          }}
-                        />
-                      ) : (
-                        <View className="w-full h-full items-center justify-center" style={{ backgroundColor: colors.surfaceContainerHighest }}>
-                          <Text style={{ color: colors.onSurfaceVariant, fontSize: 12 }}>No cover</Text>
-                        </View>
-                      )}
-                    </View>
-
-                    <View className="flex-1 justify-between py-1">
-                      <View>
-                        <Text className="text-lg font-semibold" numberOfLines={2} style={{ color: colors.onSurface }}>
-                          {book.title}
-                        </Text>
-                        <Text className="text-base mt-1" numberOfLines={1} style={{ color: colors.onSurfaceVariant }}>
-                          {book.author_name?.join(', ') || 'Unknown Author'}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </Pressable>
-              );
-            })}
+            {searchResults.docs?.map((book: OpenLibraryBook, index: number) => (
+              <AnimatedBookItem
+                key={book.key}
+                book={book}
+                index={index}
+                onPress={handleBookPress}
+                failedImages={failedImages}
+                onImageError={handleImageError}
+              />
+            ))}
           </View>
         )}
       </ScrollView>

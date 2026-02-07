@@ -77,22 +77,28 @@ export const useBookEditions = ({
         }
       }
 
-      // Get description from the work
+      // Get description from the edition first, then fall back to the work
       let description: string | undefined;
-      const workKey = edition.works?.[0]?.key;
-      if (workKey) {
-        try {
-          const work = await getWork({ openLibraryId: workKey });
-          if (work.description) {
-            description = typeof work.description === 'string'
-              ? work.description
-              : work.description.value;
+      if (edition.description) {
+        description = typeof edition.description === 'string'
+          ? edition.description
+          : edition.description.value;
+      } else {
+        const workKey = edition.works?.[0]?.key;
+        if (workKey) {
+          try {
+            const work = await getWork({ openLibraryId: workKey });
+            if (work.description) {
+              description = typeof work.description === 'string'
+                ? work.description
+                : work.description.value;
+            }
+            if (work.title && !titleFallback) {
+              setWorkTitle(work.title);
+            }
+          } catch {
+            // Description is optional, continue without it
           }
-          if (work.title && !titleFallback) {
-            setWorkTitle(work.title);
-          }
-        } catch {
-          // Description is optional, continue without it
         }
       }
 

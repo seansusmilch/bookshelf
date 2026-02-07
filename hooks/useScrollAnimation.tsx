@@ -13,7 +13,7 @@ type UseScrollAnimationProps = {
 export const useScrollAnimation = ({ title, colors, navigation }: UseScrollAnimationProps) => {
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  const headerOpacity = scrollY.interpolate({
+  const headerScrollProgress = scrollY.interpolate({
     inputRange: [0, 100],
     outputRange: [0, 1],
     extrapolate: 'clamp',
@@ -52,13 +52,15 @@ export const useScrollAnimation = ({ title, colors, navigation }: UseScrollAnima
         <Animated.View
           style={{
             flex: 1,
-            backgroundColor: colors.background,
-            opacity: headerOpacity,
+            backgroundColor: headerScrollProgress.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['transparent', colors.background],
+            }),
           }}
         />
       ),
     });
-  }, [navigation, colors, scrollY, title, headerOpacity, titleOpacity]);
+  }, [navigation, colors, scrollY, title, headerScrollProgress, titleOpacity]);
 
-  return { scrollY, headerOpacity, titleOpacity };
+  return { scrollY, headerScrollProgress, titleOpacity };
 };
