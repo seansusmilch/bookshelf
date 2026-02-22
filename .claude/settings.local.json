@@ -9,7 +9,11 @@
       "Bash(pnpm format:*)",
       "Bash(pnpm lint)",
       "mcp__convex__status",
-      "mcp__convex__logs"
+      "mcp__convex__logs",
+      "mcp__convex__functionSpec",
+      "mcp__convex__run",
+      "mcp__convex__data",
+      "Bash(pnpm dev)"
     ]
   },
   "enableAllProjectMcpServers": true,

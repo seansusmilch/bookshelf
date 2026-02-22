@@ -299,6 +299,33 @@ export const useBooks = () => {
 - Define schema in `convex/schema.ts` when created
 - Use Convex CLI for backend management
 
+### Testing Convex Changes
+
+**REQUIRED**: After making any changes to Convex code, you MUST manually test using the Convex MCP tools before considering the work complete:
+
+1. **Get deployment status** - Use `mcp__convex__status` to identify the deployment selector
+2. **Run modified functions** - Use `mcp__convex__run` to execute functions with test arguments
+3. **Verify database state** - Use `mcp__convex__data` to query tables and confirm expected data
+4. **Check for errors** - Use `mcp__convex__logs` with status "failure" to review any errors
+
+Example testing workflow:
+```typescript
+// After editing convex/books.ts
+// 1. Run the function to test it
+mcp__convex__run({
+  deploymentSelector: "ownDev",
+  functionName: "convex/books.ts:list",
+  args: "{}"
+})
+
+// 2. Verify the data
+mcp__convex__data({
+  deploymentSelector: "ownDev",
+  tableName: "books",
+  order: "desc"
+})
+```
+
 ## Mobile-First Design
 
 - Responsive layouts using Tailwind

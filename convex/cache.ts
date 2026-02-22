@@ -26,10 +26,30 @@ export const getCachedSearchResults = query({
     },
 })
 
+// Type for slimmed-down search results (kept under Convex's 8KB argument limit)
+export type SlimSearchResultDoc = {
+    key: string
+    title: string
+    author_name: string[]
+    author_key: string[]
+    cover_i?: number
+    hasCover?: boolean
+    first_publish_year?: number
+    edition_count?: number
+    isbn?: string[]
+}
+
+export type SlimSearchResponse = {
+    start: number
+    num_found: number
+    num_found_exact: boolean
+    docs: SlimSearchResultDoc[]
+}
+
 export const cacheSearchResults = mutation({
     args: {
         query: v.string(),
-        results: v.any(),
+        results: v.any(), // SlimSearchResponse
     },
     handler: async (ctx, args): Promise<void> => {
         const existing = await ctx.db
@@ -93,5 +113,31 @@ export const cacheBookDetails = mutation({
                 cachedAt: Date.now(),
             })
         }
+    },
+})
+
+// Clear cached books that don't have author information
+// This is useful when the author fetching logic is improved
+export const clearBooksWithoutAuthors = mutation({
+    args: {},
+    handler: async (ctx): Promise<{cleared: number}> => {
+        const allCachedBooks = await ctx.db.query('bookCache').collect()
+        let cleared = 0
+
+        for (const cached of allCachedBooks) {
+            const bookData = cached.bookData as any
+            // Check if the book has no authors array or has an empty authors array
+            const hasNoAuthors =
+                !bookData.authors ||
+                (Array.isArray(bookData.authors) && bookData.authors.length === 0)
+
+            if (hasNoAuthors) {
+                await ctx.db.delete(cached._id)
+                cleared++
+            }
+        }
+
+        console.log('[clearBooksWithoutAuthors] Cleared', cleared, 'cached books without authors')
+        return {cleared}
     },
 })

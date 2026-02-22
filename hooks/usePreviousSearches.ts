@@ -15,7 +15,13 @@ export const usePreviousSearches = () => {
         try {
             const savedSearches = await AsyncStorage.getItem(STORAGE_KEY)
             if (savedSearches) {
-                setSearches(JSON.parse(savedSearches))
+                const parsedSearches = JSON.parse(savedSearches)
+                const trimmedSearches = parsedSearches.slice(0, 10)
+                setSearches(trimmedSearches)
+                // Update storage if we trimmed any queries
+                if (parsedSearches.length > 10) {
+                    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(trimmedSearches))
+                }
             }
         } catch (error) {
             console.error('Failed to load previous searches:', error)
@@ -32,7 +38,7 @@ export const usePreviousSearches = () => {
             const parsedSearches: string[] = existingSearches ? JSON.parse(existingSearches) : []
 
             const filteredSearches = parsedSearches.filter((s) => s !== query)
-            const updatedSearches = [query, ...filteredSearches].slice(0, 20)
+            const updatedSearches = [query, ...filteredSearches].slice(0, 10)
 
             await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSearches))
             setSearches(updatedSearches)

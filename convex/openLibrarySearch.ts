@@ -47,26 +47,37 @@ export const searchBooks = action({
         try {
             const response = await searchBooksAPI(searchQuery)
 
-            // Check covers for each result
-            const docsWithCoverInfo = await Promise.all(
-                response.docs.map(async (doc) => {
-                    const olid = extractOLID(doc.key, 'work')
-                    const hasCover = olid
-                        ? await ctx.runMutation('covers:checkCover' as any, {olid})
-                        : false
-                    return {...doc, hasCover}
-                })
-            )
+            // Create a minimal response to avoid Convex's 8KB argument/return value limit
+            // Keep only essential fields that the client needs
+            const minimalDocs = response.docs.map((doc) => ({
+                key: doc.key,
+                title: doc.title,
+                author_name: (doc.author_name || []).slice(0, 3), // max 3 authors
+                author_key: (doc.author_key || []).slice(0, 3),
+                cover_i: doc.cover_i,
+                cover_edition_key: doc.cover_edition_key, // Needed for getting edition OLID
+            }))
 
-            const responseWithCovers = {
-                ...response,
-                docs: docsWithCoverInfo,
+            const minimalResponse: SearchResponse = {
+                start: response.start,
+                num_found: response.num_found,
+                num_found_exact: response.num_found_exact,
+                docs: minimalDocs,
             }
 
-            await ctx.runMutation('cache:cacheSearchResults' as any, {
-                query: normalizedQuery,
-                results: responseWithCovers,
-            })
+            // Cache the minimal results
+            try {
+                await ctx.runMutation('cache:cacheSearchResults' as any, {
+                    query: normalizedQuery,
+                    results: minimalResponse,
+                })
+            } catch (cacheError) {
+                // Don't fail the search if caching fails - just log and continue
+                console.warn('[searchBooks] Failed to cache results (continuing anyway):', {
+                    query: normalizedQuery,
+                    error: cacheError instanceof Error ? cacheError.message : 'Unknown error',
+                })
+            }
 
             console.log('[searchBooks] Search successful:', {
                 query: normalizedQuery,
@@ -74,7 +85,7 @@ export const searchBooks = action({
                 totalFound: response.num_found,
             })
 
-            return responseWithCovers
+            return minimalResponse
         } catch (error) {
             if (error instanceof Error) {
                 console.error('[searchBooks] Error searching books:', {

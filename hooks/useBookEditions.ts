@@ -59,12 +59,16 @@ export const useBookEditions = ({
             const olid = paramId.startsWith('/') ? paramId : `/books/${paramId}`
             const edition = await getBookDetailsAction({openLibraryId: olid})
 
-            // Resolve author
+            // Resolve author - try edition first, then work
             let author = 'Unknown Author'
+            let authorResolved = false
+
+            // First try to get author from edition
             if (edition.authors && edition.authors.length > 0) {
                 const firstAuthor = edition.authors[0]
                 if (firstAuthor.name) {
                     author = firstAuthor.name
+                    authorResolved = true
                 } else if (firstAuthor.key) {
                     try {
                         const authorOlid = extractOLID(firstAuthor.key, 'author')
@@ -73,9 +77,41 @@ export const useBookEditions = ({
                         )
                         if (authorData.name) {
                             author = authorData.name
+                            authorResolved = true
                         }
                     } catch {
-                        // Fall through to default
+                        // Fall through to try work
+                    }
+                }
+            }
+
+            // If author not found in edition, try to get from work
+            if (!authorResolved) {
+                const workKey = edition.works?.[0]?.key
+                if (workKey) {
+                    try {
+                        const work = await getWork({openLibraryId: workKey})
+                        // Work authors have a different structure: [{author: {key: "/authors/..."}}]
+                        if (work.authors && work.authors.length > 0) {
+                            const workAuthor = work.authors[0]
+                            const authorKey = workAuthor.author?.key || workAuthor.key
+                            if (authorKey) {
+                                const authorOlid = extractOLID(authorKey, 'author')
+                                const authorData = await fetchOpenLibrary<{name: string}>(
+                                    `/authors/${authorOlid}.json`
+                                )
+                                if (authorData.name) {
+                                    author = authorData.name
+                                    authorResolved = true
+                                }
+                            }
+                        }
+                        // Also get work title and description while we have the work data
+                        if (work.title && !titleFallback) {
+                            setWorkTitle(work.title)
+                        }
+                    } catch {
+                        // Fall through to default author
                     }
                 }
             }
@@ -87,7 +123,8 @@ export const useBookEditions = ({
                     typeof edition.description === 'string'
                         ? edition.description
                         : edition.description.value
-            } else {
+            } else if (!authorResolved) {
+                // If we didn't fetch the work above for author, fetch it now for description
                 const workKey = edition.works?.[0]?.key
                 if (workKey) {
                     try {
