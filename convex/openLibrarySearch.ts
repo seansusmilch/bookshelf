@@ -47,9 +47,25 @@ export const searchBooks = action({
         try {
             const response = await searchBooksAPI(searchQuery)
 
+            // Check covers for each result
+            const docsWithCoverInfo = await Promise.all(
+                response.docs.map(async (doc) => {
+                    const olid = extractOLID(doc.key, 'work')
+                    const hasCover = olid
+                        ? await ctx.runMutation('covers:checkCover' as any, {olid})
+                        : false
+                    return {...doc, hasCover}
+                })
+            )
+
+            const responseWithCovers = {
+                ...response,
+                docs: docsWithCoverInfo,
+            }
+
             await ctx.runMutation('cache:cacheSearchResults' as any, {
                 query: normalizedQuery,
-                results: response,
+                results: responseWithCovers,
             })
 
             console.log('[searchBooks] Search successful:', {
@@ -58,7 +74,7 @@ export const searchBooks = action({
                 totalFound: response.num_found,
             })
 
-            return response
+            return responseWithCovers
         } catch (error) {
             if (error instanceof Error) {
                 console.error('[searchBooks] Error searching books:', {
