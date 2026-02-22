@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx convex dev:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pkill:*)",
+      "Bash(pnpm check)",
+      "Bash(pnpm format:*)",
+      "Bash(pnpm lint)",
+      "mcp__convex__status",
+      "mcp__convex__logs"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "convex"
+  ]
+}
