@@ -309,20 +309,21 @@ export const useBooks = () => {
 4. **Check for errors** - Use `mcp__convex__logs` with status "failure" to review any errors
 
 Example testing workflow:
+
 ```typescript
 // After editing convex/books.ts
 // 1. Run the function to test it
 mcp__convex__run({
-  deploymentSelector: "ownDev",
-  functionName: "convex/books.ts:list",
-  args: "{}"
+    deploymentSelector: 'ownDev',
+    functionName: 'convex/books.ts:list',
+    args: '{}',
 })
 
 // 2. Verify the data
 mcp__convex__data({
-  deploymentSelector: "ownDev",
-  tableName: "books",
-  order: "desc"
+    deploymentSelector: 'ownDev',
+    tableName: 'books',
+    order: 'desc',
 })
 ```
 

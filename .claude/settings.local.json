@@ -13,7 +13,10 @@
       "mcp__convex__functionSpec",
       "mcp__convex__run",
       "mcp__convex__data",
-      "Bash(pnpm dev)"
+      "Bash(pnpm dev)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "mcp__convex__runOneoffQuery"
     ]
   },
   "enableAllProjectMcpServers": true,

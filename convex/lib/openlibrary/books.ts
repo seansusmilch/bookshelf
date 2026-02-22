@@ -1,7 +1,7 @@
 'use node'
 
 import {fetchOpenLibrary, isValidOLID} from './client'
-import {Book, Work, Author} from './types'
+import {Book, Work, Author, EditionsResponse} from './types'
 
 export async function getBook(olid: string): Promise<Book> {
     if (!isValidOLID(olid)) {
@@ -17,6 +17,15 @@ export async function getWork(olid: string): Promise<Work> {
     }
 
     return fetchOpenLibrary<Work>(`/works/${olid}.json`)
+}
+
+export async function getWorkEditions(olid: string): Promise<Book[]> {
+    if (!isValidOLID(olid)) {
+        throw new Error(`Invalid work OLID: ${olid}`)
+    }
+
+    const response = await fetchOpenLibrary<EditionsResponse>(`/works/${olid}/editions.json`)
+    return response.entries
 }
 
 export async function getAuthor(olid: string): Promise<Author> {

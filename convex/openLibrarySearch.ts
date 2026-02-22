@@ -5,6 +5,7 @@ import {
     getBook as getBookAPI,
     getBookByISBN as getBookByISBNAPI,
     getWork as getWorkAPI,
+    getWorkEditions as getWorkEditionsAPI,
     searchBooks as searchBooksAPI,
     type Book,
     type SearchQuery,
@@ -224,6 +225,33 @@ export const getWork = action({
                 errorName: error instanceof Error ? error.name : 'Unknown',
             })
             throw new Error('Failed to fetch work details')
+        }
+    },
+})
+
+export const getWorkEditions = action({
+    args: {
+        openLibraryId: v.string(),
+    },
+    handler: async (ctx, args): Promise<Book[]> => {
+        console.log('[getWorkEditions] Fetching editions for work:', args.openLibraryId)
+
+        try {
+            const editions = await getWorkEditionsAPI(extractOLID(args.openLibraryId, 'work'))
+
+            console.log('[getWorkEditions] Successfully fetched editions:', {
+                openLibraryId: args.openLibraryId,
+                count: editions.length,
+            })
+
+            return editions
+        } catch (error) {
+            console.error('[getWorkEditions] Error fetching work editions:', {
+                openLibraryId: args.openLibraryId,
+                error: error instanceof Error ? error.message : 'Unknown error',
+                errorName: error instanceof Error ? error.name : 'Unknown',
+            })
+            throw new Error('Failed to fetch work editions')
         }
     },
 })

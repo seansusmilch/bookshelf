@@ -5,7 +5,7 @@ import {SearchSkeletonList} from '@/components/ui/SkeletonLoader'
 import {usePreviousSearches} from '@/hooks/usePreviousSearches'
 import {useUserBooksWithIds} from '@/hooks/useBooks'
 import {OpenLibraryBook, OpenLibraryResponse, useSearchBooks} from '@/hooks/useSearchBooks'
-import {CoverSize, getCoverUrl, getEditionOlid} from '~/lib/openlibrary'
+import {CoverSize, getBestCoverUrl, getEditionOlid} from '~/lib/openlibrary'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import {useNavigation, useRouter} from 'expo-router'
 import {useEffect, useRef, useState, useCallback} from 'react'
@@ -79,7 +79,7 @@ export default function SearchScreen() {
             const editionOlid = getEditionOlid(book)
 
             const authorName = book.author_name?.[0] || 'Unknown Author'
-            const coverUrl = editionOlid ? getCoverUrl(editionOlid, CoverSize.Medium) : undefined
+            const coverUrl = getBestCoverUrl(book, CoverSize.Medium)
             router.push(
                 `/book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl || '')}&title=${encodeURIComponent(book.title)}`
             )

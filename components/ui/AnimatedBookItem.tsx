@@ -3,7 +3,7 @@ import Animated, {useAnimatedStyle, withDelay, withTiming, FadeIn} from 'react-n
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import {OpenLibraryBook} from '@/hooks/useSearchBooks'
 import {useAppTheme} from '@/components/material3-provider'
-import {CoverSize, getCoverUrl, getEditionOlid} from '~/lib/openlibrary'
+import {CoverSize, getBestCoverUrl, hasCover} from '~/lib/openlibrary'
 
 interface AnimatedBookItemProps {
     book: OpenLibraryBook
@@ -15,8 +15,7 @@ interface AnimatedBookItemProps {
 export const AnimatedBookItem = ({book, index, onPress, isInShelf}: AnimatedBookItemProps) => {
     const {colors} = useAppTheme()
 
-    const editionOlid = getEditionOlid(book)
-    const coverUrl = editionOlid ? getCoverUrl(editionOlid, CoverSize.Medium) : undefined
+    const coverUrl = getBestCoverUrl(book, CoverSize.Medium)
 
     const containerStyle = useAnimatedStyle(() => {
         return {
@@ -50,7 +49,7 @@ export const AnimatedBookItem = ({book, index, onPress, isInShelf}: AnimatedBook
                             {width: 128, height: 176, borderRadius: 8, overflow: 'hidden'},
                             imageStyle,
                         ]}>
-                        {book.hasCover && coverUrl ? (
+                        {hasCover(book) && coverUrl ? (
                             <Animated.Image
                                 source={{uri: coverUrl}}
                                 className="h-full w-full"

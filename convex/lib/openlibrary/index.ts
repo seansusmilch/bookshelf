@@ -9,6 +9,7 @@ export {searchBooks, searchAuthors, searchSubjects} from './search'
 export {
     getBook,
     getWork,
+    getWorkEditions,
     getAuthor,
     getAuthorWorks,
     getWorkRatings,

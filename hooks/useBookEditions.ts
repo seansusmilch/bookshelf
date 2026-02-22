@@ -3,6 +3,7 @@ import {useAction} from 'convex/react'
 import {api} from 'convex/_generated/api'
 import {fetchOpenLibrary, extractOLID} from 'convex/lib/openlibrary/client'
 import {CoverSize, getCoverUrl} from '~/lib/openlibrary'
+import type {Book} from 'convex/lib/openlibrary/types'
 
 export type BookDetails = {
     key: string
@@ -32,6 +33,7 @@ export const useBookEditions = ({
 }: UseBookEditionsProps) => {
     const getBookDetailsAction = useAction(api.openLibrarySearch.getBookDetails)
     const getWork = useAction(api.openLibrarySearch.getWork)
+    const getWorkEditions = useAction(api.openLibrarySearch.getWorkEditions)
 
     const [bookDetails, setBookDetails] = useState<BookDetails | null>(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -56,8 +58,41 @@ export const useBookEditions = ({
                 throw new Error('workId parameter is missing')
             }
 
-            const olid = paramId.startsWith('/') ? paramId : `/books/${paramId}`
-            const edition = await getBookDetailsAction({openLibraryId: olid})
+            // Determine if we have a work key or edition/book key
+            const isWorkKey =
+                paramId.startsWith('/works/') || (paramId.startsWith('OL') && paramId.endsWith('W'))
+
+            let edition: Book | undefined
+            if (isWorkKey) {
+                // If we have a work key, fetch the work editions first
+                const workId = paramId.startsWith('/') ? paramId : `/works/${paramId}`
+                try {
+                    const editions = await getWorkEditions({openLibraryId: workId})
+                    // Get the first edition from the work
+                    if (editions && editions.length > 0) {
+                        const firstEditionKey = editions[0].key
+                        if (firstEditionKey) {
+                            edition = await getBookDetailsAction({openLibraryId: firstEditionKey})
+                        }
+                    }
+                } catch (workError) {
+                    console.error(
+                        'Failed to fetch work editions, trying direct book fetch:',
+                        workError
+                    )
+                    // If work fetch fails, try as a book key anyway
+                    const bookId = paramId.startsWith('/') ? paramId : `/books/${paramId}`
+                    edition = await getBookDetailsAction({openLibraryId: bookId})
+                }
+            } else {
+                // Normal book/edition key path
+                const olid = paramId.startsWith('/') ? paramId : `/books/${paramId}`
+                edition = await getBookDetailsAction({openLibraryId: olid})
+            }
+
+            if (!edition) {
+                throw new Error('Failed to load book details')
+            }
 
             // Resolve author - try edition first, then work
             let author = 'Unknown Author'
@@ -91,10 +126,10 @@ export const useBookEditions = ({
                 if (workKey) {
                     try {
                         const work = await getWork({openLibraryId: workKey})
-                        // Work authors have a different structure: [{author: {key: "/authors/..."}}]
+                        // Work authors have a different structure: [{type: {key: ...}, author: {key: "/authors/..."}}]
                         if (work.authors && work.authors.length > 0) {
                             const workAuthor = work.authors[0]
-                            const authorKey = workAuthor.author?.key || workAuthor.key
+                            const authorKey = workAuthor.author?.key
                             if (authorKey) {
                                 const authorOlid = extractOLID(authorKey, 'author')
                                 const authorData = await fetchOpenLibrary<{name: string}>(
