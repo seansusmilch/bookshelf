@@ -119,6 +119,13 @@ Use these skills when relevant
 - **root-cause-analysis** - Systematic debugging methodology
 - **log-analysis** - Log analysis and error patterns
 
+## MCP Integration
+
+This project uses Model Context Protocol (MCP) servers configured in `.mcp.json`.
+
+- **Convex MCP** - Use when inspecting database state, debugging backend functions, viewing logs, or managing environment variables. Tools are available as `mcp__convex__*`.
+- **Context7 MCP** - Use when you need up-to-date documentation for any library or framework (React Native, Expo, Convex, etc.). First resolve the library ID with `mcp__context7__resolve-library-id`, then query docs with `mcp__context7__query-docs`.
+
 ## Code Style
 
 ### Imports

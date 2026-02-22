@@ -1,0 +1,9 @@
+{
+    "mcpServers": {
+        "convex": {
+            "type": "stdio",
+            "command": "cmd",
+            "args": ["/c", "npx", "convex@latest", "mcp", "start"]
+        }
+    }
+}
