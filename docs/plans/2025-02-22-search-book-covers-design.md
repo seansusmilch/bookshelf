@@ -24,11 +24,10 @@ The key insight is that Open Library's cover API has a metadata endpoint that te
 
 ```typescript
 covers: defineTable({
-  olid: v.string(),
-  hasCover: v.boolean(),
-  checkedAt: v.number(),
-})
-  .index("by_olid", ["olid"])
+    olid: v.string(),
+    hasCover: v.boolean(),
+    checkedAt: v.number(),
+}).index('by_olid', ['olid'])
 ```
 
 This table caches cover checks so we don't repeatedly hit Open Library's API for the same book.
@@ -38,46 +37,46 @@ This table caches cover checks so we don't repeatedly hit Open Library's API for
 ### `convex/covers.ts`
 
 ```typescript
-import { v } from "convex/values"
+import {v} from 'convex/values'
 
 export const checkCover = mutation({
-  args: { olid: v.string() },
-  handler: async (ctx, args) => {
-    // Check cache first
-    const cached = await ctx.db
-      .query("covers")
-      .withIndex("by_olid", (q) => q.eq("olid", args.olid))
-      .first()
+    args: {olid: v.string()},
+    handler: async (ctx, args) => {
+        // Check cache first
+        const cached = await ctx.db
+            .query('covers')
+            .withIndex('by_olid', (q) => q.eq('olid', args.olid))
+            .first()
 
-    if (cached) {
-      // Refresh if cache is older than 7 days
-      const age = Date.now() - cached.checkedAt
-      if (age < 7 * 24 * 60 * 60 * 1000) {
-        return cached.hasCover
-      }
-    }
+        if (cached) {
+            // Refresh if cache is older than 7 days
+            const age = Date.now() - cached.checkedAt
+            if (age < 7 * 24 * 60 * 60 * 1000) {
+                return cached.hasCover
+            }
+        }
 
-    // Fetch metadata from Open Library
-    const url = `https://covers.openlibrary.org/b/olid/${args.olid}.json`
-    const response = await fetch(url)
-    const data = await response.json()
+        // Fetch metadata from Open Library
+        const url = `https://covers.openlibrary.org/b/olid/${args.olid}.json`
+        const response = await fetch(url)
+        const data = await response.json()
 
-    // Open Library returns { error: "Not Found" } if no cover
-    const hasCover = !data.error
+        // Open Library returns { error: "Not Found" } if no cover
+        const hasCover = !data.error
 
-    // Cache the result
-    if (cached) {
-      await ctx.db.patch(cached._id, { hasCover, checkedAt: Date.now() })
-    } else {
-      await ctx.db.insert("covers", {
-        olid: args.olid,
-        hasCover,
-        checkedAt: Date.now(),
-      })
-    }
+        // Cache the result
+        if (cached) {
+            await ctx.db.patch(cached._id, {hasCover, checkedAt: Date.now()})
+        } else {
+            await ctx.db.insert('covers', {
+                olid: args.olid,
+                hasCover,
+                checkedAt: Date.now(),
+            })
+        }
 
-    return hasCover
-  }
+        return hasCover
+    },
 })
 ```
 
@@ -86,24 +85,24 @@ export const checkCover = mutation({
 Update `convex/openLibrarySearch.ts` to check covers during search:
 
 ```typescript
-import { api } from "./_generated/api"
+import {api} from './_generated/api'
 
 export const searchBooks = mutation({
-  args: { query: v.string() },
-  handler: async (ctx, args) => {
-    // ... existing Open Library search logic ...
+    args: {query: v.string()},
+    handler: async (ctx, args) => {
+        // ... existing Open Library search logic ...
 
-    // For each result, check if cover exists
-    const resultsWithCovers = await Promise.all(
-      results.docs.map(async (doc) => {
-        const olid = getEditionOlid(doc)
-        const hasCover = olid ? await ctx.runMutation(api.covers.checkCover, { olid }) : false
-        return { ...doc, hasCover }
-      })
-    )
+        // For each result, check if cover exists
+        const resultsWithCovers = await Promise.all(
+            results.docs.map(async (doc) => {
+                const olid = getEditionOlid(doc)
+                const hasCover = olid ? await ctx.runMutation(api.covers.checkCover, {olid}) : false
+                return {...doc, hasCover}
+            })
+        )
 
-    return { ...results, docs: resultsWithCovers }
-  }
+        return {...results, docs: resultsWithCovers}
+    },
 })
 ```
 

@@ -4,7 +4,7 @@ import {api} from 'convex/_generated/api'
 import {fetchOpenLibrary, extractOLID} from 'convex/lib/openlibrary/client'
 import {CoverSize, getCoverUrl} from '~/lib/openlibrary'
 
-type BookDetails = {
+export type BookDetails = {
     key: string
     title: string
     pageCount?: number

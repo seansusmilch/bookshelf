@@ -12,12 +12,7 @@ interface AnimatedBookItemProps {
     isInShelf?: boolean
 }
 
-export const AnimatedBookItem = ({
-    book,
-    index,
-    onPress,
-    isInShelf,
-}: AnimatedBookItemProps) => {
+export const AnimatedBookItem = ({book, index, onPress, isInShelf}: AnimatedBookItemProps) => {
     const {colors} = useAppTheme()
 
     const editionOlid = getEditionOlid(book)

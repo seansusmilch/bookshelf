@@ -28,11 +28,14 @@ export default function MyBooksScreen() {
         setRefreshing(false)
     }
 
-    const handleBookPress = (bookId: string) => {
-        console.log('📚 [ShelfScreen] handleBookPress called with bookId:', bookId)
-        console.log('📚 [ShelfScreen] bookId type:', typeof bookId)
-        console.log('📚 [ShelfScreen] bookId value:', JSON.stringify(bookId))
-        router.push(`/book/${bookId}` as any)
+    const handleBookPress = (book: any) => {
+        const openLibraryId = book.openLibraryId
+        if (!openLibraryId) {
+            console.log('📚 [ShelfScreen] Book has no openLibraryId, cannot navigate')
+            return
+        }
+        console.log('📚 [ShelfScreen] handleBookPress called with openLibraryId:', openLibraryId)
+        router.push(`/book/${openLibraryId}`)
     }
 
     return (
@@ -84,8 +87,7 @@ export default function MyBooksScreen() {
                             <BookCard
                                 key={book._id}
                                 book={book}
-                                onPress={() => handleBookPress(book._id)}
-                                onMenuPress={() => handleBookPress(book._id)}
+                                onPress={() => handleBookPress(book)}
                             />
                         )
                     })}

@@ -30,7 +30,7 @@ New Convex query:
 ```typescript
 // convex/functions/books.ts
 getBookByOpenLibraryId: query({
-  openLibraryId: v.string(),
+    openLibraryId: v.string(),
 }).returns(v.union(v.null(), booksSchema))
 ```
 
@@ -107,10 +107,10 @@ mutation   update UI
 ### Modify
 
 1. **`app/book/[olid].tsx`** (rename from `[id].tsx`)
-   - Use `olid` param instead of `id`
-   - Add `useBookEditions` hook
-   - Add ownership check query
-   - Conditional rendering
+    - Use `olid` param instead of `id`
+    - Add `useBookEditions` hook
+    - Add ownership check query
+    - Conditional rendering
 
 2. **Search result links** - Update to use `/book/[olid]`
 
@@ -120,12 +120,12 @@ mutation   update UI
 
 ## Error Handling
 
-| Scenario | Behavior |
-|----------|----------|
-| Invalid OLID | Error state with retry |
+| Scenario               | Behavior                                   |
+| ---------------------- | ------------------------------------------ |
+| Invalid OLID           | Error state with retry                     |
 | Open Library API fails | Error with retry; show saved data if owned |
-| Add mutation fails | Inline error, stay on Add view |
-| Ownership check fails | Default to Add view |
+| Add mutation fails     | Inline error, stay on Add view             |
+| Ownership check fails  | Default to Add view                        |
 
 ## Performance
 
@@ -136,6 +136,7 @@ mutation   update UI
 ## Navigation Updates
 
 Find and update:
+
 ```bash
 href="/add-book/  →  href="/book/
 router.push('/add-book/  →  router.push('/book/
@@ -144,6 +145,7 @@ router.push('/add-book/  →  router.push('/book/
 ## Backward Compatibility
 
 If existing saved links use Convex IDs, consider a query param fallback:
+
 ```
 /book/[olid]?convexId=xxx
 ```

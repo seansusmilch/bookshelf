@@ -8,11 +8,59 @@ Core principle: Fresh subagent per task + two-stage review (spec then quality) =
 
 ## Commands
 
+### Development
+
+- `pnpm start` - Start Expo development server with tunneling (for remote device testing)
+    - Use when: Developing on a physical device without a local network, or when you need to test with Expo Go on a device not on the same network
+    - Opens Expo DevTools in browser
+
+- `pnpm dev` - Start Convex backend in development mode
+    - Use when: You need to interact with Convex backend functions during development
+    - Runs alongside `pnpm start` (typically run in separate terminal)
+
+- `pnpm android` - Run app on Android emulator or connected device
+    - Use when: Testing on Android specifically, requires Android dev environment set up
+    - Builds and runs the native Android app
+
+- `pnpm ios` - Run app on iOS simulator or connected device
+    - Use when: Testing on iOS specifically (macOS only)
+    - Requires Xcode and iOS dev environment
+
+- `pnpm web` - Run app in web browser
+    - Use when: Quick testing or when native environment unavailable
+    - Note: Some native APIs may not work fully on web
+
 ### Code Quality
 
-- `pnpm lint` - Run ESLint and Prettier checks
-- `pnpm format` - Auto-fix linting and format code
-- `pnpm type-check` - Run TypeScript type checking (run this after completing work)
+- `pnpm lint` - Run ESLint checks
+    - Use when: Checking code for linting errors before committing
+    - Does NOT auto-fix issues (use `pnpm format` instead)
+
+- `pnpm format` - Auto-fix linting errors and format code with Prettier
+    - Use when: Fixing code style issues automatically
+    - Runs Prettier write then ESLint with --fix flag
+
+- `pnpm check [path]` - Run TypeScript type checking without emitting files
+    - Use when: Verifying type correctness after completing work
+    - With no arguments: checks entire codebase
+    - With file path: checks only that file (e.g., `pnpm check app/book.tsx`)
+    - **Required**: Run this before committing changes
+    - Note: Path aliases may show errors when checking single files; run without arguments for complete type checking
+
+### Utilities
+
+- `pnpm reset-project` - Reset project to initial state
+    - Use when: Starting fresh from a clean slate (destructive)
+    - Runs scripts/reset-project.js
+
+- `pnpm clear-cache` - Clear Metro bundler cache and restart dev server
+    - Use when: Experiencing caching issues or weird build behavior
+    - Equivalent to `npx expo start -c`
+    - Commonly needed after:
+        - Native module installations
+        - Babel config changes
+        - Tailwind config changes
+        - Unexplained rendering issues
 
 ### Testing
 

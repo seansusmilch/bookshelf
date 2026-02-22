@@ -61,15 +61,7 @@ export default function RootLayout() {
                                                         options={{headerShown: false}}
                                                     />
                                                     <Stack.Screen
-                                                        name="book/[id]"
-                                                        options={{
-                                                            headerTitle: '',
-                                                            headerTransparent: true,
-                                                            headerShadowVisible: false,
-                                                        }}
-                                                    />
-                                                    <Stack.Screen
-                                                        name="add-book/[workId]"
+                                                        name="book/[olid]"
                                                         options={{
                                                             headerTitle: '',
                                                             headerTransparent: true,

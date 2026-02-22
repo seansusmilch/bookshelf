@@ -10,6 +10,7 @@
 
 import type * as books from "../books.js";
 import type * as cache from "../cache.js";
+import type * as covers from "../covers.js";
 import type * as lib_openlibrary_books from "../lib/openlibrary/books.js";
 import type * as lib_openlibrary_client from "../lib/openlibrary/client.js";
 import type * as lib_openlibrary_covers from "../lib/openlibrary/covers.js";
@@ -31,6 +32,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   books: typeof books;
   cache: typeof cache;
+  covers: typeof covers;
   "lib/openlibrary/books": typeof lib_openlibrary_books;
   "lib/openlibrary/client": typeof lib_openlibrary_client;
   "lib/openlibrary/covers": typeof lib_openlibrary_covers;
