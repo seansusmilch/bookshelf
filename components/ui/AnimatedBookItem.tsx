@@ -9,8 +9,6 @@ interface AnimatedBookItemProps {
     book: OpenLibraryBook
     index: number
     onPress: (book: OpenLibraryBook) => void
-    failedImages: Set<string>
-    onImageError: (coverUrl: string) => void
     isInShelf?: boolean
 }
 
@@ -18,8 +16,6 @@ export const AnimatedBookItem = ({
     book,
     index,
     onPress,
-    failedImages,
-    onImageError,
     isInShelf,
 }: AnimatedBookItemProps) => {
     const {colors} = useAppTheme()
@@ -59,7 +55,7 @@ export const AnimatedBookItem = ({
                             {width: 128, height: 176, borderRadius: 8, overflow: 'hidden'},
                             imageStyle,
                         ]}>
-                        {coverUrl && !failedImages.has(coverUrl) ? (
+                        {book.hasCover && coverUrl ? (
                             <Animated.Image
                                 source={{uri: coverUrl}}
                                 className="h-full w-full"
