@@ -58,3 +58,20 @@ export async function getCoverMetadata(
         return {url: getBookCoverURL(key, value, 'M')}
     }
 }
+
+export async function checkCoverExists(olid: string): Promise<boolean> {
+    const url = `https://covers.openlibrary.org/b/olid/${olid}.json`
+
+    try {
+        const response = await fetch(url)
+        if (!response.ok) {
+            return false
+        }
+        const data = await response.json()
+        // Open Library returns { error: "Not Found" } if no cover
+        return !data.error
+    } catch (error) {
+        console.error('Error checking cover for olid:', olid, error)
+        return false
+    }
+}
