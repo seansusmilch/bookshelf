@@ -83,7 +83,16 @@ export default defineSchema({
         userId: v.string(),
         year: v.number(),
         goal: v.number(),
+        genreVarietyGoal: v.optional(v.number()),
+        pageGoal: v.optional(v.number()),
+        weeklyReadingDays: v.optional(v.number()),
         createdAt: v.number(),
         updatedAt: v.number(),
     }).index('by_user_year', ['userId', 'year']),
+
+    covers: defineTable({
+        olid: v.string(),
+        hasCover: v.boolean(),
+        checkedAt: v.number(),
+    }).index('by_olid', ['olid']),
 })
