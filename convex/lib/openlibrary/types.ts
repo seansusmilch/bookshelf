@@ -17,6 +17,7 @@ export interface SearchResultDoc {
     author_name: string[]
     author_key: string[]
     cover_i?: number
+    hasCover?: boolean
     first_publish_year?: number
     edition_count?: number
     isbn?: string[]
