@@ -46,6 +46,7 @@ export interface OpenLibraryBook {
     author_key: string[]
     cover_i?: number
     cover_edition_key?: string
+    hasCover?: boolean
     first_publish_year?: number
     edition_count?: number
     isbn?: string[]
