@@ -20,7 +20,6 @@ export default function SearchScreen() {
     const searchbarRef = useRef<TextInput>(null)
     const [query, setQuery] = useState('')
     const [searchResults, setSearchResults] = useState<OpenLibraryResponse | null>(null)
-    const [failedImages, setFailedImages] = useState<Set<string>>(new Set())
     const debounceTimeoutRef = useRef<number | null>(null)
 
     const {isLoading, searchBooks: executeSearch} = useSearchBooks()
@@ -79,26 +78,14 @@ export default function SearchScreen() {
         (book: OpenLibraryBook) => {
             const editionOlid = getEditionOlid(book)
 
-            if (editionOlid && userBooksWithIds) {
-                const existingBook = userBooksWithIds.find((b) => b.openLibraryId === editionOlid)
-                if (existingBook) {
-                    router.push({pathname: '/book/[id]', params: {id: existingBook._id}})
-                    return
-                }
-            }
-
             const authorName = book.author_name?.[0] || 'Unknown Author'
             const coverUrl = editionOlid ? getCoverUrl(editionOlid, CoverSize.Medium) : undefined
             router.push(
-                `/add-book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl || '')}&title=${encodeURIComponent(book.title)}`
+                `/book/${editionOlid}?author=${encodeURIComponent(authorName)}&coverUrl=${encodeURIComponent(coverUrl || '')}&title=${encodeURIComponent(book.title)}`
             )
         },
-        [userBooksWithIds, router]
+        [router]
     )
-
-    const handleImageError = (coverUrl: string) => {
-        setFailedImages((prev) => new Set(prev).add(coverUrl))
-    }
 
     return (
         <View className="flex-1" style={{backgroundColor: colors.background}}>
@@ -205,8 +192,6 @@ export default function SearchScreen() {
                                     book={book}
                                     index={index}
                                     onPress={handleBookPress}
-                                    failedImages={failedImages}
-                                    onImageError={handleImageError}
                                     isInShelf={isInShelf}
                                 />
                             )
