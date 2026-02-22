@@ -41,7 +41,8 @@ export function getEditionOlid(book: {
 
 /**
  * Gets the best available cover URL for a book by trying multiple sources.
- * Priority: cover_i (numeric ID) > cover_edition_key > work key
+ * Priority: cover_i (numeric ID) > cover_edition_key
+ * Note: Work keys are NOT used as they rarely have cover images.
  */
 export function getBestCoverUrl(
     book: {
@@ -61,23 +62,25 @@ export function getBestCoverUrl(
         return `https://covers.openlibrary.org/b/id/${book.cover_i}-${size}.jpg`
     }
 
-    // Try cover_edition_key or work key as fallback
-    const olid = getEditionOlid(book)
-    if (olid) {
+    // Try cover_edition_key as fallback (edition OLID)
+    if (book.cover_edition_key) {
+        const olid = extractOLID(book.cover_edition_key)
         return getCoverUrl(olid, size)
     }
 
+    // Work keys are not reliable for covers, so we don't use them
     return undefined
 }
 
 /**
  * Determines if a book has any cover identifier available.
- * Checks for cover_i, cover_edition_key, or a valid key.
+ * Only checks for cover_i (numeric ID) or cover_edition_key (edition OLID).
+ * Work keys are NOT reliable for covers, so they are not considered.
  */
 export function hasCover(book: {
     cover_i?: number
     cover_edition_key?: string
     key?: string
 }): boolean {
-    return !!(book.cover_i && book.cover_i > 0) || !!book.cover_edition_key || !!book.key
+    return !!(book.cover_i && book.cover_i > 0) || !!book.cover_edition_key
 }

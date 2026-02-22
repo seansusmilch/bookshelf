@@ -4,6 +4,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import {OpenLibraryBook} from '@/hooks/useSearchBooks'
 import {useAppTheme} from '@/components/material3-provider'
 import {CoverSize, getBestCoverUrl, hasCover} from '~/lib/openlibrary'
+import {useState} from 'react'
 
 interface AnimatedBookItemProps {
     book: OpenLibraryBook
@@ -14,8 +15,10 @@ interface AnimatedBookItemProps {
 
 export const AnimatedBookItem = ({book, index, onPress, isInShelf}: AnimatedBookItemProps) => {
     const {colors} = useAppTheme()
+    const [imageError, setImageError] = useState(false)
 
     const coverUrl = getBestCoverUrl(book, CoverSize.Medium)
+    const shouldShowCover = hasCover(book) && coverUrl && !imageError
 
     const containerStyle = useAnimatedStyle(() => {
         return {
@@ -49,11 +52,12 @@ export const AnimatedBookItem = ({book, index, onPress, isInShelf}: AnimatedBook
                             {width: 128, height: 176, borderRadius: 8, overflow: 'hidden'},
                             imageStyle,
                         ]}>
-                        {hasCover(book) && coverUrl ? (
+                        {shouldShowCover ? (
                             <Animated.Image
                                 source={{uri: coverUrl}}
                                 className="h-full w-full"
                                 resizeMode="cover"
+                                onError={() => setImageError(true)}
                             />
                         ) : (
                             <View
